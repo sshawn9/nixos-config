@@ -43,7 +43,7 @@ resolve_out_file() {
   /*) return ;;
   esac
 
-  if [[ -n "${JUST_INVOCATION_DIRECTORY:-}" ]]; then
+  if [[ -n ${JUST_INVOCATION_DIRECTORY:-} ]]; then
     OUT_FILE="$JUST_INVOCATION_DIRECTORY/$OUT_FILE"
   fi
 }
@@ -79,7 +79,7 @@ load_installed_extensions() {
     die "failed to list installed VS Code extensions."
 
   EXTENSIONS=()
-  [[ -z "$output" ]] || mapfile -t EXTENSIONS <<<"$output"
+  [[ -z $output ]] || mapfile -t EXTENSIONS <<<"$output"
 }
 
 write_extensions_json() {

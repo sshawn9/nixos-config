@@ -43,18 +43,18 @@ resolve_ext_file() {
   /*) return ;;
   esac
 
-  if [[ -f "$EXT_FILE" ]]; then
+  if [[ -f $EXT_FILE ]]; then
     return
   fi
 
-  if [[ -n "${JUST_INVOCATION_DIRECTORY:-}" &&
+  if [[ -n ${JUST_INVOCATION_DIRECTORY:-} &&
     -f "$JUST_INVOCATION_DIRECTORY/$EXT_FILE" ]]; then
     EXT_FILE="$JUST_INVOCATION_DIRECTORY/$EXT_FILE"
   fi
 }
 
 require_inputs() {
-  [[ -f "$EXT_FILE" ]] ||
+  [[ -f $EXT_FILE ]] ||
     die "$EXT_FILE not found."
 
   command -v "$CODE_BIN" >/dev/null 2>&1 ||
@@ -138,7 +138,7 @@ load_recommendations() {
     die "failed to parse recommendations from $EXT_FILE."
 
   EXTENSIONS=()
-  [[ -z "$output" ]] || mapfile -t EXTENSIONS <<<"$output"
+  [[ -z $output ]] || mapfile -t EXTENSIONS <<<"$output"
 }
 
 install_extension() {
