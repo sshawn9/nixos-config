@@ -1,0 +1,16 @@
+screenshot-path "~/Pictures/Screenshots/%Y-%m-%d_%H-%M-%S.png"
+prefer-no-csd
+
+cursor {
+    xcursor-theme "catppuccin-mocha-mauve-cursors"
+    xcursor-size 24
+}
+
+hotkey-overlay { skip-at-startup; }
+
+environment {
+    "NIXOS_OZONE_WL" "1"
+    "QS_ICON_THEME" "Adwaita"
+}
+
+spawn-at-startup "noctalia-shell"

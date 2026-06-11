@@ -1,0 +1,148 @@
+// Global polish.
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+
+    background-effect {
+        blur true
+        xray true
+    }
+
+    popups {
+        geometry-corner-radius 12
+        background-effect {
+            blur true
+            xray false
+        }
+    }
+}
+
+// Give floating windows enough separation from the tiled layer.
+window-rule {
+    match is-floating=true
+
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+}
+
+// Portal, authentication, and permission prompts should interrupt clearly.
+window-rule {
+    match app-id=r#"^xdg-desktop-portal"#
+    match app-id=r#"^org\.freedesktop\.impl\.portal"#
+    match app-id=r#"^org\.gnome\.PolkitAgent$"#
+    match app-id=r#"^polkit-gnome-authentication-agent-1$"#
+    match app-id=r#"^org\.kde\.polkit-kde-authentication-agent-1$"#
+    match app-id=r#"^lxqt-policykit-agent$"#
+    match title=r#"(?i)^(Authentication Required|Authenticate|Password Required|Unlock Login Keyring|Enter Password|Permission Required)$"#
+
+    open-floating true
+    open-focused true
+    default-column-width { fixed 560; }
+}
+
+// File pickers are workflow dialogs, not layout participants.
+window-rule {
+    match title=r#"(?i)^(Open File|Open Files|Save File|Save As|Open Folder|Save Folder|Select File|Select Files|Select Folder|Choose File|Choose Files|Choose Folder|File Upload|File Chooser)$"#
+    match title=r#"(?i)^(Open|Save|Select|Choose|Pick)( a)? (File|Files|Folder|Directory)$"#
+
+    open-floating true
+    open-focused true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 650; }
+}
+
+// Exact generic dialog titles. Keep these anchored to avoid floating browser tabs.
+window-rule {
+    match title=r#"(?i)^(Preferences|Settings|Options|Properties|About|Rename|Confirm|Confirmation|Error|Warning)$"#
+
+    open-floating true
+    open-focused true
+    default-column-width { fixed 680; }
+}
+
+// System control panels and hardware/network utilities.
+window-rule {
+    match app-id=r#"(?i)^(pavucontrol|org\.pulseaudio\.pavucontrol|nm-connection-editor|blueman-manager|blueberry|overskride|iwgtk|wdisplays|arandr|nwg-displays|nwg-look|qt5ct|qt6ct|kvantummanager|org\.gnome\.Settings|gnome-control-center|org\.gnome\.Tweaks|gnome-tweaks)$"#
+
+    open-floating true
+    default-column-width { fixed 780; }
+    default-window-height { fixed 560; }
+}
+
+// Small desktop utilities.
+window-rule {
+    match app-id=r#"(?i)^(org\.gnome\.Calculator|gnome-calculator|qalculate-gtk|io\.github\.qalculate\.qalculate-gtk|galculator|org\.gnome\.Characters|org\.gnome\.Clocks|org\.gnome\.Weather|org\.gnome\.Calendar|zenity|yad)$"#
+
+    open-floating true
+    default-column-width { fixed 620; }
+    default-window-height { fixed 520; }
+}
+
+// Clipboard, color, and emoji tools are usually short-lived overlays.
+window-rule {
+    match app-id=r#"(?i)^(copyq|com\.github\.hluk\.copyq|cliphist|gcolor3|gpick|org\.gnome\.design\.Palette|org\.gnome\.Eyedropper|emoji-picker)$"#
+
+    open-floating true
+    default-column-width { fixed 560; }
+    default-window-height { fixed 460; }
+}
+
+// Browser picture-in-picture windows belong above the workspace.
+window-rule {
+    match app-id=r#"(?i)^(firefox|org\.mozilla\.firefox|librewolf|io\.gitlab\.librewolf-community|floorp|zen|chromium|google-chrome|google-chrome-beta|google-chrome-unstable|brave-browser|com\.brave\.Browser|microsoft-edge|com\.microsoft\.Edge|vivaldi-stable|opera|thorium-browser)$"# title=r#"(?i)^Picture[- ]in[- ]Picture$"#
+
+    open-floating true
+    default-column-width { fixed 520; }
+    default-window-height { fixed 292; }
+    default-floating-position x=24 y=24 relative-to="bottom-right"
+}
+
+// Media players are better as movable viewers, while games get VRR when available.
+window-rule {
+    match app-id=r#"(?i)^(mpv|celluloid|io\.github\.celluloid_player\.Celluloid|vlc|org\.videolan\.VLC)$"#
+
+    open-floating true
+    default-column-width { proportion 0.55; }
+    default-window-height { proportion 0.55; }
+    default-floating-position x=24 y=24 relative-to="bottom-right"
+    variable-refresh-rate true
+}
+
+window-rule {
+    match app-id=r#"^steam_app_\d+$"#
+
+    variable-refresh-rate true
+}
+
+// Steam's auxiliary windows are dialogs; keep the launcher itself tiled.
+window-rule {
+    match app-id=r#"(?i)^steam$"# title=r#"(?i)^(Friends List|Steam Settings|Settings|.* - Chat|.* Properties)$"#
+
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 620; }
+}
+
+// Screenshot/camera helper windows tend to be transient tool surfaces.
+window-rule {
+    match app-id=r#"(?i)^(flameshot|org\.flameshot\.Flameshot|org\.kde\.spectacle|gnome-screenshot|org\.gnome\.Snapshot|cheese|org\.gnome\.Cheese|guvcview)$"#
+
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 560; }
+}
+
+// Wine helper dialogs are usually small compatibility panels.
+window-rule {
+    match app-id=r#"(?i)^(winecfg|winetricks)$"#
+    match title=r#"(?i)^(Wine configuration|Winetricks|Browse For Folder)$"#
+
+    open-floating true
+    default-column-width { fixed 720; }
+    default-window-height { fixed 560; }
+}

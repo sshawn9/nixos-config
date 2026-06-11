@@ -1,0 +1,23 @@
+# Nix build artifacts
+# `result` — default symlink target of `nix build`, pointing into /nix/store.
+result
+# Named local build links created by `just build-keep` and `just build-drv`.
+.build-links
+# direnv per-directory cache — machine-local devShell env dumps from `use flake`.
+.direnv
+
+# Editor scratch
+# Vim / Neovim swap files for in-progress edits.
+*.swp
+
+# OS metadata
+# macOS Finder metadata; leaks in on Darwin hosts.
+.DS_Store
+
+# AI assistant working directories (machine-local: settings, auth, transcripts)
+# `.codex` — OpenAI Codex CLI per-project state.
+/.codex
+# `.claude` — Claude Code per-project state. Shared project instructions
+# live in repo-root CLAUDE.md, not under .claude/.
+.claude/*
+!.claude/CLAUDE.md

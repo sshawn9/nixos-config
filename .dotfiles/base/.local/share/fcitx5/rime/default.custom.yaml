@@ -1,0 +1,10 @@
+patch:
+  __include: rime_ice_suggestion:/
+  schema_list:
+    - schema: rime_ice
+  ascii_composer/switch_key/Shift_L: commit_code
+  ascii_composer/switch_key/Shift_R: commit_code
+  menu/page_size: 10
+  switcher/hotkeys:
+    - Control+Shift+grave
+    - F4

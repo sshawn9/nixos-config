@@ -1,0 +1,227 @@
+binds {
+    // -------------------------------------------------------------------------
+    // Help, session, and config
+    // -------------------------------------------------------------------------
+    Mod+Shift+Slash repeat=false { show-hotkey-overlay; }
+    Mod+Tab repeat=false { toggle-overview; }
+    Mod+Shift+Tab { focus-window-previous; }
+    Mod+Ctrl+R repeat=false { spawn "niri" "msg" "action" "load-config-file"; }
+
+    Mod+Escape repeat=false { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Shift+E repeat=false { quit skip-confirmation=false; }
+    Mod+Shift+P repeat=false { power-off-monitors; }
+
+    // -------------------------------------------------------------------------
+    // Launchers and everyday apps
+    // -------------------------------------------------------------------------
+    Mod+Return repeat=false { spawn "ghostty"; }
+    Mod+D repeat=false { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+B repeat=false { spawn "google-chrome"; }
+    Mod+E repeat=false { spawn "nautilus"; }
+
+    // -------------------------------------------------------------------------
+    // Window basics
+    // -------------------------------------------------------------------------
+    Mod+Q repeat=false { close-window; }
+    Mod+F { maximize-window-to-edges; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { toggle-windowed-fullscreen; }
+    Mod+Ctrl+I { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Ctrl+T { toggle-column-tabbed-display; }
+
+    // -------------------------------------------------------------------------
+    // Focus navigation
+    // H/L move across columns, J/K move within a column or across workspaces.
+    // Arrow aliases mirror the same layout for one-handed or keyboard-agnostic use.
+    // -------------------------------------------------------------------------
+    Mod+H { focus-column-left-or-last; }
+    Mod+J { focus-window-or-workspace-down; }
+    Mod+K { focus-window-or-workspace-up; }
+    Mod+L { focus-column-right-or-first; }
+
+    Mod+Left { focus-column-left-or-last; }
+    Mod+Down { focus-window-or-workspace-down; }
+    Mod+Up { focus-window-or-workspace-up; }
+    Mod+Right { focus-column-right-or-first; }
+
+    Mod+Home { focus-column-first; }
+    Mod+End { focus-column-last; }
+
+    // -------------------------------------------------------------------------
+    // Move windows and columns
+    // Shift means "move the thing I am focused on".
+    // -------------------------------------------------------------------------
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+J { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K { move-window-up-or-to-workspace-up; }
+    Mod+Shift+L { move-column-right; }
+
+    Mod+Shift+Left { move-column-left; }
+    Mod+Shift+Down { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Right { move-column-right; }
+
+    Mod+Shift+Home { move-column-to-first; }
+    Mod+Shift+End { move-column-to-last; }
+
+    Mod+Alt+H { swap-window-left; }
+    Mod+Alt+L { swap-window-right; }
+    Mod+Alt+Left { swap-window-left; }
+    Mod+Alt+Right { swap-window-right; }
+
+    // -------------------------------------------------------------------------
+    // Columns, stacks, and layout shape
+    // -------------------------------------------------------------------------
+    Mod+BracketLeft { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Ctrl+BracketLeft { consume-window-into-column; }
+    Mod+Ctrl+BracketRight { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Alt+R { switch-preset-column-width-back; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Alt+Shift+R { switch-preset-window-height-back; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Alt+Minus { set-window-width "-10%"; }
+    Mod+Alt+Equal { set-window-width "+10%"; }
+    Mod+0 { reset-window-height; }
+
+    Mod+A { expand-column-to-available-width; }
+    Mod+C { center-column; }
+    Mod+Shift+C { center-window; }
+    Mod+Ctrl+C { center-visible-columns; }
+
+    // -------------------------------------------------------------------------
+    // Floating layer
+    // Space switches layers; Shift+Space changes the focused window's layer.
+    // -------------------------------------------------------------------------
+    Mod+Space { switch-focus-between-floating-and-tiling; }
+    Mod+Shift+Space { toggle-window-floating; }
+    Mod+Alt+Space { move-window-to-floating; }
+    Mod+Ctrl+Space { move-window-to-tiling; }
+
+    // -------------------------------------------------------------------------
+    // Workspaces
+    // Number keys mean workspaces, which is faster and easier to remember than
+    // using them for column indexes.
+    // -------------------------------------------------------------------------
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+    Mod+Shift+9 { move-column-to-workspace 9; }
+
+    Mod+Ctrl+1 { move-window-to-workspace 1; }
+    Mod+Ctrl+2 { move-window-to-workspace 2; }
+    Mod+Ctrl+3 { move-window-to-workspace 3; }
+    Mod+Ctrl+4 { move-window-to-workspace 4; }
+    Mod+Ctrl+5 { move-window-to-workspace 5; }
+    Mod+Ctrl+6 { move-window-to-workspace 6; }
+    Mod+Ctrl+7 { move-window-to-workspace 7; }
+    Mod+Ctrl+8 { move-window-to-workspace 8; }
+    Mod+Ctrl+9 { move-window-to-workspace 9; }
+
+    "Mod+Page_Up" { focus-workspace-up; }
+    "Mod+Page_Down" { focus-workspace-down; }
+    "Mod+Shift+Page_Up" { move-column-to-workspace-up; }
+    "Mod+Shift+Page_Down" { move-column-to-workspace-down; }
+    "Mod+Ctrl+Page_Up" { move-window-to-workspace-up; }
+    "Mod+Ctrl+Page_Down" { move-window-to-workspace-down; }
+    "Mod+Alt+Page_Up" { move-workspace-up; }
+    "Mod+Alt+Page_Down" { move-workspace-down; }
+
+    Mod+Comma { focus-workspace-previous; }
+
+    // -------------------------------------------------------------------------
+    // Monitors
+    // Ctrl changes monitor focus; Ctrl+Shift moves the current column there.
+    // Ctrl+Alt moves the whole workspace there.
+    // -------------------------------------------------------------------------
+    Mod+Ctrl+H { focus-monitor-left; }
+    Mod+Ctrl+J { focus-monitor-down; }
+    Mod+Ctrl+K { focus-monitor-up; }
+    Mod+Ctrl+L { focus-monitor-right; }
+
+    Mod+Ctrl+Left { focus-monitor-left; }
+    Mod+Ctrl+Down { focus-monitor-down; }
+    Mod+Ctrl+Up { focus-monitor-up; }
+    Mod+Ctrl+Right { focus-monitor-right; }
+
+    Mod+Ctrl+Comma { focus-monitor-previous; }
+    Mod+Ctrl+Period { focus-monitor-next; }
+
+    Mod+Shift+Ctrl+H { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L { move-column-to-monitor-right; }
+
+    Mod+Shift+Ctrl+Left { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+
+    Mod+Shift+Ctrl+Comma { move-column-to-monitor-previous; }
+    Mod+Shift+Ctrl+Period { move-column-to-monitor-next; }
+
+    Mod+Alt+Ctrl+H { move-workspace-to-monitor-left; }
+    Mod+Alt+Ctrl+J { move-workspace-to-monitor-down; }
+    Mod+Alt+Ctrl+K { move-workspace-to-monitor-up; }
+    Mod+Alt+Ctrl+L { move-workspace-to-monitor-right; }
+
+    Mod+Alt+Ctrl+Left { move-workspace-to-monitor-left; }
+    Mod+Alt+Ctrl+Down { move-workspace-to-monitor-down; }
+    Mod+Alt+Ctrl+Up { move-workspace-to-monitor-up; }
+    Mod+Alt+Ctrl+Right { move-workspace-to-monitor-right; }
+
+    Mod+Alt+Ctrl+Comma { move-workspace-to-monitor-previous; }
+    Mod+Alt+Ctrl+Period { move-workspace-to-monitor-next; }
+
+    // -------------------------------------------------------------------------
+    // Screenshots and recording
+    // Bare Print uses niri's picker. Shift/Ctrl/Alt scope it down.
+    // The Satty variants immediately open an editor.
+    // -------------------------------------------------------------------------
+    Print repeat=false { screenshot; }
+    Ctrl+Print repeat=false { screenshot-screen; }
+    Alt+Print repeat=false { screenshot-window; }
+    Shift+Print repeat=false { spawn "sh" "-c" "grim -g \"$(slurp)\" - | satty -f -"; }
+    Ctrl+Shift+Print repeat=false { spawn "sh" "-c" "grim - | satty -f -"; }
+    Alt+Shift+Print repeat=false { spawn "sh" "-c" "niri msg action screenshot-window && sleep 0.1 && satty -f \"$(ls -t ~/Pictures/Screenshots/*.png | head -1)\""; }
+
+    Mod+Print repeat=false { spawn "gpu-screen-recorder-gtk"; }
+    Mod+Shift+Print repeat=false { spawn "kooha"; }
+
+    // -------------------------------------------------------------------------
+    // Hardware and media keys
+    // -------------------------------------------------------------------------
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"; }
+    XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+
+    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioStop allow-when-locked=true { spawn "playerctl" "stop"; }
+}

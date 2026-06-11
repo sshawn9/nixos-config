@@ -1,0 +1,54 @@
+{
+  // Window
+  "window.zoomLevel": 3,
+  // Editor
+  "editor.fontFamily": "'JetBrainsMono Nerd Font','Droid Sans Mono', monospace",
+  "editor.fontSize": 20,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  // Diff editor
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.renderSideBySide": true,
+  // Files
+  "files.autoSave": "onFocusChange",
+  // Direnv
+  "direnv.restart.automatic": true,
+  // Terminal
+  "terminal.integrated.fontSize": 18,
+  // Git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  // AI and chat
+  "chat.viewSessions.orientation": "stacked",
+  "chat.mcp.gallery.enabled": true,
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.selectedModel": "default",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false
+  },
+  // Nix
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "nix.enableLanguageServer": true,
+  "nix.hiddenLanguageServerErrors": [
+    "textDocument/definition",
+    "textDocument/formatting",
+    "textDocument/rangeFormatting"
+  ],
+  "nix.serverPath": "nixd",
+  "nix.serverSettings": {
+    "nixd": {
+      "formatting": {
+        "command": [
+          "nixfmt"
+        ]
+      }
+    }
+  },
+  // Python
+  "python.analysis.typeCheckingMode": "standard"
+}

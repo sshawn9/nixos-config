@@ -1,0 +1,10 @@
+patch:
+  speller/algebra/+:
+    - derive/^([a-z]+)an$/$1ang/
+    - derive/^([a-z]+)ang$/$1an/
+    - derive/^([a-z]+)en$/$1eng/
+    - derive/^([a-z]+)eng$/$1en/
+    - derive/^([a-z]+)in$/$1ing/
+    - derive/^([a-z]+)ing$/$1in/
+    - derive/^n/l/
+    - derive/^l/n/

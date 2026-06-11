@@ -1,0 +1,7 @@
+config-file = 00-fonts.conf
+config-file = 10-colors.conf
+config-file = 20-window.conf
+config-file = 30-terminal.conf
+config-file = 40-input.conf
+config-file = 50-keybinds.conf
+config-file = 60-linux.conf

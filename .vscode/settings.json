@@ -1,0 +1,30 @@
+{
+  "nix.serverSettings": {
+    "nixd": {
+      "nixpkgs": {
+        "expr": "import (builtins.getFlake \"${workspaceFolder}\").inputs.nixpkgs-unstable {}"
+      },
+      "options": {
+        "x": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.x.options"
+        },
+        "nixos-a2141": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.nixos-a2141.options"
+        },
+        "a2141": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").darwinConfigurations.a2141.options"
+        }
+      }
+    }
+  },
+  "search.exclude": {
+    "**/.direnv": true,
+    "**/.devenv": true,
+    "**/result": true
+  },
+  "files.watcherExclude": {
+    "**/.direnv/**": true,
+    "**/.devenv/**": true,
+    "**/result/**": true
+  }
+}

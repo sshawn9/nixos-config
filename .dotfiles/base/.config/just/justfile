@@ -1,0 +1,14 @@
+set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
+
+mod docker
+mod distrobox
+mod carla
+mod vscode
+
+[private]
+default:
+    @just -g --unsorted --list --list-submodules
+
+# Format current directory with treefmt
+fmt *ARGS:
+    nix run github:sshawn9/treefmt-preset#treefmt-preset

@@ -1,0 +1,67 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# expect -c 'spawn zsh; interact timeout 1 { send "\r" }'
+# Ctrl + D to stop
+
+format = """
+$directory\
+$os\
+$username\
+$container\
+$line_break\
+$character"""
+
+right_format = """
+$cmd_duration\
+$sudo\
+$git_branch\
+$git_status\
+${custom.git_stash_count}\
+${custom.git_worktree_count}\
+$c\
+$rust\
+$golang\
+$nodejs\
+$bun\
+$haskell\
+$python\
+$time\
+"""
+
+
+[directory]
+repo_root_style = "bold #e0af68"
+truncate_to_repo = false
+truncation_length = 0
+
+[os]
+disabled = false
+
+[os.symbols]
+Ubuntu = "🟠 "
+
+[username]
+format = '[$user]($style)'
+
+[container]
+symbol = "📦"
+
+[sudo]
+disabled = false
+
+[time]
+disabled = false
+
+[custom.git_stash_count]
+description = "Show stash count for the current git repository"
+when = 'git stash list --format=%gd 2>/dev/null | grep -q .'
+command = 'git stash list --format=%gd 2>/dev/null | grep -c .'
+style = "bold red"
+format = '[stash:$output]($style) '
+
+[custom.git_worktree_count]
+description = "Show linked worktree count for the current git repository"
+when = 'test "$(git worktree list --porcelain 2>/dev/null | grep -c "^worktree ")" -gt 1'
+command = 'git worktree list --porcelain 2>/dev/null | grep -c "^worktree "'
+style = "bold red"
+format = '[wt:$output]($style) '

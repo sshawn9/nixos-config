@@ -1,0 +1,11 @@
+keys:
+  # REPLACE_WITH_AGE_PUBLIC_KEY
+  - &user_star age1edvdvngr2fyfpreqhxztm0yk8fq8xcu989pp7rlfcf3qgfpv83eq0lnprw
+  - &host_x age160ly5kl68yv9gq3j07drvn6wku9v28tmgfcdpnplaukdpsd57c9q4sc9m8
+
+creation_rules:
+  - path_regex: secrets/.*\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *user_star
+          - *host_x

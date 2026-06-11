@@ -1,0 +1,119 @@
+diff --git a/linux/Platform.c b/linux/Platform.c
+index 55a48b2c..f1f3e0c1 100644
+--- a/linux/Platform.c
++++ b/linux/Platform.c
+@@ -10,6 +10,7 @@ Released under the GNU GPLv2+, see the COPYING file
+ 
+ #include <assert.h>
+ #include <dirent.h>
++#include <dlfcn.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <inttypes.h>
+@@ -392,6 +393,90 @@ double Platform_setCPUValues(Meter* this, unsigned int cpu) {
+    return percent;
+ }
+ 
++typedef int HtopNvmlReturn;
++typedef void* HtopNvmlDevice;
++
++typedef struct HtopNvmlUtilization_ {
++   unsigned int gpu;
++   unsigned int memory;
++} HtopNvmlUtilization;
++
++typedef HtopNvmlReturn (*HtopNvmlInitFn)(void);
++typedef HtopNvmlReturn (*HtopNvmlDeviceGetCountFn)(unsigned int*);
++typedef HtopNvmlReturn (*HtopNvmlDeviceGetHandleByIndexFn)(unsigned int, HtopNvmlDevice*);
++typedef HtopNvmlReturn (*HtopNvmlDeviceGetUtilizationRatesFn)(HtopNvmlDevice, HtopNvmlUtilization*);
++
++static double Platform_getNvidiaGPUUsage(void) {
++   enum { HTOP_NVML_SUCCESS = 0 };
++
++   static bool initialized;
++   static bool unavailable;
++   static void* nvmlHandle;
++   static HtopNvmlDeviceGetCountFn getDeviceCount;
++   static HtopNvmlDeviceGetHandleByIndexFn getDeviceHandleByIndex;
++   static HtopNvmlDeviceGetUtilizationRatesFn getDeviceUtilizationRates;
++
++   if (unavailable)
++      return NAN;
++
++   if (!initialized) {
++      nvmlHandle = dlopen("libnvidia-ml.so.1", RTLD_LAZY | RTLD_LOCAL);
++      if (!nvmlHandle) {
++         unavailable = true;
++         return NAN;
++      }
++
++      HtopNvmlInitFn init = (HtopNvmlInitFn) dlsym(nvmlHandle, "nvmlInit_v2");
++      if (!init)
++         init = (HtopNvmlInitFn) dlsym(nvmlHandle, "nvmlInit");
++
++      getDeviceCount = (HtopNvmlDeviceGetCountFn) dlsym(nvmlHandle, "nvmlDeviceGetCount_v2");
++      if (!getDeviceCount)
++         getDeviceCount = (HtopNvmlDeviceGetCountFn) dlsym(nvmlHandle, "nvmlDeviceGetCount");
++
++      getDeviceHandleByIndex = (HtopNvmlDeviceGetHandleByIndexFn) dlsym(nvmlHandle, "nvmlDeviceGetHandleByIndex_v2");
++      if (!getDeviceHandleByIndex)
++         getDeviceHandleByIndex = (HtopNvmlDeviceGetHandleByIndexFn) dlsym(nvmlHandle, "nvmlDeviceGetHandleByIndex");
++
++      getDeviceUtilizationRates = (HtopNvmlDeviceGetUtilizationRatesFn) dlsym(nvmlHandle, "nvmlDeviceGetUtilizationRates");
++
++      if (!init || !getDeviceCount || !getDeviceHandleByIndex || !getDeviceUtilizationRates ||
++          init() != HTOP_NVML_SUCCESS) {
++         dlclose(nvmlHandle);
++         nvmlHandle = NULL;
++         unavailable = true;
++         return NAN;
++      }
++
++      initialized = true;
++   }
++
++   unsigned int deviceCount = 0;
++   if (getDeviceCount(&deviceCount) != HTOP_NVML_SUCCESS || deviceCount == 0)
++      return NAN;
++
++   double totalUsage = 0.0;
++   unsigned int samples = 0;
++
++   for (unsigned int i = 0; i < deviceCount; i++) {
++      HtopNvmlDevice device;
++      HtopNvmlUtilization utilization;
++
++      if (getDeviceHandleByIndex(i, &device) != HTOP_NVML_SUCCESS)
++         continue;
++      if (getDeviceUtilizationRates(device, &utilization) != HTOP_NVML_SUCCESS)
++         continue;
++
++      totalUsage += utilization.gpu;
++      samples++;
++   }
++
++   if (samples == 0)
++      return NAN;
++
++   return totalUsage / samples;
++}
++
+ void Platform_setGPUValues(Meter* this, double* totalUsage, unsigned long long* totalGPUTimeDiff) {
+    const Machine* host = this->host;
+    const LinuxMachine* lhost = (const LinuxMachine*) host;
+@@ -426,6 +508,15 @@ void Platform_setGPUValues(Meter* this, double* totalUsage, unsigned long long*
+       *totalGPUTimeDiff = saturatingSub(lhost->curGpuTime, lhost->prevGpuTime);
+       *totalUsage = 100.0 * (*totalGPUTimeDiff) / (1000 * 1000) / monotonictimeDelta;
+ 
++      if (*totalGPUTimeDiff == 0) {
++         double nvidiaUsage = Platform_getNvidiaGPUUsage();
++         if (isNonnegative(nvidiaUsage)) {
++            *totalGPUTimeDiff = -1ULL;
++            *totalUsage = nvidiaUsage;
++            residuePercentage = nvidiaUsage;
++         }
++      }
++
+       prevResidueTime = curResidueTime;
+       prevMonotonicMs = host->monotonicMs;
+    }
