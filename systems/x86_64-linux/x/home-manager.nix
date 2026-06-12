@@ -23,6 +23,7 @@ in
         aria2p.enable = true;
 
         codex.enable = true;
+        helix.enable = true;
 
         htop.package = pkgs.unstable.htop.overrideAttrs (oldAttrs: {
           patches = (oldAttrs.patches or [ ]) ++ [
