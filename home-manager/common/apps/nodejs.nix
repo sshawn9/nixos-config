@@ -10,7 +10,7 @@ in
   imports = [
     (mkHomePackages {
       nodejs = {
-        package = pkgs.stable.nodejs_24;
+        enable = true;
       };
     })
   ];
