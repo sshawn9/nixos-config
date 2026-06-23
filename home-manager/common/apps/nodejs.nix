@@ -1,6 +1,5 @@
 {
   myLib,
-  pkgs,
   ...
 }:
 let
