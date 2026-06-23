@@ -6,7 +6,7 @@
       cudaSupport = true;
     };
 
-    extraFlags = [
+    settings = [
       "--ctx-size"
       "8192"
       "--parallel"
