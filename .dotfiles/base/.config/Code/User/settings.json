@@ -23,12 +23,6 @@
   "chat.mcp.gallery.enabled": true,
   "claudeCode.preferredLocation": "panel",
   "claudeCode.selectedModel": "default",
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": true,
-    "markdown": true,
-    "scminput": false
-  },
   // Nix
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
@@ -43,7 +37,9 @@
   "nix.serverSettings": {
     "nixd": {
       "formatting": {
-        "command": ["nixfmt"]
+        "command": [
+          "nixfmt"
+        ]
       }
     }
   },
