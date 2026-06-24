@@ -1,8 +1,10 @@
 { config, ... }:
 
 {
-  home.file.".codex/AGENTS.md".source =
-    config.my.paths.local.dotfilesLayeredSource "home/.codex/AGENTS.md";
+  home.file.".codex/AGENTS.md".source = config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";
+
+  xdg.configFile."opencode/AGENTS.md".source =
+    config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";
 
   xdg.configFile."Code/User/settings.json".source =
     config.my.paths.local.xdgConfigLayeredSource "Code/User/settings.json";
