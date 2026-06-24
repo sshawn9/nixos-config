@@ -24,6 +24,7 @@ in
 
         codex.enable = true;
         helix.enable = true;
+        opencode.enable = true;
 
         htop.package = pkgs.unstable.htop.overrideAttrs (oldAttrs: {
           patches = (oldAttrs.patches or [ ]) ++ [
