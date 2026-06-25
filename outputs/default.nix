@@ -40,6 +40,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     {
       treefmt.settings.excludes = [
         ".dotfiles/*/.config/noctalia/**"
+        ".dotfiles/*/.config/Code/User/**"
         "sops/secrets/**"
       ];
 
