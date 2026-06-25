@@ -15,9 +15,9 @@
 
   programs = {
     direnv = {
-      package = pkgs.unstable.direnv;
+      package = lib.mkDefault pkgs.unstable.direnv;
       enable = lib.mkDefault true;
-      nix-direnv.enable = true;
+      nix-direnv.enable = lib.mkDefault true;
     };
 
     vim = {
@@ -31,49 +31,49 @@
 
     btop = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.btop;
+      package = lib.mkDefault pkgs.unstable.btop;
     };
 
     fastfetch = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.fastfetch;
+      package = lib.mkDefault pkgs.unstable.fastfetch;
     };
 
     bat = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.bat;
+      package = lib.mkDefault pkgs.unstable.bat;
     };
 
     ripgrep = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.ripgrep;
+      package = lib.mkDefault pkgs.unstable.ripgrep;
     };
 
     ripgrep-all = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.ripgrep-all;
+      package = lib.mkDefault pkgs.unstable.ripgrep-all;
     };
 
     fd = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.fd;
+      package = lib.mkDefault pkgs.unstable.fd;
     };
 
     eza = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.eza;
+      package = lib.mkDefault pkgs.unstable.eza;
       git = true;
     };
 
     yazi = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.yazi;
+      package = lib.mkDefault pkgs.unstable.yazi;
       shellWrapperName = "y";
     };
 
     jq = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.jq;
+      package = lib.mkDefault pkgs.unstable.jq;
     };
   };
 }

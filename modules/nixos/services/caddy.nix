@@ -14,7 +14,7 @@
 
   services.caddy = {
     enable = lib.mkDefault true;
-    package = pkgs.unstable.caddy;
+    package = lib.mkDefault pkgs.unstable.caddy;
   };
 
   users.users.${config.my.shared.username}.extraGroups = [ "caddy" ];

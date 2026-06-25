@@ -25,8 +25,8 @@ in
 {
   config = lib.mkIf config.my.shared.desktops.niri.enable {
     services.greetd = {
-      enable = true;
-      package = pkgs.unstable.greetd;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.greetd;
       useTextGreeter = true;
       settings = {
         default_session = {

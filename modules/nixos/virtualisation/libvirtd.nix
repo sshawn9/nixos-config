@@ -1,7 +1,12 @@
 # sudo virsh net-start default
 # sudo virsh net-autostart default
 
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (config.my.shared) username;
@@ -9,29 +14,29 @@ in
 {
   virtualisation = {
     libvirtd = {
-      enable = true;
-      package = pkgs.unstable.libvirt;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.libvirt;
 
       qemu = {
-        package = pkgs.unstable.qemu_kvm;
+        package = lib.mkDefault pkgs.unstable.qemu_kvm;
         runAsRoot = true;
         vhostUserPackages = [ pkgs.unstable.virtiofsd ];
 
         swtpm = {
-          enable = true;
-          package = pkgs.unstable.swtpm;
+          enable = lib.mkDefault true;
+          package = lib.mkDefault pkgs.unstable.swtpm;
         };
       };
     };
 
-    spiceUSBRedirection.enable = true;
+    spiceUSBRedirection.enable = lib.mkDefault true;
   };
 
   programs = {
-    dconf.enable = true;
+    dconf.enable = lib.mkDefault true;
     virt-manager = {
-      enable = true;
-      package = pkgs.unstable.virt-manager;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.virt-manager;
     };
   };
 

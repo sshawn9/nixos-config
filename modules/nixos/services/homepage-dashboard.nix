@@ -19,8 +19,8 @@
   };
 
   services.homepage-dashboard = {
-    enable = true;
-    package = pkgs.unstable.homepage-dashboard;
+    enable = lib.mkDefault true;
+    package = lib.mkDefault pkgs.unstable.homepage-dashboard;
     listenPort = 8082;
     openFirewall = true;
     allowedHosts = lib.concatStringsSep "," [

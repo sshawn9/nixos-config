@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   # XMODIFIERS / QT_IM_MODULE / GTK_IM_MODULE are set by the upstream
@@ -12,7 +12,7 @@
   #     protocol and do not consult XMODIFIERS at all.
 
   i18n.inputMethod = {
-    enable = true;
+    enable = lib.mkDefault true;
     type = "fcitx5";
     fcitx5 = {
       waylandFrontend = true;

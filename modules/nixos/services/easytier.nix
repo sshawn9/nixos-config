@@ -1,13 +1,14 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
 
 {
   services.easytier = {
-    enable = true;
-    package = pkgs.stable.easytier;
+    enable = lib.mkDefault true;
+    package = lib.mkDefault pkgs.stable.easytier;
     instances = {
       default = {
         configServer = "\${ET_CONFIG_SERVER}";

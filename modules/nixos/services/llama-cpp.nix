@@ -1,10 +1,12 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   services.llama-cpp = {
-    package = pkgs.unstable.llama-cpp.override {
-      cudaSupport = true;
-    };
+    package = lib.mkDefault (
+      pkgs.unstable.llama-cpp.override {
+        cudaSupport = true;
+      }
+    );
 
     settings = [
       "--ctx-size"

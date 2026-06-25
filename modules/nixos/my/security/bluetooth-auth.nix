@@ -9,23 +9,23 @@
   imports = [ inputs.bluetooth-auth.nixosModules.bluetooth-auth ];
 
   my.security.bluetoothAuth = {
-    enable = true;
+    enable = lib.mkDefault true;
 
     user = lib.mkDefault config.my.shared.username;
     bluetoothAddressFile = config.sops.secrets.auth_bluetooth_address.path;
     autoConnect = {
-      enable = true;
+      enable = lib.mkDefault true;
       deviceUnvailableGraceSeconds = 30;
       exceptionGraceSeconds = 30;
     };
     autoLock = {
-      enable = false;
+      enable = lib.mkDefault false;
       checkIntervalSeconds = 120;
       sleepAfterLockSeconds = 120;
     };
-    sudoAuth.enable = true;
-    polkitAuth.enable = true;
-    lockerAuth.enable = true;
+    sudoAuth.enable = lib.mkDefault true;
+    polkitAuth.enable = lib.mkDefault true;
+    lockerAuth.enable = lib.mkDefault true;
   };
 
   users.groups.bluetooth-auth.members = [

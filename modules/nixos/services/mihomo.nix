@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   repoTree,
   ...
@@ -23,8 +24,8 @@ in
   };
 
   services.mihomo = {
-    enable = true;
-    package = pkgs.unstable.mihomo;
+    enable = lib.mkDefault true;
+    package = lib.mkDefault pkgs.unstable.mihomo;
     tunMode = true;
     configFile = "/var/lib/mihomo/config.yaml";
     webui = "/var/lib/mihomo/ui";

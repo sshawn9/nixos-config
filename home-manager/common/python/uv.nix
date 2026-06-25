@@ -8,7 +8,7 @@
   programs = {
     uv = {
       enable = lib.mkDefault false;
-      package = pkgs.unstable.uv;
+      package = lib.mkDefault pkgs.unstable.uv;
 
       settings = {
         python-preference = "only-managed";

@@ -1,22 +1,27 @@
-{ inputs, config, ... }:
+{
+  inputs,
+  lib,
+  config,
+  ...
+}:
 
 {
   imports = [ inputs.catppuccin.nixosModules.catppuccin ];
 
   catppuccin = {
-    enable = true;
+    enable = lib.mkDefault true;
     autoEnable = true;
     inherit (config.my.shared.catppuccin) flavor accent;
 
-    cache.enable = true;
+    cache.enable = lib.mkDefault true;
 
-    cursors.enable = true;
+    cursors.enable = lib.mkDefault true;
 
     fcitx5 = {
-      enable = true;
+      enable = lib.mkDefault true;
       enableRounded = true;
     };
 
-    tty.enable = true;
+    tty.enable = lib.mkDefault true;
   };
 }

@@ -6,7 +6,7 @@
 
 {
   services.podman = lib.mkIf config.my.shared.containers.enable {
-    enable = true;
+    enable = lib.mkDefault true;
 
     settings.storage = {
       storage.driver = "overlay";

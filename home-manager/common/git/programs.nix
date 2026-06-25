@@ -8,8 +8,8 @@
   programs = {
     git = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.git;
-      lfs.enable = true;
+      package = lib.mkDefault pkgs.unstable.git;
+      lfs.enable = lib.mkDefault true;
 
       settings = {
         user = {
@@ -31,7 +31,7 @@
 
     gh = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.gh;
+      package = lib.mkDefault pkgs.unstable.gh;
 
       settings = {
         git_protocol = "https";
@@ -42,17 +42,17 @@
 
     mr = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.mr;
+      package = lib.mkDefault pkgs.unstable.mr;
     };
 
     lazygit = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.lazygit;
+      package = lib.mkDefault pkgs.unstable.lazygit;
     };
 
     delta = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.delta;
+      package = lib.mkDefault pkgs.unstable.delta;
 
       enableGitIntegration = true;
 

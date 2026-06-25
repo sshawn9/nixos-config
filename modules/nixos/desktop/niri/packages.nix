@@ -8,8 +8,8 @@
 {
   config = lib.mkIf config.my.shared.desktops.niri.enable {
     programs.gpu-screen-recorder = {
-      enable = true;
-      package = pkgs.unstable.gpu-screen-recorder;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.gpu-screen-recorder;
     };
 
     environment.systemPackages = with pkgs.unstable; [

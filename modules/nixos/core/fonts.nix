@@ -5,7 +5,7 @@
 {
   fonts = {
     enableDefaultPackages = lib.mkDefault true;
-    fontDir.enable = true;
+    fontDir.enable = lib.mkDefault true;
 
     packages = with pkgs.unstable; [
       # Primary Unicode families.
@@ -87,11 +87,11 @@
     ];
 
     fontconfig = {
-      enable = true;
+      enable = lib.mkDefault true;
       antialias = true;
 
       hinting = {
-        enable = true;
+        enable = lib.mkDefault true;
         style = "slight";
       };
 

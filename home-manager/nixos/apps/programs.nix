@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   ...
 }:
@@ -6,7 +7,7 @@
 {
   programs = {
     broot = {
-      package = pkgs.unstable.broot;
+      package = lib.mkDefault pkgs.unstable.broot;
     };
   };
 }

@@ -13,7 +13,7 @@
   programs = {
     ghostty = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.ghostty;
+      package = lib.mkDefault pkgs.unstable.ghostty;
 
       installBatSyntax = lib.mkDefault true;
       installVimSyntax = lib.mkDefault true;

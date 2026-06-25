@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   config,
   ...
@@ -9,18 +10,18 @@
   imports = [ inputs.catppuccin.homeModules.catppuccin ];
 
   catppuccin = {
-    enable = true;
+    enable = lib.mkDefault true;
     autoEnable = false;
     inherit (config.my.shared.catppuccin) flavor accent;
 
-    cache.enable = true;
+    cache.enable = lib.mkDefault true;
 
-    fzf.enable = true;
-    bat.enable = true;
-    btop.enable = true;
-    zsh-syntax-highlighting.enable = true;
+    fzf.enable = lib.mkDefault true;
+    bat.enable = lib.mkDefault true;
+    btop.enable = lib.mkDefault true;
+    zsh-syntax-highlighting.enable = lib.mkDefault true;
 
-    mpv.enable = true;
+    mpv.enable = lib.mkDefault true;
 
     # Cursor and GTK icon themes pull catppuccin-cursors and
     # catppuccin-papirus-folders, which nixpkgs marks unavailable on darwin.

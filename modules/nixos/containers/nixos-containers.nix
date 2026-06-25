@@ -60,7 +60,7 @@ in
 
         virtualisation.docker = {
           enable = lib.mkDefault true;
-          package = pkgs.unstable.docker;
+          package = lib.mkDefault pkgs.unstable.docker;
           daemon.settings = {
             features."containerd-snapshotter" = false;
           };

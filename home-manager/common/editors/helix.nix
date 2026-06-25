@@ -7,7 +7,7 @@
   programs = {
     helix = {
       enable = lib.mkDefault false;
-      package = pkgs.unstable.helix;
+      package = lib.mkDefault pkgs.unstable.helix;
     };
   };
 }

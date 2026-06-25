@@ -17,40 +17,40 @@
   programs = {
     fzf = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.fzf;
+      package = lib.mkDefault pkgs.unstable.fzf;
       defaultCommand = "fd --type f";
       changeDirWidgetCommand = "fd --type d";
     };
 
     carapace = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.carapace;
+      package = lib.mkDefault pkgs.unstable.carapace;
     };
 
     tealdeer = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.tealdeer;
+      package = lib.mkDefault pkgs.unstable.tealdeer;
       settings.updates.auto_update = true;
     };
 
     navi = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.navi;
+      package = lib.mkDefault pkgs.unstable.navi;
     };
 
     atuin = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.atuin;
+      package = lib.mkDefault pkgs.unstable.atuin;
     };
 
     starship = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.starship;
+      package = lib.mkDefault pkgs.unstable.starship;
     };
 
     zoxide = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.zoxide;
+      package = lib.mkDefault pkgs.unstable.zoxide;
       options = [ "--cmd cd" ];
     };
   };

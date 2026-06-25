@@ -8,7 +8,7 @@
   programs = {
     tmux = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.tmux;
+      package = lib.mkDefault pkgs.unstable.tmux;
       mouse = lib.mkDefault true;
       historyLimit = lib.mkDefault 100000;
       escapeTime = lib.mkDefault 0;

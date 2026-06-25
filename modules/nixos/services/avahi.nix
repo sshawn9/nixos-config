@@ -6,7 +6,7 @@
 {
   services.avahi = {
     enable = lib.mkDefault true;
-    package = pkgs.unstable.avahi;
+    package = lib.mkDefault pkgs.unstable.avahi;
     nssmdns4 = lib.mkDefault true;
     publish = {
       enable = lib.mkDefault true;

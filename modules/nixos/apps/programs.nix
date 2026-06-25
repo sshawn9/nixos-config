@@ -8,7 +8,7 @@
   programs = {
     mosh = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.mosh;
+      package = lib.mkDefault pkgs.unstable.mosh;
     };
   };
 }

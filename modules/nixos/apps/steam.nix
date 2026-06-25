@@ -8,7 +8,7 @@
 {
   programs.steam = {
     enable = lib.mkDefault false;
-    package = pkgs.unstable.steam;
+    package = lib.mkDefault pkgs.unstable.steam;
 
     dedicatedServer.openFirewall = lib.mkDefault false;
     localNetworkGameTransfers.openFirewall = lib.mkDefault false;
@@ -42,7 +42,7 @@
   programs.gamemode.enable = config.programs.steam.enable;
 
   programs.gamescope = lib.mkIf config.programs.steam.enable {
-    enable = true;
+    enable = lib.mkDefault true;
     capSysNice = true;
   };
 

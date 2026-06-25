@@ -6,9 +6,8 @@
 {
   programs = {
     vscode = {
-      enable = lib.mkDefault false;
-      package = pkgs.unstable.vscode;
-      mutableExtensionsDir = false;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.vscode;
     };
   };
 }

@@ -22,7 +22,7 @@ in
 
     docker = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.docker;
+      package = lib.mkDefault pkgs.unstable.docker;
       rootless = {
         enable = lib.mkDefault true;
         setSocketVariable = lib.mkDefault false;
@@ -31,7 +31,7 @@ in
 
     podman = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.podman;
+      package = lib.mkDefault pkgs.unstable.podman;
       defaultNetwork.settings.dns_enabled = lib.mkDefault true;
     };
   };

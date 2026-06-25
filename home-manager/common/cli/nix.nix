@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   myLib,
   ...
 }:
@@ -49,5 +50,5 @@ in
     })
   ];
 
-  programs.nix-index-database.comma.enable = true;
+  programs.nix-index-database.comma.enable = lib.mkDefault true;
 }

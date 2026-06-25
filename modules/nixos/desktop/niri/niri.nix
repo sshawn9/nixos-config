@@ -8,8 +8,8 @@
 {
   config = lib.mkIf config.my.shared.desktops.niri.enable {
     programs.niri = {
-      enable = true;
-      package = pkgs.unstable.niri;
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.niri;
     };
   };
 }

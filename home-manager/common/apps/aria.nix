@@ -131,12 +131,12 @@ in
 
   programs = {
     aria2 = {
-      package = pkgs.unstable.aria2;
+      package = lib.mkDefault pkgs.unstable.aria2;
       systemd.enable = lib.mkDefault pkgs.stdenv.isLinux;
     };
 
     aria2p = {
-      package = pkgs.unstable.python3Packages.aria2p;
+      package = lib.mkDefault pkgs.unstable.python3Packages.aria2p;
     };
   };
 

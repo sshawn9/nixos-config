@@ -169,12 +169,12 @@ in
   programs = {
     zsh = {
       enable = lib.mkDefault true;
-      package = pkgs.unstable.zsh;
+      package = lib.mkDefault pkgs.unstable.zsh;
       dotDir = "${config.xdg.configHome}/zsh";
 
       enableCompletion = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
+      autosuggestion.enable = lib.mkDefault true;
+      syntaxHighlighting.enable = lib.mkDefault true;
 
       autocd = true;
 

@@ -6,6 +6,6 @@
 {
   services.flatpak = {
     enable = lib.mkDefault true;
-    package = pkgs.unstable.flatpak;
+    package = lib.mkDefault pkgs.unstable.flatpak;
   };
 }

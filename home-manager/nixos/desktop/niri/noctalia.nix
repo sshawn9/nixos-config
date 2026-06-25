@@ -12,7 +12,7 @@
 
   config = lib.mkIf config.my.shared.desktops.niri.enable {
     programs.noctalia-shell = {
-      enable = true;
+      enable = lib.mkDefault true;
 
       settings = config.my.paths.local.xdgConfigLayeredSource "noctalia/settings.json";
       plugins = config.my.paths.local.xdgConfigLayeredSource "noctalia/plugins.json";
