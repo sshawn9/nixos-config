@@ -21,3 +21,6 @@ result
 # live in repo-root CLAUDE.md, not under .claude/.
 .claude/*
 !.claude/CLAUDE.md
+
+# maybe htoprc layered source misleading htop_history, so ignore htop_history
+htop_history
