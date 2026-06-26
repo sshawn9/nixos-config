@@ -8,10 +8,7 @@ in
 {
   imports = [
     (mkHomePackages {
-      regctl = {
-        enable = true;
-      };
-      skopeo = {
+      rustup = {
         enable = true;
       };
     })

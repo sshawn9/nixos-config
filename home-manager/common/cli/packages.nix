@@ -52,6 +52,12 @@ in
       xh = {
         enable = true;
       };
+      ssh-to-age = {
+        enable = true;
+      };
+      sops = {
+        enable = true;
+      };
     })
   ];
 

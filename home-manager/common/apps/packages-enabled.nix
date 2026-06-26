@@ -8,10 +8,10 @@ in
 {
   imports = [
     (mkHomePackages {
-      regctl = {
+      google-chrome = {
         enable = true;
       };
-      skopeo = {
+      github-desktop = {
         enable = true;
       };
     })

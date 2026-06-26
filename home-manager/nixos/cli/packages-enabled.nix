@@ -8,10 +8,11 @@ in
 {
   imports = [
     (mkHomePackages {
-      regctl = {
+      perf = {
         enable = true;
       };
-      skopeo = {
+      # lm_sensors reads Linux kernel hwmon devices; no darwin package exists.
+      lm_sensors = {
         enable = true;
       };
     })

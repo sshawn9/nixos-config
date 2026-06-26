@@ -8,10 +8,10 @@ in
 {
   imports = [
     (mkHomePackages {
-      regctl = {
+      sqlite = {
         enable = true;
       };
-      skopeo = {
+      sqlitebrowser = {
         enable = true;
       };
     })

@@ -8,12 +8,10 @@ in
 {
   imports = [
     (mkHomePackages {
-      regctl = {
-        enable = true;
-      };
-      skopeo = {
-        enable = true;
-      };
+      antigravity = { };
+      code-cursor = { };
+      inshellisense = { };
+      warp-terminal = { };
     })
   ];
 }
