@@ -4,6 +4,7 @@ mod docker
 mod distrobox
 mod carla
 mod vscode
+mod credentials
 
 [private]
 default:
