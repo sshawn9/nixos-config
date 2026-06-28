@@ -15,6 +15,7 @@ in
         vscode.enable = true;
         uv.enable = true;
         mcp.enable = true;
+        opencode.enable = false;
       };
 
       my = {
