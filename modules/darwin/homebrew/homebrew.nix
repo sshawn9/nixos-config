@@ -26,6 +26,8 @@
       "ghostty"
       "iina"
       "orbstack"
+      "codex"
+      "codex-app"
     ];
   };
 }
