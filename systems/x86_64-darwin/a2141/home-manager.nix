@@ -22,8 +22,8 @@ in
         packages = {
           obsidian.enable = true;
           google-chrome.enable = true;
-          antigravity.enable = true;
-          code-cursor.enable = true;
+          # antigravity.enable = true;
+          # code-cursor.enable = true;
           sqlite.enable = true;
           sqlitebrowser.enable = true;
           regctl.enable = true;
