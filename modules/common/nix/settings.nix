@@ -3,12 +3,6 @@
 {
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
 
-  nix = {
-    daemonCPUSchedPolicy = lib.mkDefault "batch";
-    daemonIOSchedClass = lib.mkDefault "idle";
-    # daemonIOSchedPriority = lib.mkDefault 7;
-  };
-
   nix.settings = {
     auto-optimise-store = true;
     max-jobs = lib.mkDefault 2;
