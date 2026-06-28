@@ -5,9 +5,12 @@
     enable = lib.mkDefault true;
 
     onActivation = {
-      cleanup = lib.mkDefault "zap";
-      autoUpdate = lib.mkDefault false;
-      upgrade = lib.mkDefault false;
+      extraFlags = [
+        "install"
+        "--no-upgrade"
+        "--zap"
+        "--force-cleanup"
+      ];
     };
 
     global = {
