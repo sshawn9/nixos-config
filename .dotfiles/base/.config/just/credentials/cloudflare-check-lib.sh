@@ -290,6 +290,42 @@ print_section() {
   fi
 }
 
+print_account_rows() {
+  ((${#ACCOUNT_ROWS[@]} > 0)) || return 0
+
+  local idx account_row account_id account_name
+
+  printf '\n  %sAccounts found%s\n' "$BOLD" "$RST"
+  printf '  %-4s  %-34s  %s\n' "#" "ACCOUNT ID" "ACCOUNT NAME"
+  printf '  '
+  print_rule '-' 96
+
+  idx=0
+  for account_row in "${ACCOUNT_ROWS[@]}"; do
+    IFS=$'\t' read -r account_id account_name <<<"$account_row"
+    idx=$((idx + 1))
+    printf '  %-4s  %-34s  %s\n' "$idx" "$account_id" "$account_name"
+  done
+}
+
+print_zone_rows() {
+  ((${#ZONE_ROWS[@]} > 0)) || return 0
+
+  local idx zone_row zone_id zone_name account_id account_name
+
+  printf '\n  %sZones found%s\n' "$BOLD" "$RST"
+  printf '  %-4s  %-30s  %-34s  %-24s  %s\n' "#" "DOMAIN" "ZONE ID" "ACCOUNT NAME" "ACCOUNT ID"
+  printf '  '
+  print_rule '-' 128
+
+  idx=0
+  for zone_row in "${ZONE_ROWS[@]}"; do
+    IFS=$'\t' read -r zone_id zone_name account_id account_name <<<"$zone_row"
+    idx=$((idx + 1))
+    printf '  %-4s  %-30s  %-34s  %-24s  %s\n' "$idx" "$zone_name" "$zone_id" "$account_name" "$account_id"
+  done
+}
+
 finish_report() {
   header "Cloudflare Credential Check Summary"
 
@@ -302,7 +338,9 @@ finish_report() {
   print_section "token" "Token"
   print_section "user" "User Context"
   print_section "accounts" "Accounts"
+  print_account_rows
   print_section "zones" "Zones"
+  print_zone_rows
   print_section "workers" "Workers"
   print_section "pages" "Pages"
   print_section "not-tested" "Not Tested" "hide-empty"

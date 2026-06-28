@@ -48,7 +48,6 @@ discover_accounts() {
     [[ -n $id ]] || continue
     record_account "$id" "$name"
     kv "account" "$(account_label "$id" "$name")"
-    report "accounts" "OK" "Discovered account" "$(account_label "$id" "$name")"
   done < <(jq -r '.result[]? | [.id, (.name // "unknown")] | @tsv' <<<"$RESPONSE_BODY")
 }
 
@@ -84,7 +83,6 @@ discover_zones() {
     record_account "$account_id" "$account_name"
     kv "zone" "$(zone_label "$id" "$name")"
     kv "account" "$(account_label "$account_id" "$account_name")"
-    report "zones" "OK" "Discovered zone" "$(zone_label "$id" "$name")"
   done < <(jq -r '.result[]? | [.id, (.name // "unknown"), (.account.id // ""), (.account.name // "unknown")] | @tsv' <<<"$RESPONSE_BODY")
 }
 
