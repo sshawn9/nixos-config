@@ -8,11 +8,6 @@ $directory\
 $os\
 $username\
 $container\
-$line_break\
-$character"""
-
-right_format = """
-$cmd_duration\
 $sudo\
 $git_branch\
 $git_status\
@@ -26,7 +21,26 @@ $bun\
 $haskell\
 $python\
 $time\
-"""
+$cmd_duration\
+$line_break\
+$character"""
+
+# right_format = """
+# $cmd_duration\
+# $sudo\
+# $git_branch\
+# $git_status\
+# ${custom.git_stash_count}\
+# ${custom.git_worktree_count}\
+# $c\
+# $rust\
+# $golang\
+# $nodejs\
+# $bun\
+# $haskell\
+# $python\
+# $time\
+# """
 
 
 [directory]
