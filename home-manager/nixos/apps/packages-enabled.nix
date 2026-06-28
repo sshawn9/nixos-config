@@ -8,7 +8,7 @@ in
 {
   imports = [
     (mkHomePackages {
-      google-chrome = {
+      github-desktop = {
         enable = true;
       };
     })
