@@ -55,7 +55,7 @@ disabled = false
 Ubuntu = "🟠 "
 
 [username]
-format = '[$user]($style)'
+format = '[$user]($style) '
 
 [container]
 symbol = "📦"
