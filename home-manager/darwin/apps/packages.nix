@@ -8,8 +8,6 @@ in
 {
   imports = [
     (mkHomePackages {
-      iina = { };
-      orbstack = { };
     })
   ];
 }

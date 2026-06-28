@@ -24,6 +24,8 @@
       "github"
       "clion"
       "ghostty"
+      "iina"
+      "orbstack"
     ];
   };
 }
