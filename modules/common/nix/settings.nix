@@ -8,10 +8,6 @@
     max-jobs = lib.mkDefault 2;
     cores = lib.mkDefault 16;
 
-    trusted-users = [
-      "@wheel"
-    ];
-
     extra-substituters = lib.mkBefore [
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
       "https://noctalia.cachix.org"
