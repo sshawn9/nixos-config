@@ -118,15 +118,18 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     openfang = {
       url = "github:RightNow-AI/openfang";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.flake-parts.follows = "flake-parts";
       inputs.rust-flake = {
         inputs.nixpkgs.follows = "nixpkgs-unstable";
-        inputs.rust-overlay = {
-          inputs.nixpkgs.follows = "nixpkgs-unstable";
-        };
+        inputs.rust-overlay.follows = "rust-overlay";
       };
     };
 
@@ -136,6 +139,12 @@
       url = "github:daeuniverse/flake.nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.flake-parts.follows = "flake-parts";
+    };
+
+    mousehop = {
+      url = "github:jondkinney/mousehop/v0.14.2";
+      # inputs.nixpkgs.follows = "nixpkgs-unstable";
+      # inputs.rust-overlay.follows = "rust-overlay";
     };
   };
 }
