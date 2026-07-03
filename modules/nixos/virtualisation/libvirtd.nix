@@ -12,6 +12,14 @@ let
   inherit (config.my.shared) username;
 in
 {
+  networking.firewall.extraCommands = ''
+    iptables -A nixos-fw -i virbr0 \
+      -m conntrack --ctstate DNAT \
+      -j nixos-fw-accept
+  '';
+
+  # networking.firewall.trustedInterfaces = [ "virbr0" ];
+
   virtualisation = {
     libvirtd = {
       enable = lib.mkDefault true;
