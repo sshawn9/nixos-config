@@ -20,10 +20,25 @@ in
 
   # networking.firewall.trustedInterfaces = [ "virbr0" ];
 
+  services.cockpit = {
+    enable = lib.mkDefault true;
+    package = pkgs.unstable.cockpit;
+    port = lib.mkDefault 9091;
+    plugins = [ pkgs.unstable.cockpit-machines ];
+    openFirewall = lib.mkDefault true;
+  };
+
+  users.users.libvirtdbus.extraGroups = [ "libvirtd" ];
+
   virtualisation = {
     libvirtd = {
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.libvirt;
+
+      dbus = {
+        enable = lib.mkDefault true;
+        package = lib.mkDefault pkgs.unstable.libvirt-dbus;
+      };
 
       qemu = {
         package = lib.mkDefault pkgs.unstable.qemu_kvm;
