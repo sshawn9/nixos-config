@@ -80,6 +80,7 @@ in
           telegram-desktop.enable = true;
 
           warp-terminal.enable = true;
+          haruna.enable = true;
         };
       };
     };
