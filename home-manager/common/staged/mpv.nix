@@ -5,37 +5,39 @@
 }:
 {
   programs.mpv = {
-    enable = lib.mkDefault false;
-    scripts = [
-      pkgs.mpvScripts.uosc
-      pkgs.mpvScripts.thumbfast
+    defaultProfiles = [ "high-quality" ];
+
+    scripts = with pkgs.mpvScripts; [
+      mpris
+      uosc
+      thumbfast
     ];
     config = {
-      "osc" = "no";
-      "osd-bar" = "no";
-      "border" = "no";
+      osc = false;
+      osd-bar = false;
+      border = false;
+      force-window = true;
 
-      "profile" = "gpu-hq";
-      "vo" = "gpu-next";
-      "hwdec" = "auto-safe";
+      slang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
+      alang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
 
-      "slang" = "chi,zh-CN,sc,zh,eng,en";
-      "alang" = "chi,zh-CN,sc,zh,eng,en";
+      screenshot-format = "png";
+      screenshot-directory = "~/Pictures/Screenshots";
 
-      "screenshot-format" = "png";
-      "screenshot-directory" = "~/Pictures/Screenshots";
+      cache = true;
+      cache-on-disk = false;
+      cache-secs = 3600000;
+      demuxer-max-bytes = "16384MiB";
+      demuxer-max-back-bytes = "4096MiB";
+      demuxer-seekable-cache = true;
+      demuxer-cache-wait = false;
+      cache-pause-initial = false;
+      demuxer-hysteresis-secs = 0;
+      prefetch-playlist = true;
 
-      "cache" = "yes";
-      "demuxer-max-bytes" = "8192MiB";
-      "demuxer-max-back-bytes" = "1024MiB";
-      "demuxer-seekable-cache" = "yes";
-      "prefetch-playlist" = "yes";
-      "force-window" = "yes";
-
-      "audio-buffer" = "1";
-      "video-sync" = "display-resample";
-      "interpolation" = "yes";
-      "tscale" = "oversample";
+      audio-buffer = 1;
+      video-sync = "display-resample";
+      interpolation = true;
     };
 
     bindings = {
