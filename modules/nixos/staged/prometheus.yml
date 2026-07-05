@@ -1,0 +1,51 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - 127.0.0.1:9092
+
+  - job_name: node
+    static_configs:
+      - targets:
+          - 127.0.0.1:9100
+
+  - job_name: smartctl
+    static_configs:
+      - targets:
+          - 127.0.0.1:9633
+
+  - job_name: process
+    static_configs:
+      - targets:
+          - 127.0.0.1:9256
+
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params:
+      module:
+        - http_2xx
+    static_configs:
+      - targets:
+          - http://127.0.0.1:3000/api/health
+          - http://127.0.0.1:9092/-/ready
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: __param_target
+      - source_labels:
+          - __param_target
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  # SNMP device targets need an auth/module pair generated for their vendor MIB.
+  # Until devices are added, this target only monitors the exporter itself.
+  - job_name: snmp-exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9116
