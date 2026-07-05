@@ -19,7 +19,8 @@
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.fzf;
       defaultCommand = "fd --type f";
-      changeDirWidgetCommand = "fd --type d";
+      changeDirWidget.command = "fd --type d";
+      historyWidget.command = "";
     };
 
     carapace = {

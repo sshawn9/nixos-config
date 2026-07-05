@@ -65,9 +65,8 @@
 
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell/v4.7.7";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.url = "github:NixOS/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
       inputs.noctalia-qs = {
-        inputs.nixpkgs.follows = "nixpkgs-unstable";
         inputs.treefmt-nix.follows = "treefmt-nix";
       };
     };
@@ -100,7 +99,6 @@
 
     claude-code-nix = {
       url = "github:sadjow/claude-code-nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     nix-index-database = {
@@ -137,7 +135,6 @@
 
     daeuniverse = {
       url = "github:daeuniverse/flake.nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.flake-parts.follows = "flake-parts";
     };
 
