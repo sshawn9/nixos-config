@@ -30,7 +30,7 @@
       nvidia = {
         # package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.stable;
         modesetting.enable = lib.mkDefault true;
-        dynamicBoost.enable = lib.mkDefault false;
+        dynamicBoost.enable = lib.mkDefault true;
         powerManagement.enable = lib.mkDefault true;
         powerManagement.finegrained = lib.mkDefault false;
         open = lib.mkDefault true;
