@@ -45,8 +45,6 @@ run_docker() {
     -e XDG_RUNTIME_DIR=/tmp/runtime \
     -v "$xdg_stub":/usr/local/bin/xdg-user-dir:ro \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-    -v "$XAUTHORITY":/tmp/.Xauthority:ro \
-    -e XAUTHORITY=/tmp/.Xauthority \
     -v /etc/localtime:/etc/localtime:ro \
     "$image" \
     "$@"
