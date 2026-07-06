@@ -122,7 +122,7 @@
     };
 
     openfang = {
-      url = "github:RightNow-AI/openfang";
+      url = "github:RightNow-AI/openfang/v0.6.9";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.flake-parts.follows = "flake-parts";
       inputs.rust-flake = {

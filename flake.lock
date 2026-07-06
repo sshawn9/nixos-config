@@ -604,6 +604,7 @@
       },
       "original": {
         "owner": "RightNow-AI",
+        "ref": "v0.6.9",
         "repo": "openfang",
         "type": "github"
       }
