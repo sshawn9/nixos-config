@@ -16,6 +16,7 @@
       "https://noctalia.cachix.org"
       "https://nix-community.cachix.org"
       "https://mousehop.cachix.org"
+      "https://pyproject-nix.cachix.org"
     ];
 
     extra-trusted-public-keys = lib.mkBefore [
@@ -25,6 +26,7 @@
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "mousehop.cachix.org-1:5wbRclpnaMFh5hRLx4BR+UMSkOfCiR2kfr6WLItDpPU="
+      "pyproject-nix.cachix.org-1:UNzugsOlQIu2iOz0VyZNBQm2JSrL/kwxeCcFGw+jMe0="
     ];
 
     experimental-features = [
