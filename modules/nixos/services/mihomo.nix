@@ -30,6 +30,7 @@ in
     configFile = "/var/lib/mihomo/config.yaml";
     webui = "/var/lib/mihomo/ui";
   };
+  systemd.services.mihomo.wantedBy = lib.mkForce [ ];
 
   services.caddy.virtualHosts."http://zashboard.localhost" = {
     extraConfig = ''
