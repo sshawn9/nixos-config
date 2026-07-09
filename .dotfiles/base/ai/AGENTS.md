@@ -7,6 +7,7 @@ General instructions for coding agents.
 - Read-only Git: Never alter git state (e.g., `git add/commit/checkout/reset`). Only use read commands.
 - Respect manual edits: Current file state, silent edits, and deletions are definitive. Never overwrite or restore removed content unless explicitly asked. Assume manual edits are intentional; only ask for clarification if ambiguity risks critical breakage.
 - No irrecoverable destruction: Ask before deleting user data, databases, or uncommitted work. Routine cleanups (e.g., `node_modules`) are permitted.
+- No subagents unless explicitly requested.
 
 ## Decision Making & Problem Framing
 
