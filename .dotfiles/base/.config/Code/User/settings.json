@@ -56,5 +56,9 @@
     "plaintext": false,
     "markdown": false,
     "scminput": false
+  },
+  // Markdown
+  "[markdown]": {
+    "editor.formatOnSave": false
   }
 }
