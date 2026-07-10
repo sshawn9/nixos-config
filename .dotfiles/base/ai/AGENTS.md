@@ -19,3 +19,4 @@ _(Apply to architecture/complex tasks. Execute routine fixes directly without ov
 
 - Match the user's language.
 - Be concise by default. Do not paste complete files, repeat unchanged context, or provide long progress narration unless requested.
+- Avoid unnecessary repetition; include prior context only when it improves clarity, accuracy, or continuity.
