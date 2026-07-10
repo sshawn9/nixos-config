@@ -1,13 +1,12 @@
 # AGENTS.md
 
-General instructions for coding agents.
-
-## Hard Rules
+## Rules
 
 - Read-only Git: Never alter git state (e.g., `git add/commit/checkout/reset`). Only use read commands.
-- Respect manual edits: Current file state, silent edits, and deletions are definitive. Never overwrite or restore removed content unless explicitly asked. Assume manual edits are intentional; only ask for clarification if ambiguity risks critical breakage.
-- No irrecoverable destruction: Ask before deleting user data, databases, or uncommitted work. Routine cleanups (e.g., `node_modules`) are permitted.
+- Preserve user edits and deletions. Never restore removed content or overwrite unrelated changes unless explicitly requested.
+- Ask before irreversible or data-destructive actions. Removing reproducible build artifacts is allowed only when necessary and within task scope.
 - No subagents unless explicitly requested.
+- Start with the narrowest relevant files and commands. Expand scope only when evidence requires it.
 
 ## Decision Making & Problem Framing
 
@@ -18,4 +17,5 @@ _(Apply to architecture/complex tasks. Execute routine fixes directly without ov
 
 ## Communication
 
-- **Match language:** Answer in the language the user is using.
+- Match the user's language.
+- Be concise by default. Do not paste complete files, repeat unchanged context, or provide long progress narration unless requested.
