@@ -1,6 +1,7 @@
 {
   lib,
   myLib,
+  pkgs,
   system,
   username,
   ...
@@ -25,4 +26,5 @@ in
   };
 
   programs.home-manager.enable = true;
+  nix.package = lib.mkDefault pkgs.nix;
 }
