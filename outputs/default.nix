@@ -22,6 +22,10 @@ let
 
   systems = import ./systems.nix commonArgs;
   homes = import ./homes.nix commonArgs;
+  configurationChecks = import ./checks.nix {
+    inherit (nixpkgs) lib;
+    inherit systems homes;
+  };
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
@@ -29,15 +33,18 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     inputs.treefmt-preset.flakeModules.default
   ];
 
-  systems = systems.supportedSystems;
+  systems = configurationChecks.supportedSystems;
 
   perSystem =
     {
       config,
       pkgs,
+      system,
       ...
     }:
     {
+      checks = configurationChecks.forSystem system;
+
       treefmt.settings.excludes = [
         ".dotfiles/*/.config/noctalia/**"
         ".dotfiles/*/.config/Code/User/**"

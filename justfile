@@ -19,10 +19,15 @@ fmt:
 update:
     nix flake update
 
-# Check all flake outputs
+# Evaluate checks and flake outputs for every platform without building
 [group("repo")]
 check:
-    nix flake check --all-systems
+    nix flake check --all-systems --no-build --keep-going
+
+# Build checks for the current platform
+[group("repo")]
+check-build *FLAGS:
+    nix flake check --keep-going --print-build-logs {{ FLAGS }}
 
 # Lint Nix files
 [group("repo")]

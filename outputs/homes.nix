@@ -43,6 +43,8 @@ let
     };
 in
 {
+  supportedSystems = builtins.attrNames homesTree;
+
   homeConfigurations = lib.concatMapAttrs (
     system: entries:
     lib.mapAttrs' (key: _: {
