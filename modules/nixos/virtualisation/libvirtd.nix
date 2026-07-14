@@ -68,10 +68,10 @@ in
     "libvirtd"
   ];
 
-  environment.systemPackages = with pkgs.unstable; [
-    libguestfs
-    guestfs-tools
-    virt-viewer
-    virtio-win
-  ];
+  # environment.systemPackages = with pkgs.unstable; [
+  #   libguestfs
+  #   guestfs-tools
+  #   virt-viewer
+  #   virtio-win
+  # ];
 }
