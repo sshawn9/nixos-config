@@ -49,7 +49,7 @@
   "codexAccounts.codexAppRestartEnabled": false,
   "codexAccounts.autoRefreshMinutes": 15,
   "codexAccounts.backgroundTokenRefreshEnabled": true,
-  "codexAccounts.quotaWarningEnabled": true,
+  "codexAccounts.quotaWarningEnabled": false,
   "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.enable": {
     "*": false,
