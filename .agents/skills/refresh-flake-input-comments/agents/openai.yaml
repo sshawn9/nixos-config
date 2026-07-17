@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refresh Flake Input Comments"
+  short_description: "Audit upstream input trees and follow rationale"
+  default_prompt: "Use $refresh-flake-input-comments to audit and update the upstream input-tree and follow-policy comments in this flake."
