@@ -332,3 +332,50 @@ keep-derivation-build DRV NAME="" *FLAGS:
       --print-build-logs \
       --out-link ".build-links/$link_name" \
       "$drv^*"
+
+# Format the x86_64-darwin compatibility flake
+[group("intel-darwin")]
+[working-directory("x86_64-darwin")]
+fmt-intel-darwin:
+    nix fmt .
+
+# Update the x86_64-darwin compatibility flake lock file
+[group("intel-darwin")]
+update-intel-darwin *FLAGS:
+    nix flake update --flake ./x86_64-darwin {{ FLAGS }}
+
+# Evaluate all x86_64-darwin checks and outputs without building
+[group("intel-darwin")]
+check-intel-darwin *FLAGS:
+    nix flake check --all-systems --no-build --keep-going {{ FLAGS }} ./x86_64-darwin
+
+# Build x86_64-darwin checks on an Intel Darwin host or remote builder
+[group("intel-darwin")]
+check-build-intel-darwin *FLAGS:
+    nix flake check --keep-going --print-build-logs {{ FLAGS }} ./x86_64-darwin
+
+# Lint the x86_64-darwin compatibility flake
+[group("intel-darwin")]
+lint-intel-darwin:
+    statix check ./x86_64-darwin
+    deadnix --fail ./x86_64-darwin
+
+# Build an x86_64-darwin host (default: current hostname)
+[group("intel-darwin")]
+build-intel-darwin HOST=hostname *FLAGS:
+    nh darwin build --hostname {{ quote(HOST) }} --out-link result ./x86_64-darwin {{ FLAGS }}
+
+# Dry-run an x86_64-darwin host build
+[group("intel-darwin")]
+build-intel-darwin-dry-run HOST=hostname *FLAGS:
+    nix build {{ FLAGS }} --dry-run --print-build-logs {{ quote("./x86_64-darwin#darwinConfigurations." + HOST + ".system") }}
+
+# Switch an x86_64-darwin host
+[group("intel-darwin")]
+switch-intel-darwin HOST=hostname *FLAGS:
+    nh darwin switch --hostname {{ quote(HOST) }} ./x86_64-darwin {{ FLAGS }}
+
+# Dry-run an x86_64-darwin host switch
+[group("intel-darwin")]
+switch-intel-darwin-dry-run HOST=hostname *FLAGS:
+    nh darwin switch --dry --hostname {{ quote(HOST) }} ./x86_64-darwin {{ FLAGS }}
