@@ -12,7 +12,6 @@
 
   programs = {
     opencode = {
-      enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.opencode;
     };
   };
