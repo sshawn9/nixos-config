@@ -1,16 +1,12 @@
 {
+  inputs,
   pkgs,
-  repoTree,
   ...
 }:
-
 let
-  mihomo-switch-base = pkgs.callPackage repoTree.packages.mihomo-switch.default { };
-  mihomo-switch = pkgs.writeShellScriptBin "mihomo-switch" ''
-    export MIHOMO_RESTART_CMD="launchctl kickstart -k system/mihomo"
-    exec ${mihomo-switch-base}/bin/mihomo-switch "$@"
-  '';
-  mihomo-get-zashboard = pkgs.callPackage repoTree.packages.mihomo-get-zashboard.default { };
+  mihomo-switch = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-switch;
+  mihomo-get-zashboard =
+    inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-get-zashboard;
 in
 {
   environment.systemPackages = [

@@ -22,6 +22,18 @@
     nixpkgs.follows = "nixpkgs-unstable";
 
     # Upstream inputs:
+    # nix-packages
+    # ├── nixpkgs
+    # └── nixpkgs-2605-darwin
+    #
+    # Follow policy: partial — lightweight wrappers share the root unstable package
+    # set; the unique x86_64-darwin compatibility pin remains upstream.
+    nix-packages = {
+      url = "github:sshawn9/nix-packages";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # Upstream inputs:
     # nixos-hardware
     # └── nixpkgs
     #

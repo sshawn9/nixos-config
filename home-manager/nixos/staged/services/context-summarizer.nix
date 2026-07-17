@@ -1,15 +1,15 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
-  repoTree,
   ...
 }:
 
 let
   cfg = config.my.services.context-summarizer;
 
-  summarizer = pkgs.callPackage repoTree.packages.context-summarizer.default { };
+  summarizer = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.context-summarizer;
 
   atuinBin = "${config.programs.atuin.package or pkgs.atuin}/bin/atuin";
 

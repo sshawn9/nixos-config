@@ -1,12 +1,13 @@
 {
+  inputs,
   lib,
   pkgs,
-  repoTree,
   ...
 }:
 let
-  mihomo-switch = pkgs.callPackage repoTree.packages.mihomo-switch.default { };
-  mihomo-get-zashboard = pkgs.callPackage repoTree.packages.mihomo-get-zashboard.default { };
+  mihomo-switch = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-switch;
+  mihomo-get-zashboard =
+    inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-get-zashboard;
 in
 {
   environment.systemPackages = [

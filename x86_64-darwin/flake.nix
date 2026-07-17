@@ -20,7 +20,20 @@
     };
     nixpkgs-unstable.follows = "nixpkgs-2605-darwin";
     nixpkgs-stable.follows = "nixpkgs-2605-darwin";
-    nixpkgs.follows = "nixpkgs-unstable";
+    nixpkgs.follows = "nixpkgs-2605-darwin";
+
+    # Upstream inputs:
+    # nix-packages
+    # ├── nixpkgs
+    # └── nixpkgs-2605-darwin
+    #
+    # Follow policy: all — these lightweight wrappers have no cache-sensitive builds,
+    # and both package sets already exist at the root.
+    nix-packages = {
+      url = "github:sshawn9/nix-packages";
+      inputs.nixpkgs.follows = "nixpkgs-2605-darwin";
+      inputs.nixpkgs-2605-darwin.follows = "nixpkgs-2605-darwin";
+    };
 
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware";

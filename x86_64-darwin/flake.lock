@@ -381,6 +381,29 @@
         "type": "github"
       }
     },
+    "nix-packages": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-2605-darwin"
+        ],
+        "nixpkgs-2605-darwin": [
+          "nixpkgs-2605-darwin"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784326922,
+        "narHash": "sha256-Fj44jLMnmkKSWIIoC8wUNDZgSOkqDVvyeTNh7ZoaPpE=",
+        "owner": "sshawn9",
+        "repo": "nix-packages",
+        "rev": "6834464958016693ac4ebbd5e86d63310e790cdb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sshawn9",
+        "repo": "nix-packages",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "inputs": {
         "nixpkgs": [
@@ -680,9 +703,10 @@
         "nix-cachyos-kernel": "nix-cachyos-kernel",
         "nix-darwin": "nix-darwin",
         "nix-index-database": "nix-index-database",
+        "nix-packages": "nix-packages",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": [
-          "nixpkgs-unstable"
+          "nixpkgs-2605-darwin"
         ],
         "nixpkgs-2511": "nixpkgs-2511",
         "nixpkgs-2605": "nixpkgs-2605",
