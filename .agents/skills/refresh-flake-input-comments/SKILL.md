@@ -35,6 +35,7 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
    The script is read-only and uses `nix flake metadata --no-write-lock-file`.
    It emits only non-trivial flake inputs. Treat failures as unknown data: do
    not guess or delete the existing tree.
+
 3. Inspect local overrides and existing comments:
 
    ```console
@@ -42,7 +43,6 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
    ```
 
 4. Classify each root input from the target flake's own definitions:
-
    - `N/A`: a non-nixpkgs flake with no upstream inputs.
    - `all (alias)`: a root alias implemented entirely with `.follows`.
    - `all`: every direct upstream input is redirected to a root counterpart.
@@ -51,6 +51,7 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
    - `none`: no local follow override exists anywhere below that root input.
 
    Do not count an upstream flake's native shared edge as a local follow.
+
 5. Re-evaluate the reason; never copy it blindly. Search actual consumers and
    cache configuration:
 
@@ -61,7 +62,6 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
 
    Apply these repository rules against future root-input updates, not merely
    the revisions that happen to match today:
-
    - Preserve upstream dependency pins when a consumed package is expensive and
      an upstream binary cache is expected to supply that exact derivation.
    - Follow shared roots when a cache miss only rebuilds a cheap wrapper or other
@@ -75,6 +75,7 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
      explain a `partial` policy.
    - Never justify follows by saying current output paths happen to match; the
      root nixpkgs pins are intentionally updateable.
+
 6. Update the immediately preceding comment block with `apply_patch`:
 
    ```nix
@@ -91,6 +92,7 @@ keep the separate `# Follow policy:` rationale faithful to this repository.
    Keep trees structural and glanceable. Show upstream-native shared nodes as
    `(shared with <path>)`; do not annotate tree edges with this repository's
    follows. Keep policy reasons to one to three lines.
+
 7. Re-run the inspector and compare every emitted root input with its comment.
    Do not require comments for skipped sources or nixpkgs pins. Then run:
 

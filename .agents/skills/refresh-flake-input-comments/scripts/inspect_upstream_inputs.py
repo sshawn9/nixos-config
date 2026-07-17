@@ -171,7 +171,9 @@ def main() -> int:
     selected = set(args.inputs or root_inputs)
     unknown = selected.difference(root_inputs)
     if unknown:
-        print(f"error: unknown root inputs: {', '.join(sorted(unknown))}", file=sys.stderr)
+        print(
+            f"error: unknown root inputs: {', '.join(sorted(unknown))}", file=sys.stderr
+        )
         return 2
 
     rendered: dict[str, list[str]] = {}
