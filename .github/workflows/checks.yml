@@ -79,6 +79,7 @@ jobs:
             --flake "${flake_url}#checks" \
             --select "checks: checks.\"${SYSTEM}\" or {}" \
             --systems "$SYSTEM" \
+            --no-nom \
             --no-link \
             --result-format junit \
             --result-file "test-results/${SYSTEM}/result.xml"
