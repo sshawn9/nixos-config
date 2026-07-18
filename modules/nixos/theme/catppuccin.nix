@@ -22,6 +22,6 @@
       enableRounded = true;
     };
 
-    tty.enable = lib.mkDefault true;
+    tty.enable = lib.mkDefault false;
   };
 }
