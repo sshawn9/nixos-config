@@ -112,20 +112,7 @@ in
 {
   imports = [
     (mkHomePackages {
-      ariang = {
-        # TODO
-        # Keep AriaNg on stable until upstream refreshes its npm lockfile.
-        # AriaNg 1.3.13 still ships a lockfileVersion=1 package-lock while
-        # depending on angular-input-dropdown via a git URL; npm 11's `npm ci`
-        # rejects that as package.json/package-lock drift:
-        #   Invalid: lock file's angular-input-dropdown@ does not satisfy angular-input-dropdown@1.1.2
-        # Track:
-        #   https://github.com/mayswind/AriaNg/blob/1.3.13/package.json#L14
-        #   https://github.com/mayswind/AriaNg/blob/1.3.13/package-lock.json#L4
-        #   https://docs.npmjs.com/cli/v11/commands/npm-ci
-        #   https://github.com/NixOS/nixpkgs/issues/523144
-        package = pkgs.pkgs2511.ariang;
-      };
+      ariang = { };
     })
   ];
 

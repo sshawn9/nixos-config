@@ -230,18 +230,7 @@ in
 
     watchers = {
       server = {
-        # TODO
-        # Keep aw-server-rust on pkgs2511 until aw-webui's test closure is
-        # fixed upstream/in nixpkgs. Newer unstable rebuilds aw-webui-0.13.2
-        # locally and its nixpkgs checkPhase (`npm test`) fails because
-        # @vue/vue2-jest cannot resolve the peer-only vue-template-compiler.
-        # Track:
-        #   https://github.com/NixOS/nixpkgs/blob/64c08a7ca051951c8eae34e3e3cb1e202fe36786/pkgs/applications/office/activitywatch/default.nix#L208-L253
-        #   https://github.com/ActivityWatch/activitywatch/blob/v0.13.2/aw-server-rust/aw-webui/package.json#L12-L13
-        #   https://github.com/ActivityWatch/activitywatch/blob/v0.13.2/aw-server-rust/aw-webui/package.json#L84-L92
-        #   https://github.com/ActivityWatch/activitywatch/blob/v0.13.2/aw-server-rust/aw-webui/package-lock.json#L26005-L26010
-        #   https://github.com/NixOS/nixpkgs/issues/523146
-        package = lib.mkPackageOption pkgs.pkgs2511 "aw-server-rust" { };
+        package = lib.mkPackageOption pkgs.unstable "aw-server-rust" { };
 
         settings = lib.mkOption {
           inherit (tomlFormat) type;

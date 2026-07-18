@@ -5,13 +5,10 @@
 
   inputs = {
     # Official NixOS/Nixpkgs repositories, using mirrors for faster access in China.
-    # url = "git+https://mirrors.tuna.tsinghua.edu.cn/git/nixpkgs.git?ref=nixos-25.11&shallow=1";
+    # url = "git+https://mirrors.tuna.tsinghua.edu.cn/git/nixpkgs.git?ref=nixos-26.05&shallow=1";
     # url = "git+https://mirrors.tuna.tsinghua.edu.cn/git/nixpkgs.git?ref=nixos-unstable&shallow=1";
     # https://github.com/NixOS/nixpkgs
     # https://wiki.nixos.org/wiki/FAQ#Using_flakes
-    nixpkgs-2511 = {
-      url = "github:NixOS/nixpkgs/nixos-25.11";
-    };
     nixpkgs-2605 = {
       url = "github:NixOS/nixpkgs/nixos-26.05";
     };

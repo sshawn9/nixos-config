@@ -59,10 +59,7 @@ in
           regctl.enable = true;
           skopeo.enable = true;
           jetbrains = {
-            clion = {
-              enable = true;
-              package = pkgs.pkgs2511.jetbrains.clion;
-            };
+            clion.enable = true;
             pycharm.enable = true;
             rust-rover.enable = true;
           };

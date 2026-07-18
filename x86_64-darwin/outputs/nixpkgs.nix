@@ -15,11 +15,6 @@ let
         inherit (prev.stdenv.hostPlatform) system;
         config = nixpkgsConfig;
       };
-
-      pkgs2511 = import inputs.nixpkgs-2511 {
-        inherit (prev.stdenv.hostPlatform) system;
-        config = nixpkgsConfig;
-      };
     })
   ];
 
