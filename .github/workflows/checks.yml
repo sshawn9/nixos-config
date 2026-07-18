@@ -14,25 +14,9 @@ concurrency:
 
 jobs:
   check:
-    name: ${{ matrix.system }} · ${{ matrix.runner }}
-    runs-on: ${{ matrix.runner }}
+    name: flake check no build
+    runs-on: ubuntu-latest
     timeout-minutes: 360
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - system: x86_64-linux
-            runner: ubuntu-latest
-            flake_dir: .
-          - system: aarch64-linux
-            runner: ubuntu-26.04-arm
-            flake_dir: .
-          - system: x86_64-darwin
-            runner: macos-26-intel
-            flake_dir: x86_64-darwin
-          - system: aarch64-darwin
-            runner: macos-latest
-            flake_dir: x86_64-darwin
 
     steps:
       - name: Check out repository
@@ -64,59 +48,11 @@ jobs:
             extra-substituters = https://pyproject-nix.cachix.org
             extra-trusted-public-keys = pyproject-nix.cachix.org-1:UNzugsOlQIu2iOz0VyZNBQm2JSrL/kwxeCcFGw+jMe0=
 
-      - name: Build checks
-        shell: bash
-        env:
-          SYSTEM: ${{ matrix.system }}
-          FLAKE_DIR: ${{ matrix.flake_dir }}
-        run: |
-          set -euo pipefail
+      - name: Evaluate all root flake checks
+        run: nix flake check --all-systems --no-build --keep-going .
 
-          if [[ "$FLAKE_DIR" == "." ]]; then
-            flake_url="git+file://${GITHUB_WORKSPACE}"
-          else
-            flake_url="git+file://${GITHUB_WORKSPACE}?dir=${FLAKE_DIR}"
-          fi
+      - name: Evaluate all x86_64 Darwin flake checks
+        run: nix flake check --all-systems --no-build --keep-going ./x86_64-darwin
 
-          mkdir -p "test-results/${SYSTEM}"
-          nix run "github:Mic92/nix-fast-build/1.6.0" -- \
-            --flake "${flake_url}#checks" \
-            --select "checks: checks.\"${SYSTEM}\" or {}" \
-            --systems "$SYSTEM" \
-            --no-nom \
-            --no-link \
-            --result-format junit \
-            --result-file "test-results/${SYSTEM}/result.xml"
-
-      - name: Upload check results
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: nix-check-${{ matrix.system }}
-          path: test-results/${{ matrix.system }}
-          if-no-files-found: warn
-          retention-days: 30
-
-  report:
-    name: Nix check matrix
-    if: ${{ !cancelled() }}
-    needs: check
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Download check results
-        uses: actions/download-artifact@v8
-        with:
-          pattern: nix-check-*
-          path: test-results
-
-      - name: Publish check matrix
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: test-results/**/*.xml
-          check_name: Nix check matrix
-          comment_mode: off
-          check_run: false
-          job_summary: true
-          action_fail: false
-          action_fail_on_inconclusive: false
+      - name: Check formatting
+        run: nix build --no-link .#checks.x86_64-linux.treefmt
