@@ -19,7 +19,7 @@
   };
 
   services.homepage-dashboard = {
-    enable = lib.mkDefault true;
+    enable = lib.mkDefault false;
     package = lib.mkDefault pkgs.unstable.homepage-dashboard;
     listenPort = 8082;
     openFirewall = true;

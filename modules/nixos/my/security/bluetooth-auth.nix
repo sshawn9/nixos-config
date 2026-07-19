@@ -9,7 +9,7 @@
   imports = [ inputs.bluetooth-auth.nixosModules.bluetooth-auth ];
 
   my.security.bluetoothAuth = {
-    enable = lib.mkDefault true;
+    enable = lib.mkDefault false;
 
     user = lib.mkDefault config.my.shared.username;
     bluetoothAddressFile = config.sops.secrets.auth_bluetooth_address.path;

@@ -9,6 +9,7 @@ in
   imports = [
     (mkHomePackages {
       telegram-desktop = { };
+      google-chrome = { };
     })
   ];
 }

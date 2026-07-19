@@ -8,6 +8,7 @@ in
 {
   imports = [
     (mkHomePackages {
+      github-desktop = { };
     })
   ];
 }

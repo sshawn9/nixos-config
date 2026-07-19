@@ -12,7 +12,6 @@
 
   programs = {
     ghostty = {
-      enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.ghostty;
 
       installBatSyntax = lib.mkDefault true;

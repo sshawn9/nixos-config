@@ -11,9 +11,7 @@ in
 {
   imports = [
     (mkHomePackages {
-      obsidian = {
-        enable = true;
-      };
+      obsidian = { };
     })
   ];
 

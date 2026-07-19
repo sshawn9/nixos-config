@@ -12,7 +12,6 @@
 
   programs = {
     codex = {
-      enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.codex;
     };
   };

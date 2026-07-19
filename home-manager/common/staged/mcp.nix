@@ -12,7 +12,6 @@ in
 {
   programs = {
     mcp = {
-      enable = lib.mkDefault false;
       servers = {
         everything = {
           command = npx;

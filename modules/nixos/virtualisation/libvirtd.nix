@@ -21,18 +21,29 @@ in
   # networking.firewall.trustedInterfaces = [ "virbr0" ];
 
   services.cockpit = {
-    enable = lib.mkDefault true;
+    enable = lib.mkDefault false;
     package = pkgs.unstable.cockpit;
     port = lib.mkDefault 9091;
     plugins = [ pkgs.unstable.cockpit-machines ];
     openFirewall = lib.mkDefault true;
   };
 
-  users.users.libvirtdbus.extraGroups = [ "libvirtd" ];
+  users.users = {
+    ${username}.extraGroups = [
+      "kvm"
+      "libvirtd"
+    ];
+
+    libvirtdbus =
+      lib.mkIf (config.virtualisation.libvirtd.enable && config.virtualisation.libvirtd.dbus.enable)
+        {
+          extraGroups = [ "libvirtd" ];
+        };
+  };
 
   virtualisation = {
     libvirtd = {
-      enable = lib.mkDefault true;
+      enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.libvirt;
 
       dbus = {
@@ -58,15 +69,10 @@ in
   programs = {
     dconf.enable = lib.mkDefault true;
     virt-manager = {
-      enable = lib.mkDefault true;
+      enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.virt-manager;
     };
   };
-
-  users.users.${username}.extraGroups = [
-    "kvm"
-    "libvirtd"
-  ];
 
   # environment.systemPackages = with pkgs.unstable; [
   #   libguestfs
