@@ -19,6 +19,11 @@ in
 
   forSystem =
     system:
+    # `nix flake check` already validates `nixosConfigurations` as a standard
+    # flake output, so NixOS evaluation failures may be reported once there and
+    # once again under `checks`. Keep the explicit check anyway: it makes the
+    # system toplevel a buildable check derivation and gives NixOS, nix-darwin,
+    # and Home Manager configurations one uniform per-system check interface.
     mkConfigurationChecks "nixos" (configuration: configuration.config.system.build.toplevel) (
       configurationsForSystem system systems.nixosConfigurations
     )
