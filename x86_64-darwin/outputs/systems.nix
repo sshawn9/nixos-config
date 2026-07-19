@@ -44,13 +44,31 @@ let
 
   configurationsFor =
     systemPredicate: builder:
+    let
+      matchingSystems = lib.filterAttrs (system: _: systemPredicate system) systemsTree;
+
+      hostnameSystems = lib.foldlAttrs (
+        acc: system: hosts:
+        lib.foldlAttrs (
+          acc': hostname: _:
+          acc'
+          // {
+            ${hostname} = (acc'.${hostname} or [ ]) ++ [ system ];
+          }
+        ) acc hosts
+      ) { } matchingSystems;
+    in
     lib.concatMapAttrs (
       system: hosts:
-      if systemPredicate system then
-        lib.mapAttrs (hostname: _: mkSystem builder system hostname) hosts
-      else
-        { }
-    ) systemsTree;
+      lib.mapAttrs' (
+        hostname: _:
+        let
+          outputName =
+            if builtins.length hostnameSystems.${hostname} == 1 then hostname else "${hostname}@${system}";
+        in
+        lib.nameValuePair outputName (mkSystem builder system hostname)
+      ) hosts
+    ) matchingSystems;
 in
 {
   inherit systemsTree;
