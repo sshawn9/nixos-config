@@ -12,8 +12,24 @@ let
   # Layout under homes/:
   #   homes/<system>/<user>/**.nix         -> homeConfigurations."<user>@<system>"
   #   homes/<system>/<user>@<host>/**.nix  -> homeConfigurations."<user>@<host>"
-  # Cross-system collisions on host-pinned keys silently let the last system win,
-  # mirroring how outputs/systems.nix merges nixosConfigurations.
+  # A host-pinned key shared by multiple systems gains a final @<system> suffix,
+  # preventing concatMapAttrs from silently retaining only one architecture.
+  defaultName = system: key: if lib.hasInfix "@" key then key else "${key}@${system}";
+
+  nameCounts = lib.foldlAttrs (
+    counts: system: entries:
+    lib.foldlAttrs (
+      counts': key: _:
+      let
+        name = defaultName system key;
+      in
+      counts'
+      // {
+        ${name} = (counts'.${name} or 0) + 1;
+      }
+    ) counts entries
+  ) { } homesTree;
+
   mkHome =
     system: key:
     let
@@ -47,9 +63,13 @@ in
 
   homeConfigurations = lib.concatMapAttrs (
     system: entries:
-    lib.mapAttrs' (key: _: {
-      name = if lib.hasInfix "@" key then key else "${key}@${system}";
-      value = mkHome system key;
-    }) entries
+    lib.mapAttrs' (
+      key: _:
+      let
+        name = defaultName system key;
+        finalName = if nameCounts.${name} == 1 then name else "${name}@${system}";
+      in
+      lib.nameValuePair finalName (mkHome system key)
+    ) entries
   ) homesTree;
 }

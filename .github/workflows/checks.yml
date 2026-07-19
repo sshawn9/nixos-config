@@ -8,6 +8,29 @@ on:
 permissions:
   contents: read
 
+env:
+  EXTRA_NIX_CONFIG: |
+    extra-substituters = https://cache.nixos-cuda.org
+    extra-trusted-public-keys = cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
+    extra-substituters = https://cache.soopy.moe
+    extra-trusted-public-keys = cache.soopy.moe-1:0RZVsQeR+GOh0VQI9rvnHz55nVXkFardDqfm4+afjPo=
+    extra-substituters = https://attic.xuyh0120.win/lantian
+    extra-trusted-public-keys = lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=
+    extra-substituters = https://cache.garnix.io
+    extra-trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
+    extra-substituters = https://catppuccin.cachix.org
+    extra-trusted-public-keys = catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU=
+    extra-substituters = https://claude-code.cachix.org
+    extra-trusted-public-keys = claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk=
+    extra-substituters = https://noctalia.cachix.org
+    extra-trusted-public-keys = noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=
+    extra-substituters = https://nix-community.cachix.org
+    extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+    extra-substituters = https://mousehop.cachix.org
+    extra-trusted-public-keys = mousehop.cachix.org-1:5wbRclpnaMFh5hRLx4BR+UMSkOfCiR2kfr6WLItDpPU=
+    extra-substituters = https://pyproject-nix.cachix.org
+    extra-trusted-public-keys = pyproject-nix.cachix.org-1:UNzugsOlQIu2iOz0VyZNBQm2JSrL/kwxeCcFGw+jMe0=
+
 concurrency:
   group: nix-checks-${{ github.ref }}
   cancel-in-progress: true
@@ -26,27 +49,7 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |
-            extra-substituters = https://cache.nixos-cuda.org
-            extra-trusted-public-keys = cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
-            extra-substituters = https://cache.soopy.moe
-            extra-trusted-public-keys = cache.soopy.moe-1:0RZVsQeR+GOh0VQI9rvnHz55nVXkFardDqfm4+afjPo=
-            extra-substituters = https://attic.xuyh0120.win/lantian
-            extra-trusted-public-keys = lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=
-            extra-substituters = https://cache.garnix.io
-            extra-trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
-            extra-substituters = https://catppuccin.cachix.org
-            extra-trusted-public-keys = catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU=
-            extra-substituters = https://claude-code.cachix.org
-            extra-trusted-public-keys = claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk=
-            extra-substituters = https://noctalia.cachix.org
-            extra-trusted-public-keys = noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=
-            extra-substituters = https://nix-community.cachix.org
-            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-            extra-substituters = https://mousehop.cachix.org
-            extra-trusted-public-keys = mousehop.cachix.org-1:5wbRclpnaMFh5hRLx4BR+UMSkOfCiR2kfr6WLItDpPU=
-            extra-substituters = https://pyproject-nix.cachix.org
-            extra-trusted-public-keys = pyproject-nix.cachix.org-1:UNzugsOlQIu2iOz0VyZNBQm2JSrL/kwxeCcFGw+jMe0=
+          extra_nix_config: ${{ env.EXTRA_NIX_CONFIG }}
 
       - name: Evaluate all root flake checks
         run: nix flake check --all-systems --no-build --keep-going .
@@ -56,3 +59,122 @@ jobs:
 
       - name: Check formatting
         run: nix build --no-link .#checks.x86_64-linux.treefmt
+
+  build-demo:
+    name: build demo (${{ matrix.system }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            runner: ubuntu-latest
+            flake_dir: .
+            generic_home: home-demouser@x86_64-linux
+            host_home: home-demouser@demohost@x86_64-linux
+            system_configuration: nixos-demohost@x86_64-linux
+          - system: aarch64-linux
+            runner: ubuntu-26.04-arm
+            flake_dir: .
+            generic_home: home-demouser@aarch64-linux
+            host_home: home-demouser@demohost@aarch64-linux
+            system_configuration: nixos-demohost@aarch64-linux
+          - system: x86_64-darwin
+            runner: macos-26-intel
+            flake_dir: x86_64-darwin
+            generic_home: home-demouser@x86_64-darwin
+            host_home: home-demouser@demohost
+            system_configuration: darwin-demohost
+          - system: aarch64-darwin
+            runner: macos-latest
+            flake_dir: .
+            generic_home: home-demouser@aarch64-darwin
+            host_home: home-demouser@demohost@aarch64-darwin
+            system_configuration: darwin-demohost
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: ${{ env.EXTRA_NIX_CONFIG }}
+
+      - name: Build demo checks
+        shell: bash
+        env:
+          SYSTEM: ${{ matrix.system }}
+          FLAKE_DIR: ${{ matrix.flake_dir }}
+          GENERIC_HOME: ${{ matrix.generic_home }}
+          HOST_HOME: ${{ matrix.host_home }}
+          SYSTEM_CONFIGURATION: ${{ matrix.system_configuration }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$FLAKE_DIR" == "." ]]; then
+            flake_url="git+file://${GITHUB_WORKSPACE}"
+          else
+            flake_url="git+file://${GITHUB_WORKSPACE}?dir=${FLAKE_DIR}"
+          fi
+
+          mkdir -p "test-results/${SYSTEM}"
+          nix run "github:Mic92/nix-fast-build/1.6.0" -- \
+            --flake "${flake_url}#checks" \
+            --select "checks: {
+              \"${GENERIC_HOME}\" = checks.\"${SYSTEM}\".\"${GENERIC_HOME}\";
+              \"${HOST_HOME}\" = checks.\"${SYSTEM}\".\"${HOST_HOME}\";
+              \"${SYSTEM_CONFIGURATION}\" = checks.\"${SYSTEM}\".\"${SYSTEM_CONFIGURATION}\";
+            }" \
+            --systems "$SYSTEM" \
+            --no-nom \
+            --no-link \
+            --result-format json \
+            --result-file "test-results/${SYSTEM}/result.json"
+
+      - name: Collect build metrics
+        if: ${{ !cancelled() }}
+        env:
+          SYSTEM: ${{ matrix.system }}
+          GENERIC_HOME: ${{ matrix.generic_home }}
+          HOST_HOME: ${{ matrix.host_home }}
+          SYSTEM_CONFIGURATION: ${{ matrix.system_configuration }}
+        run: |
+          python3 .github/scripts/demo-build-metrics.py collect \
+            --system "$SYSTEM" \
+            --result "test-results/${SYSTEM}/result.json" \
+            --output "test-results/${SYSTEM}/metrics.json" \
+            --target "$GENERIC_HOME" \
+            --target "$HOST_HOME" \
+            --target "$SYSTEM_CONFIGURATION"
+
+      - name: Upload build results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: nix-demo-build-${{ matrix.system }}
+          path: test-results/${{ matrix.system }}
+          if-no-files-found: warn
+          retention-days: 30
+
+  report:
+    name: demo build matrix
+    if: ${{ !cancelled() }}
+    needs: build-demo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Download build results
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          pattern: nix-demo-build-*
+          path: test-results
+
+      - name: Publish build matrix
+        run: python3 .github/scripts/demo-build-metrics.py render --input test-results >> "$GITHUB_STEP_SUMMARY"
