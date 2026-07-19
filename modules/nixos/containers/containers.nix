@@ -37,7 +37,7 @@ in
   };
 
   boot.binfmt = {
-    emulatedSystems = [ "aarch64-linux" ];
+    emulatedSystems = lib.optional (pkgs.stdenv.hostPlatform.system != "aarch64-linux") "aarch64-linux";
     preferStaticEmulators = lib.mkDefault true;
   };
 
