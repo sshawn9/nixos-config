@@ -81,31 +81,25 @@ def summarize(args: argparse.Namespace) -> None:
         build = indexed_results.get((target, "BUILD"))
         drv_path = drv_paths.get(target)
         if build is not None and drv_path is not None:
-            builds_by_drv.setdefault(drv_path, []).append((target, build))
+            builds_by_drv.setdefault(drv_path, []).append(build)
 
     metrics = []
     for target in args.target:
         evaluation = indexed_results.get((target, "EVAL"))
         build = indexed_results.get((target, "BUILD"))
         drv_path = drv_paths.get(target)
-        shared_with = None
-
         equivalent_builds = builds_by_drv.get(drv_path, []) if drv_path else []
         successful_build = next(
             (
-                (build_target, build_result)
-                for build_target, build_result in equivalent_builds
+                build_result
+                for build_result in equivalent_builds
                 if build_result.get("success")
             ),
             None,
         )
-        representative_build = successful_build or (
-            equivalent_builds[0] if equivalent_builds else None
+        build = successful_build or (
+            equivalent_builds[0] if equivalent_builds else build
         )
-        if representative_build:
-            build_target, build = representative_build
-            if build_target != target:
-                shared_with = build_target
 
         outputs = build.get("outputs") if build and build.get("success") else None
         store_path = (
@@ -127,7 +121,6 @@ def summarize(args: argparse.Namespace) -> None:
             {
                 "target": target,
                 "status": status,
-                "sharedWith": shared_with,
                 "storePath": store_path,
                 "closureNarSize": None,
                 "closurePaths": None,
@@ -166,7 +159,7 @@ def summarize(args: argparse.Namespace) -> None:
     print("| --- | ---: | ---: | ---: |")
     for metric in metrics:
         if metric["status"] == "success":
-            result = "✅ shared" if metric["sharedWith"] else "✅"
+            result = "✅"
         else:
             result = f"❌ {html.escape(metric['status'])}"
         print(
