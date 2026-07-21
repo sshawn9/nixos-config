@@ -1,0 +1,44 @@
+name: Update flake lock
+
+on:
+  schedule:
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-root-flake-lock
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update root flake.lock
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update flake.lock
+        uses: DeterminateSystems/update-flake-lock@v28
+        with:
+          token: ${{ secrets.GH_PAT }}
+          base: main
+          branch: automation/update-root-flake-lock
+          commit-msg: "flake.lock: update inputs"
+          pr-title: "flake.lock: update inputs"
+          pr-labels: dependencies
+          pr-body: |
+            ```text
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```

@@ -1,0 +1,43 @@
+name: Update x86_64 Darwin flake lock
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: update-x86-64-darwin-flake-lock
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update x86_64-darwin flake.lock
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update x86_64-darwin flake.lock
+        uses: DeterminateSystems/update-flake-lock@v28
+        with:
+          token: ${{ secrets.GH_PAT }}
+          base: main
+          branch: automation/update-x86-64-darwin-flake-lock
+          path-to-flake-dir: x86_64-darwin
+          commit-msg: "x86_64-darwin: update flake inputs"
+          pr-title: "x86_64-darwin: update flake inputs"
+          pr-labels: dependencies
+          pr-body: |
+            ```text
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```
