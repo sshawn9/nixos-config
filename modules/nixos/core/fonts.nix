@@ -71,6 +71,25 @@ let
     powerline-fonts # Legacy Powerline-patched fonts and symbols.
     nerd-fonts.symbols-only # Standalone Nerd Font icons for font fallback.
   ];
+
+  # Work around fontconfig#540:
+  # https://gitlab.freedesktop.org/fontconfig/fontconfig/-/work_items/540
+  #
+  # Upstream 48-guessfamily.conf breaks font matching in Chromium/Electron. In
+  # Chrome Vertical Tabs it hides tab-group labels and some toolbar icons. The
+  # issue still reproduces with Fontconfig 2.18.2: an otherwise identical
+  # configuration works as soon as this single file is omitted.
+  #
+  # Track the issue above and remove this workaround only after the fix reaches
+  # the current nixpkgs input. To verify, temporarily remove the override, run
+  # `just test`, fully exit and restart Chrome, then check Vertical Tabs again.
+  disableGuessFamily = pkgs.writeTextDir "etc/fonts/conf.d/48-guessfamily.conf" ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+    <fontconfig>
+      <description>Disable broken generic-family guessing</description>
+    </fontconfig>
+  '';
 in
 {
   fonts = {
@@ -80,6 +99,11 @@ in
     packages = lib.optionals (config.my.shared.desktops.active != [ ]) fullFontPackages;
 
     fontconfig = {
+      # Shadow the upstream file with a higher-priority no-op configuration.
+      confPackages = lib.mkBefore [
+        (lib.hiPrio disableGuessFamily)
+      ];
+
       enable = lib.mkDefault true;
       antialias = true;
 
