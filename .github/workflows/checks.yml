@@ -129,52 +129,25 @@ jobs:
               \"${SYSTEM_CONFIGURATION}\" = checks.\"${SYSTEM}\".\"${SYSTEM_CONFIGURATION}\";
             }" \
             --systems "$SYSTEM" \
+            --max-jobs 1 \
             --no-nom \
             --no-link \
             --result-format json \
             --result-file "test-results/${SYSTEM}/result.json"
 
-      - name: Collect build metrics
+      - name: Publish closure metrics
         if: ${{ !cancelled() }}
         env:
           SYSTEM: ${{ matrix.system }}
+          FLAKE_DIR: ${{ matrix.flake_dir }}
           GENERIC_HOME: ${{ matrix.generic_home }}
           HOST_HOME: ${{ matrix.host_home }}
           SYSTEM_CONFIGURATION: ${{ matrix.system_configuration }}
         run: |
-          python3 .github/scripts/demo-build-metrics.py collect \
+          python3 .github/scripts/demo-build-metrics.py \
             --system "$SYSTEM" \
+            --flake "$FLAKE_DIR" \
             --result "test-results/${SYSTEM}/result.json" \
-            --output "test-results/${SYSTEM}/metrics.json" \
             --target "$GENERIC_HOME" \
             --target "$HOST_HOME" \
-            --target "$SYSTEM_CONFIGURATION"
-
-      - name: Upload build results
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: nix-demo-build-${{ matrix.system }}
-          path: test-results/${{ matrix.system }}
-          if-no-files-found: warn
-          retention-days: 30
-
-  report:
-    name: demo build matrix
-    if: ${{ !cancelled() }}
-    needs: build-demo
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Download build results
-        uses: actions/download-artifact@v8
-        continue-on-error: true
-        with:
-          pattern: nix-demo-build-*
-          path: test-results
-
-      - name: Publish build matrix
-        run: python3 .github/scripts/demo-build-metrics.py render --input test-results >> "$GITHUB_STEP_SUMMARY"
+            --target "$SYSTEM_CONFIGURATION" >> "$GITHUB_STEP_SUMMARY"
