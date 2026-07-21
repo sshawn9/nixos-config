@@ -1,0 +1,16 @@
+version: 2
+
+updates:
+  - package-ecosystem: nix
+    directories:
+      - /
+      - /x86_64-darwin
+    schedule:
+      interval: weekly
+      day: sunday
+      time: "07:00"
+      timezone: Asia/Shanghai
+    groups:
+      all-flake-inputs:
+        patterns:
+          - "*"

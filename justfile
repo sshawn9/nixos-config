@@ -184,6 +184,178 @@ switch NAME="" *FLAGS:
 switch-dry-run NAME="" *FLAGS:
     just {{ if nh-domain == "os" { "nixos-switch-dry-run" } else if nh-domain == "darwin" { "darwin-switch-dry-run" } else { "home-switch-dry-run" } }} {{ if NAME == "" { "" } else { quote(NAME) } }} {{ FLAGS }}
 
+[private]
+_github-flake REFERENCE:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    repository="sshawn9/nixos-config"
+    reference={{ quote(REFERENCE) }}
+    revision=""
+    pull_request=""
+
+    if [[ "$reference" =~ ^[0-9]+$ ]]; then
+        pull_request="$reference"
+    elif [[ "$reference" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+        revision="$reference"
+    elif [[ "$reference" == "https://github.com/${repository}/pull/"* ]]; then
+        remainder="${reference#https://github.com/${repository}/pull/}"
+        pull_request="${remainder%%[^0-9]*}"
+    elif [[ "$reference" == "https://github.com/${repository}/commit/"* ]]; then
+        remainder="${reference#https://github.com/${repository}/commit/}"
+        revision="${remainder%%[^0-9a-fA-F]*}"
+    else
+        printf 'unsupported GitHub reference: %s\n' "$reference" >&2
+        printf 'expected a PR number, PR URL, commit SHA, or commit URL\n' >&2
+        exit 2
+    fi
+
+    if [[ -n "$pull_request" ]]; then
+        if [[ ! "$pull_request" =~ ^[0-9]+$ ]]; then
+            printf 'invalid GitHub pull request reference: %s\n' "$reference" >&2
+            exit 2
+        fi
+
+        mergeable=""
+        for attempt in 1 2 3; do
+            IFS=$'\t' read -r mergeable revision < <(
+                gh api "repos/${repository}/pulls/${pull_request}" \
+                    --jq '[.mergeable, .merge_commit_sha] | @tsv'
+            )
+
+            if [[ "$mergeable" == "true" && -n "$revision" ]]; then
+                break
+            fi
+            if [[ "$mergeable" == "false" ]]; then
+                printf 'PR #%s conflicts with its base branch; no test merge commit is available\n' \
+                    "$pull_request" >&2
+                exit 1
+            fi
+            sleep 1
+        done
+
+        if [[ "$mergeable" != "true" || -z "$revision" ]]; then
+            printf 'GitHub is still computing mergeability for PR #%s; try again shortly\n' \
+                "$pull_request" >&2
+            exit 1
+        fi
+
+        printf 'GitHub source: PR #%s -> merge commit %s\n' \
+            "$pull_request" "$revision" >&2
+    else
+        if [[ ! "$revision" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+            printf 'invalid GitHub commit reference: %s\n' "$reference" >&2
+            exit 2
+        fi
+
+        revision="$(gh api "repos/${repository}/commits/${revision}" --jq .sha)"
+        printf 'GitHub source: commit %s\n' "$revision" >&2
+    fi
+
+    printf 'github:%s/%s\n' "$repository" "$revision"
+
+# Evaluate a GitHub commit or pull request without building
+[group("github")]
+github-check REFERENCE *FLAGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flake="$(just --quiet _github-flake {{ quote(REFERENCE) }})"
+    nix flake check --all-systems --no-build --keep-going {{ FLAGS }} "$flake"
+
+# Build the local configuration from a GitHub commit or pull request
+[group("github")]
+github-build REFERENCE NAME="" *FLAGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flake="$(just --quiet _github-flake {{ quote(REFERENCE) }})"
+    domain={{ quote(nh-domain) }}
+    name={{ quote(NAME) }}
+
+    if [[ -z "$name" ]]; then
+        if [[ "$domain" == "home" ]]; then
+            name="${USER}@$(hostname -s)"
+        else
+            name="$(hostname -s)"
+        fi
+    fi
+
+    case "$domain" in
+        os)
+            nh os build --hostname "$name" --out-link result "$flake" {{ FLAGS }}
+            ;;
+        darwin)
+            nh darwin build --hostname "$name" --out-link result "$flake" {{ FLAGS }}
+            ;;
+        home)
+            nh home build --configuration "$name" --out-link result "$flake" {{ FLAGS }}
+            ;;
+    esac
+
+# Test-activate the local NixOS configuration from a GitHub commit or pull request
+[group("github")]
+github-test REFERENCE NAME="" *FLAGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flake="$(just --quiet _github-flake {{ quote(REFERENCE) }})"
+    name={{ quote(NAME) }}
+
+    if [[ {{ quote(nh-domain) }} != "os" ]]; then
+        printf '%s\n' 'github-test is only supported for NixOS' >&2
+        exit 1
+    fi
+    if [[ -z "$name" ]]; then
+        name="$(hostname -s)"
+    fi
+
+    nh os test --hostname "$name" "$flake" {{ FLAGS }}
+
+# Build a boot generation from a GitHub commit or pull request without switching now
+[group("github")]
+github-boot REFERENCE NAME="" *FLAGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flake="$(just --quiet _github-flake {{ quote(REFERENCE) }})"
+    name={{ quote(NAME) }}
+
+    if [[ {{ quote(nh-domain) }} != "os" ]]; then
+        printf '%s\n' 'github-boot is only supported for NixOS' >&2
+        exit 1
+    fi
+    if [[ -z "$name" ]]; then
+        name="$(hostname -s)"
+    fi
+
+    nh os boot --hostname "$name" "$flake" {{ FLAGS }}
+
+# Permanently switch the local configuration to a GitHub commit or pull request
+[group("github")]
+github-switch REFERENCE NAME="" *FLAGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flake="$(just --quiet _github-flake {{ quote(REFERENCE) }})"
+    domain={{ quote(nh-domain) }}
+    name={{ quote(NAME) }}
+
+    if [[ -z "$name" ]]; then
+        if [[ "$domain" == "home" ]]; then
+            name="${USER}@$(hostname -s)"
+        else
+            name="$(hostname -s)"
+        fi
+    fi
+
+    case "$domain" in
+        os)
+            nh os switch --hostname "$name" "$flake" {{ FLAGS }}
+            ;;
+        darwin)
+            nh darwin switch --hostname "$name" "$flake" {{ FLAGS }}
+            ;;
+        home)
+            nh home switch --configuration "$name" "$flake" {{ FLAGS }}
+            ;;
+    esac
+
 # Print roots that keep Nix store paths reachable
 [group("maintenance")]
 gc-print-roots:
