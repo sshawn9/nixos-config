@@ -40,7 +40,7 @@
         forceFullCompositionPipeline = lib.mkDefault false;
       };
 
-      nvidia-container-toolkit = {
+      nvidia-container-toolkit = lib.mkIf config.my.shared.containers.enable {
         enable = lib.mkDefault true;
         package = lib.mkDefault pkgs.unstable.nvidia-container-toolkit;
       };
