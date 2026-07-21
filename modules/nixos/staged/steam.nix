@@ -30,11 +30,6 @@
       libkrb5
       keyutils
     ];
-
-    fontPackages = with pkgs.unstable; [
-      wqy_zenhei
-      noto-fonts-cjk-sans
-    ];
   };
 
   hardware.steam-hardware.enable = config.programs.steam.enable;

@@ -2,7 +2,7 @@
   // Window
   "window.zoomLevel": 3,
   // Editor
-  "editor.fontFamily": "'JetBrainsMono Nerd Font','Droid Sans Mono', monospace",
+  "editor.fontFamily": "'JetBrainsMono Nerd Font Mono', 'Noto Sans Mono CJK SC', monospace",
   "editor.fontSize": 20,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
