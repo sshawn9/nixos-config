@@ -1,0 +1,22 @@
+[[tools.python]]
+version = "3.14"
+
+[[tools.python]]
+version = "3.13"
+
+[[tools.python]]
+version = "3.12"
+
+[[tools.python]]
+version = "3.11"
+
+[[tools.python]]
+version = "3.10"
+
+[settings]
+# NixOS can run mise's precompiled Python builds through nix-ld.
+all_compile = false
+
+# Inside a uv project (identified by uv.lock), create/source its .venv so
+# `python` resolves to the project environment, including in subdirectories.
+python.uv_venv_auto = "create|source"
