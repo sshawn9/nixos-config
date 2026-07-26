@@ -28,6 +28,7 @@
 
       # Utilities
       xdg-utils
+      xdg-user-dirs
 
       # Brightness control
       brightnessctl

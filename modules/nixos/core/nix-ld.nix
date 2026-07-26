@@ -26,6 +26,7 @@
       freetype
       libxkbcommon
       wayland
+      vulkan-loader
 
       libx11
     ];
