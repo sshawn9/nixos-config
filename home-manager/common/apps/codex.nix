@@ -6,7 +6,7 @@
 }:
 
 {
-  home.file.".codex/AGENTS.md" = lib.mkIf config.programs.codex.enable {
+  home.file.".codex/AGENTS.md" = {
     source = config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";
   };
 
