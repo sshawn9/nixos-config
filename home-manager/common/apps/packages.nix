@@ -10,6 +10,8 @@ in
     (mkHomePackages {
       telegram-desktop = { };
       google-chrome = { };
+
+      ffmpeg-full = { };
     })
   ];
 }

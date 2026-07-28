@@ -8,9 +8,6 @@ in
 {
   imports = [
     (mkHomePackages {
-      ffmpeg-full = {
-        enable = true;
-      };
     })
   ];
 }
