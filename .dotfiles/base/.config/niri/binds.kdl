@@ -89,6 +89,7 @@ binds {
     Mod+Alt+Minus { set-window-width "-10%"; }
     Mod+Alt+Equal { set-window-width "+10%"; }
     Mod+0 { reset-window-height; }
+    Mod+V repeat=false allow-inhibiting=false { spawn "sh" "-c" "exec bash \"${XDG_CONFIG_HOME:-$HOME/.config}/niri/fit-window-to-height.sh\""; }
 
     Mod+A { expand-column-to-available-width; }
     Mod+C { center-column; }
