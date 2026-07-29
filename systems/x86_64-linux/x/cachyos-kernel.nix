@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   lib,
+  config,
   ...
 }:
 
@@ -14,6 +15,7 @@
   ];
 
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-lto-x86_64-v3;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.latest;
 
   boot.kernelModules = [
     "tcp_bbr3"
