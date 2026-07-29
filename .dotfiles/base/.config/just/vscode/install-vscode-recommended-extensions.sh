@@ -6,7 +6,7 @@ readonly DEFAULT_EXT_FILE=".vscode/extensions.json"
 readonly DEFAULT_CODE_BIN="code"
 
 usage() {
-  cat <<EOF
+    cat <<EOF
 Usage: ${0##*/} [EXTENSIONS_JSON] [CODE_BIN]
 
 Install VS Code workspace recommended extensions.
@@ -18,54 +18,54 @@ EOF
 }
 
 die() {
-  echo "Error: $*" >&2
-  exit 1
+    echo "Error: $*" >&2
+    exit 1
 }
 
 info() {
-  echo "$*"
+    echo "$*"
 }
 
 parse_args() {
-  case "${1:-}" in
-  -h | --help)
-    usage
-    exit 0
-    ;;
-  esac
+    case "${1:-}" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    esac
 
-  EXT_FILE="${1:-$DEFAULT_EXT_FILE}"
-  CODE_BIN="${2:-$DEFAULT_CODE_BIN}"
+    EXT_FILE="${1:-$DEFAULT_EXT_FILE}"
+    CODE_BIN="${2:-$DEFAULT_CODE_BIN}"
 }
 
 resolve_ext_file() {
-  case "$EXT_FILE" in
-  /*) return ;;
-  esac
+    case "$EXT_FILE" in
+    /*) return ;;
+    esac
 
-  if [[ -f $EXT_FILE ]]; then
-    return
-  fi
+    if [[ -f $EXT_FILE ]]; then
+        return
+    fi
 
-  if [[ -n ${JUST_INVOCATION_DIRECTORY:-} &&
-    -f "$JUST_INVOCATION_DIRECTORY/$EXT_FILE" ]]; then
-    EXT_FILE="$JUST_INVOCATION_DIRECTORY/$EXT_FILE"
-  fi
+    if [[ -n ${JUST_INVOCATION_DIRECTORY:-} &&
+        -f "$JUST_INVOCATION_DIRECTORY/$EXT_FILE" ]]; then
+        EXT_FILE="$JUST_INVOCATION_DIRECTORY/$EXT_FILE"
+    fi
 }
 
 require_inputs() {
-  [[ -f $EXT_FILE ]] ||
-    die "$EXT_FILE not found."
+    [[ -f $EXT_FILE ]] ||
+        die "$EXT_FILE not found."
 
-  command -v "$CODE_BIN" >/dev/null 2>&1 ||
-    die "$CODE_BIN not found in PATH."
+    command -v "$CODE_BIN" >/dev/null 2>&1 ||
+        die "$CODE_BIN not found in PATH."
 
-  command -v jq >/dev/null 2>&1 ||
-    die "jq not found in PATH."
+    command -v jq >/dev/null 2>&1 ||
+        die "jq not found in PATH."
 }
 
 strip_jsonc_comments() {
-  awk '
+    awk '
     BEGIN {
       in_string = 0
       escaped = 0
@@ -128,48 +128,48 @@ strip_jsonc_comments() {
 }
 
 read_recommendations() {
-  strip_jsonc_comments <"$EXT_FILE" |
-    jq -r '.recommendations // [] | .[] | select(type == "string")'
+    strip_jsonc_comments <"$EXT_FILE" |
+        jq -r '.recommendations // [] | .[] | select(type == "string")'
 }
 
 load_recommendations() {
-  local output
-  output=$(read_recommendations) ||
-    die "failed to parse recommendations from $EXT_FILE."
+    local output
+    output=$(read_recommendations) ||
+        die "failed to parse recommendations from $EXT_FILE."
 
-  EXTENSIONS=()
-  [[ -z $output ]] || mapfile -t EXTENSIONS <<<"$output"
+    EXTENSIONS=()
+    [[ -z $output ]] || mapfile -t EXTENSIONS <<<"$output"
 }
 
 install_extension() {
-  local extension="$1"
-  info "Installing: $extension"
-  "$CODE_BIN" --install-extension "$extension" --force >/dev/null 2>&1 ||
-    die "failed to install extension: $extension"
+    local extension="$1"
+    info "Installing: $extension"
+    "$CODE_BIN" --install-extension "$extension" --force >/dev/null 2>&1 ||
+        die "failed to install extension: $extension"
 }
 
 install_recommendations() {
-  if ((${#EXTENSIONS[@]} == 0)); then
-    info "No extensions found in recommendations."
-    return
-  fi
+    if ((${#EXTENSIONS[@]} == 0)); then
+        info "No extensions found in recommendations."
+        return
+    fi
 
-  local extension
-  for extension in "${EXTENSIONS[@]}"; do
-    install_extension "$extension"
-  done
+    local extension
+    for extension in "${EXTENSIONS[@]}"; do
+        install_extension "$extension"
+    done
 
-  info "All extensions installed successfully."
+    info "All extensions installed successfully."
 }
 
 main() {
-  parse_args "$@"
-  resolve_ext_file
-  require_inputs
+    parse_args "$@"
+    resolve_ext_file
+    require_inputs
 
-  info "Parsing and installing VS Code extensions from $EXT_FILE..."
-  load_recommendations
-  install_recommendations
+    info "Parsing and installing VS Code extensions from $EXT_FILE..."
+    load_recommendations
+    install_recommendations
 }
 
 main "$@"

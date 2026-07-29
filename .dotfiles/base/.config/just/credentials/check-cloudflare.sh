@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  cat <<EOF
+    cat <<EOF
 Usage: ${0##*/} TOKEN
 
 Dispatches Cloudflare credential checks by token prefix:
@@ -16,35 +16,35 @@ EOF
 }
 
 die() {
-  echo "Error: $*" >&2
-  exit 1
+    echo "Error: $*" >&2
+    exit 1
 }
 
 main() {
-  case "${1:-}" in
-  -h | --help)
-    usage
-    exit 0
-    ;;
-  esac
+    case "${1:-}" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    esac
 
-  (($# == 1)) || die "usage: ${0##*/} TOKEN"
+    (($# == 1)) || die "usage: ${0##*/} TOKEN"
 
-  local token="$1"
-  local script_dir
-  script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+    local token="$1"
+    local script_dir
+    script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-  case "$token" in
-  cfut_*)
-    exec bash "$script_dir/check-cloudflare-user.sh" "$token"
-    ;;
-  cfat_*)
-    exec bash "$script_dir/check-cloudflare-account.sh" "$token"
-    ;;
-  *)
-    die "unsupported Cloudflare token prefix. Expected cfut_* or cfat_*."
-    ;;
-  esac
+    case "$token" in
+    cfut_*)
+        exec bash "$script_dir/check-cloudflare-user.sh" "$token"
+        ;;
+    cfat_*)
+        exec bash "$script_dir/check-cloudflare-account.sh" "$token"
+        ;;
+    *)
+        die "unsupported Cloudflare token prefix. Expected cfut_* or cfat_*."
+        ;;
+    esac
 }
 
 main "$@"

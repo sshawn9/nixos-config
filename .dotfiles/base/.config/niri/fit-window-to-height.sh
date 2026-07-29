@@ -15,8 +15,8 @@ require_dependencies() {
     local required_command
 
     for required_command in niri jq awk; do
-        command -v "$required_command" >/dev/null 2>&1 \
-            || die "$required_command is not available"
+        command -v "$required_command" >/dev/null 2>&1 ||
+            die "$required_command is not available"
     done
 }
 
@@ -24,8 +24,8 @@ require_dependencies() {
 get_focused_window() {
     local window_json
 
-    window_json=$(niri msg --json focused-window) \
-        || die "cannot read the focused window"
+    window_json=$(niri msg --json focused-window) ||
+        die "cannot read the focused window"
 
     jq -er '
         [
@@ -41,8 +41,8 @@ get_focused_window() {
 get_window_output_name() {
     local workspace_id=$1
 
-    niri msg --json workspaces \
-        | jq -er --argjson workspace_id "$workspace_id" '
+    niri msg --json workspaces |
+        jq -er --argjson workspace_id "$workspace_id" '
             .[]
             | select(.id == $workspace_id)
             | .output
@@ -53,8 +53,8 @@ get_window_output_name() {
 get_output_metrics() {
     local output_name=$1
 
-    niri msg --json outputs \
-        | jq -er --arg output "$output_name" '
+    niri msg --json outputs |
+        jq -er --arg output "$output_name" '
             .[$output].logical
             | [.height, .scale]
             | @tsv
@@ -65,8 +65,8 @@ get_niri_gaps() {
     local gaps
 
     gaps=$(
-        awk '$1 == "gaps" { print $2; exit }' "$NIRI_LAYOUT_FILE" 2>/dev/null \
-            || true
+        awk '$1 == "gaps" { print $2; exit }' "$NIRI_LAYOUT_FILE" 2>/dev/null ||
+            true
     )
 
     printf '%s\n' "${gaps:-0}"
@@ -98,11 +98,11 @@ get_noctalia_density_height() {
     local density=$1
 
     case "$density" in
-        mini) printf '21\n' ;;
-        compact) printf '25\n' ;;
-        comfortable) printf '37\n' ;;
-        spacious) printf '47\n' ;;
-        *) printf '31\n' ;;
+    mini) printf '21\n' ;;
+    compact) printf '25\n' ;;
+    comfortable) printf '37\n' ;;
+    spacious) printf '47\n' ;;
+    *) printf '31\n' ;;
     esac
 }
 
@@ -185,9 +185,9 @@ main() {
     local gaps bar_reserve target_size target_width target_height
 
     case "${1:-}" in
-        "") ;;
-        --dry-run) dry_run=true ;;
-        *) die "usage: ${0##*/} [--dry-run]" ;;
+    "") ;;
+    --dry-run) dry_run=true ;;
+    *) die "usage: ${0##*/} [--dry-run]" ;;
     esac
 
     require_dependencies
@@ -196,8 +196,8 @@ main() {
     IFS=$'\t' read -r window_id current_width current_height workspace_id \
         <<<"$window_data"
 
-    ((current_width > 0 && current_height > 0)) \
-        || die "focused window has an invalid size"
+    ((current_width > 0 && current_height > 0)) ||
+        die "focused window has an invalid size"
 
     output_name=$(get_window_output_name "$workspace_id")
     output_metrics=$(get_output_metrics "$output_name")
@@ -215,8 +215,8 @@ main() {
     )
     IFS=$'\t' read -r target_width target_height <<<"$target_size"
 
-    ((target_width > 0 && target_height > 0)) \
-        || die "calculated an invalid target size"
+    ((target_width > 0 && target_height > 0)) ||
+        die "calculated an invalid target size"
 
     if [[ $dry_run == true ]]; then
         printf 'window=%s output=%s current=%sx%s target=%sx%s\n' \
