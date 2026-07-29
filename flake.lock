@@ -928,11 +928,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780421321,
-        "narHash": "sha256-attfprF76ZQepMgNcgv0vwdR1j2MF4mkzh0x7fVS9bg=",
+        "lastModified": 1785242571,
+        "narHash": "sha256-2dPqI+xpmW1SXvwIkFushlyvLKLPEFhc4BMbRr5CsaU=",
         "owner": "sshawn9",
         "repo": "treefmt-preset",
-        "rev": "0e0857c3de5a1c71cccf25a03d897ca5e205e5d2",
+        "rev": "31c17c3d25df7375ab2d477d9227bb60015e75ee",
         "type": "github"
       },
       "original": {
