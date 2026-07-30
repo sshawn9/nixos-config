@@ -12,6 +12,9 @@
       thumbfast
     ];
     config = {
+      loop-playlist = "inf";
+      autocreate-playlist = "same";
+
       osc = false;
       osd-bar = false;
       border = false;
@@ -52,8 +55,8 @@
       "Shift+RIGHT" = "seek  120";
       "Shift+LEFT" = "seek -120";
 
-      "[" = "playlist-prev";
-      "]" = "playlist-next";
+      "[" = "cycle playlist-pos down";
+      "]" = "cycle playlist-pos up";
 
       "p" = "script-binding uosc/items";
       "o" = "script-binding uosc/open-file";
