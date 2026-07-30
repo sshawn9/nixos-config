@@ -12,6 +12,8 @@ in
       google-chrome = { };
 
       ffmpeg-full = { };
+
+      losslesscut = { };
     })
   ];
 }

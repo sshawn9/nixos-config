@@ -29,6 +29,8 @@ in
           telegram-desktop.enable = true;
 
           ffmpeg-full.enable = true;
+
+          losslesscut.enable = true;
         };
       };
     };
