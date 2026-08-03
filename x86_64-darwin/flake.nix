@@ -145,11 +145,6 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    daeuniverse = {
-      url = "github:daeuniverse/flake.nix";
-      inputs.flake-parts.follows = "flake-parts";
-    };
-
     mousehop = {
       url = "github:jondkinney/mousehop/v0.14.2";
       # inputs.nixpkgs.follows = "nixpkgs-unstable";

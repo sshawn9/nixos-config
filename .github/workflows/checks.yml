@@ -18,8 +18,6 @@ env:
     extra-trusted-public-keys = cache.soopy.moe-1:0RZVsQeR+GOh0VQI9rvnHz55nVXkFardDqfm4+afjPo=
     extra-substituters = https://attic.xuyh0120.win/lantian
     extra-trusted-public-keys = lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=
-    extra-substituters = https://cache.garnix.io
-    extra-trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=
     extra-substituters = https://catppuccin.cachix.org
     extra-trusted-public-keys = catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU=
     extra-substituters = https://claude-code.cachix.org

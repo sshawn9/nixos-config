@@ -280,18 +280,6 @@
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # Upstream inputs:
-    # daeuniverse
-    # ├── flake-parts
-    # │   └── nixpkgs-lib
-    # └── nixpkgs
-    #
-    # Follow policy: none — dae/daed are consumed from the upstream package set and built
-    # by Garnix, so retaining the published graph preserves those binary-cache paths.
-    daeuniverse = {
-      url = "github:daeuniverse/flake.nix";
-    };
-
-    # Upstream inputs:
     # mousehop
     # ├── nixpkgs
     # └── rust-overlay
