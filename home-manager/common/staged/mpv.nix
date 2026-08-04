@@ -40,6 +40,8 @@
       audio-buffer = 1;
       video-sync = "display-resample";
       interpolation = true;
+
+      vf-add = ''@triple:!lavfi="[in]split=3[a][b][c];[a][b][c]hstack=inputs=3[out]"'';
     };
 
     bindings = {
@@ -66,6 +68,8 @@
       "SPACE" = "cycle pause";
       "f" = "cycle fullscreen";
       "s" = "screenshot";
+
+      "Ctrl+3" = "vf toggle @triple";
     };
   };
 }
