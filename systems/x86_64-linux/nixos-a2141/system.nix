@@ -1,7 +1,5 @@
 _:
 
 {
-  programs = {
-    sniffnet.enable = true;
-  };
+  boot.tmp.useTmpfs = true;
 }

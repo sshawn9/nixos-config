@@ -8,10 +8,12 @@ in
 {
   home-manager = {
     users.${username} = {
-      home.username = username;
+      programs = {
+        ghostty.enable = true;
 
-      my = {
-        paths.dotfilesLayers.overrideDirs = [ "nixos-a2141" ];
+        vscode.enable = true;
+
+        mpv.enable = true;
       };
     };
   };
