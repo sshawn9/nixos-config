@@ -6,4 +6,7 @@
   services.gvfs.enable = lib.mkDefault true;
 
   services.power-profiles-daemon.enable = lib.mkDefault true;
+
+  security.polkit.enable = lib.mkDefault true;
+  security.polkit.enablePkexecWrapper = lib.mkDefault true;
 }
