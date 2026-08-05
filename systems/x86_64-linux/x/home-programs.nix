@@ -16,6 +16,8 @@ in
         opencode.enable = true;
 
         mpv.enable = true;
+
+        aria2.enable = true;
       };
     };
   };
