@@ -31,6 +31,8 @@ in
           ffmpeg-full.enable = true;
 
           losslesscut.enable = true;
+
+          antigravity-ide.enable = true;
         };
       };
     };
