@@ -6,6 +6,7 @@
   "editor.fontSize": 20,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
+  "editor.wordWrap": "on",
   // Diff editor
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": true,
