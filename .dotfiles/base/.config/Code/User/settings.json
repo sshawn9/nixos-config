@@ -10,6 +10,7 @@
   // Diff editor
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": true,
+  "diffEditor.wordWrap": "on",
   // Files
   "files.autoSave": "onFocusChange",
   // Direnv
