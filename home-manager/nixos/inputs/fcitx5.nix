@@ -22,6 +22,8 @@ in
     };
 
     dataFile = {
+      "fcitx5/themes/catppuccin-mocha-mauve/theme.conf".source =
+        xdgDataLayeredSource "fcitx5/themes/catppuccin-mocha-mauve/theme.conf";
       "fcitx5/rime/default.custom.yaml".source = xdgDataLayeredSource "fcitx5/rime/default.custom.yaml";
       "fcitx5/rime/rime_ice.custom.yaml".source = xdgDataLayeredSource "fcitx5/rime/rime_ice.custom.yaml";
       "fcitx5/rime/fcitx5.custom.yaml".source = xdgDataLayeredSource "fcitx5/rime/fcitx5.custom.yaml";
