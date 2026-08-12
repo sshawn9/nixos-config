@@ -187,12 +187,11 @@
 
     # Upstream inputs:
     # claude-code-nix
-    # ├── flake-utils
-    # │   └── systems
-    # └── nixpkgs
+    # ├── nixpkgs
+    # └── systems
     #
     # Follow policy: partial — nixpkgs is shared because rebuilding the fixed upstream
-    # binary's thin wrapper is cheap; the unique flake-utils graph remains upstream.
+    # binary's thin wrapper is cheap; the unique systems input has no root counterpart.
     claude-code-nix = {
       url = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -267,16 +266,14 @@
 
     # Upstream inputs:
     # nix-cachyos-kernel
-    # ├── cachyos-kernel (source only)
-    # ├── cachyos-kernel-patches (source only)
     # ├── flake-compat (source only)
     # ├── flake-parts
     # │   └── nixpkgs-lib
     # └── nixpkgs
     #
-    # Follow policy: none — the release branch, kernel patches, and pinned nixpkgs are a
-    # cache-matched unit; upstream explicitly warns that overriding nixpkgs loses the
-    # kernel cache and can introduce patch/version mismatches.
+    # Follow policy: none — the release branch and pinned nixpkgs are a cache-matched
+    # unit; upstream warns that overriding nixpkgs loses the kernel cache and can
+    # introduce patch/version mismatches.
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # Upstream inputs:
