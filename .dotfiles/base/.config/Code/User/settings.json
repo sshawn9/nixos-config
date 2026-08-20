@@ -6,11 +6,9 @@
   "editor.fontSize": 20,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "editor.wordWrap": "on",
   // Diff editor
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": true,
-  "diffEditor.wordWrap": "on",
   // Files
   "files.autoSave": "onFocusChange",
   // Direnv
