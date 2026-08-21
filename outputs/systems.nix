@@ -60,19 +60,39 @@ let
     in
     lib.concatMapAttrs (
       system: hosts:
-      lib.mapAttrs' (
+      lib.concatMapAttrs (
         hostname: _:
         let
-          outputName =
-            if builtins.length hostnameSystems.${hostname} == 1 then hostname else "${hostname}@${system}";
+          configuration = mkSystem builder system hostname;
         in
-        lib.nameValuePair outputName (mkSystem builder system hostname)
+        # The canonical name, spellable by anyone who knows the platform and the
+        # directory, without knowing what else exists. The bare directory name is
+        # the same configuration under a second key, kept because nixos-rebuild
+        # looks a configuration up by the machine's hostname; it is dropped when
+        # two platforms share a directory name, since it could not say which.
+        {
+          "${hostname}@${system}" = configuration;
+        }
+        // lib.optionalAttrs (builtins.length hostnameSystems.${hostname} == 1) {
+          ${hostname} = configuration;
+        }
       ) hosts
     ) matchingSystems;
+
+  nixosConfigurations = configurationsFor (lib.hasSuffix "linux") inputs.nixpkgs.lib.nixosSystem;
+  darwinConfigurations = configurationsFor (lib.hasSuffix "darwin") inputs.nix-darwin.lib.darwinSystem;
 in
 {
   inherit systemsTree;
-  supportedSystems = builtins.attrNames systemsTree;
-  nixosConfigurations = configurationsFor (lib.hasSuffix "linux") inputs.nixpkgs.lib.nixosSystem;
-  darwinConfigurations = configurationsFor (lib.hasSuffix "darwin") inputs.nix-darwin.lib.darwinSystem;
+
+  # Still plain values because outputs/checks.nix turns every configuration into
+  # a buildable check; the flake module below is only about publishing them.
+  inherit nixosConfigurations darwinConfigurations;
+
+  flakeModule = {
+    # Every module contributes the platforms it needs; flake-parts merges them.
+    systems = builtins.attrNames systemsTree;
+
+    flake = { inherit nixosConfigurations darwinConfigurations; };
+  };
 }

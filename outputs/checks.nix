@@ -13,10 +13,6 @@ let
     lib.mapAttrs' (
       name: configuration: lib.nameValuePair "${prefix}-${name}" (getBuild configuration)
     ) configurations;
-in
-{
-  supportedSystems = lib.unique (systems.supportedSystems ++ homes.supportedSystems);
-
   forSystem =
     system:
     # `nix flake check` already validates `nixosConfigurations` as a standard
@@ -33,4 +29,13 @@ in
     // mkConfigurationChecks "home" (configuration: configuration.activationPackage) (
       configurationsForSystem system homes.homeConfigurations
     );
+in
+{
+  flakeModule = {
+    perSystem =
+      { system, ... }:
+      {
+        checks = forSystem system;
+      };
+  };
 }

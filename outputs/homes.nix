@@ -57,9 +57,6 @@ let
         }
       ];
     };
-in
-{
-  supportedSystems = builtins.attrNames homesTree;
 
   homeConfigurations = lib.concatMapAttrs (
     system: entries:
@@ -72,4 +69,16 @@ in
       lib.nameValuePair finalName (mkHome system key)
     ) entries
   ) homesTree;
+in
+{
+  # Still a plain value because outputs/checks.nix turns every configuration into
+  # a buildable check; the flake module below is only about publishing them.
+  inherit homeConfigurations;
+
+  flakeModule = {
+    # Every module contributes the platforms it needs; flake-parts merges them.
+    systems = builtins.attrNames homesTree;
+
+    flake = { inherit homeConfigurations; };
+  };
 }
