@@ -7,7 +7,10 @@
 let
   inherit (inputs) self;
 
-  rawTime = self.lastModifiedDate;
+  # Absent when this flake is consumed as a `path:` input rather than
+  # evaluated directly, which is how an installed system reaches it: the
+  # generated flake in /etc/nixos names the staged repository as an input.
+  rawTime = self.lastModifiedDate or "19700101000000";
   toInt = lib.toIntBase10;
   pad2 = n: if n < 10 then "0${toString n}" else toString n;
   mod = base: int: base - int * (builtins.div base int);
