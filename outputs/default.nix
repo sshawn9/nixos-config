@@ -23,6 +23,7 @@ let
   systems = import ./systems.nix commonArgs;
   homes = import ./homes.nix commonArgs;
   installers = import ./installer.nix commonArgs;
+  installerSystems = import ./installer-systems.nix commonArgs;
   configurationChecks = import ./checks.nix {
     inherit (nixpkgs) lib;
     inherit systems homes;
@@ -36,6 +37,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     systems.flakeModule
     homes.flakeModule
     installers.flakeModule
+    installerSystems.flakeModule
   ];
 
   perSystem =
