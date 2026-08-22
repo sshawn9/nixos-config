@@ -34,7 +34,7 @@ let
         # whole module tree through modules/default.nix.
         repoTree.modules.installer-collect
         {
-          imports = myLib.flattenAttrTreeToList installersTree.${system}.${name};
+          imports = myLib.loadRecursiveModulePathList (self.outPath + "/installers/${system}/${name}");
           nixpkgs.pkgs = nixpkgsPolicy.mkPkgs system;
         }
       ];
