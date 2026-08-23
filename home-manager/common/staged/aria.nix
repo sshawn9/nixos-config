@@ -119,7 +119,7 @@ in
   programs = {
     aria2 = {
       package = lib.mkDefault pkgs.unstable.aria2;
-      systemd.enable = lib.mkDefault pkgs.stdenv.isLinux;
+      systemd.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isLinux;
     };
 
     aria2p = {
