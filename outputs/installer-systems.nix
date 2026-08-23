@@ -107,7 +107,8 @@ in
       {
         checks = lib.mapAttrs' (
           hostname: _:
-          lib.nameValuePair "installer-system-${hostname}" (mkInstalledSystem system hostname checkGeneratedModules).config.system.build.toplevel
+          lib.nameValuePair "installer-system-${hostname}"
+            (mkInstalledSystem system hostname checkGeneratedModules).config.system.build.toplevel
         ) (installerSystemsTree.${system} or { });
       };
   };
