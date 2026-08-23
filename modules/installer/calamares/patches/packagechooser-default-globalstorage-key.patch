@@ -1,0 +1,22 @@
+Description: Seed globalstorage's packagechooser_packagechooser with an empty value
+ With the module gone from the sequence by
+ packagechooser-remove-from-sequence.patch, nothing writes that key any more, and
+ every downstream branch that reads it would raise instead of falling through. An
+ empty value keeps those branches on their no-selection path, which is what the
+ embedded target configuration already decides.
+Forwarded: not-needed
+
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -572,6 +572,10 @@ def run():
+     # Create initial config file
+     cfg = cfghead
+     gs = libcalamares.globalstorage
++
++    # Package selection is defined by the embedded target configuration.
++    gs.insert("packagechooser_packagechooser", "")
++
+     variables = dict()
+ 
+     # Setup variables

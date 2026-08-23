@@ -1,0 +1,60 @@
+Description: Copy the configuration flake's inputs into the target's store
+ nixos-install does not build in the store it runs from. It builds with
+ `--store <root_mount_point>`, so the flake write-installed-flake.patch leaves
+ in the target is evaluated in the target's own store, which at that moment
+ holds nothing.
+ .
+ A flake input is not a store path Nix will substitute. Missing from the store
+ an evaluation runs in, it is fetched from the URL it was locked to, and
+ --extra-substituters does not enter into it; nixos-install already passes one.
+ On a medium built to install without a network that fetch is the whole
+ installation failing, one input deep, with a DNS error.
+ .
+ `nix flake archive` closes that gap and nothing else. It resolves the input
+ graph in the medium's store, where the prebuilt target's closure already put
+ every source, and copies it into the store the evaluation is about to read.
+ Signatures are waived because those paths carry none: they reached the medium
+ in its image, not from a signed cache.
+ .
+ Anchored between upstream's chmod and its nixosInstallCmd, lines no other
+ patch in this tree touches, so this one has no order to keep with them.
+Forwarded: not-needed
+
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -1020,6 +1020,34 @@
+     except subprocess.CalledProcessError as e:
+         libcalamares.utils.warning("Failed to set permissions on {}: {}".format(root_mount_point, e.output))
+ 
++    # nixos-install builds with `--store <root_mount_point>`, so the flake
++    # written above is evaluated in the target's store, not in this one. Nix
++    # does not substitute a flake input: an input whose source is missing from
++    # the store an evaluation runs in is fetched from the URL it was locked to,
++    # and on a medium built to install without a network that fetch is the whole
++    # installation failing. Archiving the flake carries every input's source,
++    # the inputs of inputs included, out of the medium's store and into the
++    # target's, which is where nixos-install is about to look for them.
++    #
++    # Signatures are waived because the medium's store paths carry none: they
++    # were put there by the image build, not fetched from a signed cache.
++    try:
++        subprocess.check_output(
++            [
++                "nix", "flake", "archive",
++                "--no-check-sigs",
++                "--to", root_mount_point,
++                "--", os.path.join(root_mount_point, "etc/nixos"),
++            ],
++            stderr=subprocess.STDOUT,
++        )
++    except subprocess.CalledProcessError as e:
++        output = e.output.decode("utf8") if e.output is not None else str(e)
++        return (
++            _("Failed to copy the configuration flake's inputs to the target"),
++            _(output),
++        )
++
+     # build nixos-install command
+     nixosInstallCmd = [ "pkexec" ]
+     nixosInstallCmd.extend(generateProxyStrings())

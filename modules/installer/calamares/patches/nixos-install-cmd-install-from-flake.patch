@@ -1,0 +1,38 @@
+Description: Point nixos-install at the flake staged in the target's /etc/nixos
+ Upstream's nixosInstallCmd installs the generated configuration.nix on its own.
+ --flake makes it evaluate the flake write-installed-flake.patch leaves there
+ instead, and --no-channel-copy keeps a flake installation from dragging the
+ medium's channels along.
+ .
+ The target store must copy outputs from the medium even when the machine has no
+ configured network address. The nix CLI otherwise treats that state like
+ --offline and turns substitution off, including substitution from the medium's
+ local store. Explicit substitute=true keeps that local copy path enabled.
+ always-allow-substitutes additionally covers outputs whose derivations disable
+ substitution themselves. Keep both settings attached to the operation which
+ needs them, across the second pkexec, instead of relying only on the medium's
+ ambient nix.conf.
+ .
+ The output name is a constant because that flake has exactly one: it was
+ written for this machine, moments ago, and names nothing else.
+Forwarded: not-needed
+
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -1030,6 +1030,15 @@
+     nixosInstallCmd.extend(
+         [
+             "nixos-install",
++            "--flake",
++            os.path.join(root_mount_point, "etc/nixos") + "#installed",
++            "--no-channel-copy",
++            "--option",
++            "substitute",
++            "true",
++            "--option",
++            "always-allow-substitutes",
++            "true",
+             "--no-root-passwd",
+             "--root",
+             root_mount_point,

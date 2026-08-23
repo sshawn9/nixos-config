@@ -1,0 +1,33 @@
+Description: Remove the packagechooser module from Calamares' sequence
+ Upstream's package chooser appends desktop-environment blocks to the generated
+ configuration.nix, and the target host imports that file, so a choice made in
+ the wizard would stack on top of the desktop this flake already declares.
+ .
+ The unfree notesqml instance goes with it, since it exists only to explain that
+ page. A dozen downstream branches in modules/nixos/main.py read the
+ globalstorage key the module used to write, which
+ packagechooser-default-globalstorage-key.patch supplies instead.
+Forwarded: not-needed
+
+diff --git a/config/settings.conf b/config/settings.conf
+--- a/config/settings.conf
++++ b/config/settings.conf
+@@ -83,9 +83,6 @@ instances:
+ #
+ # YAML: list of maps of string:string key-value pairs.
+ instances:
+-- id:       unfree
+-  module:   notesqml
+-  config:   unfree.conf
+ - module:   nixos
+   weight:   48
+ 
+@@ -117,8 +114,6 @@ sequence:
+   - locale
+   - keyboard
+   - users
+-  - packagechooser
+-  - notesqml@unfree
+   - partition
+   - summary
+ - exec:

@@ -1,0 +1,48 @@
+Description: Stage the repository under the target's /etc/nixos/config
+ Inserted right after upstream writes configuration.nix. The repository goes
+ into a subdirectory rather than into /etc/nixos itself, because /etc/nixos is
+ now the generated flake's directory: upstream's configuration.nix and
+ hardware-configuration.nix stay where they are, and the flake written beside
+ them names the first as the hardware half of the installed system.
+ .
+ The source path is a hole that calamares.nix fills while it prepares this patch.
+ .
+ Staging the tree is all this does. write-installed-flake.patch produces the
+ flake that binds it to the machine in front of us, and anchors on the lines this
+ patch inserts, so it cannot be applied before it.
+Forwarded: not-needed
+
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -1009,6 +1009,30 @@
+     # Write the configuration.nix file
+     libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", config], None, cfg)
+ 
++    # Stage the repository beside the flake that is about to be written, not in
++    # its place: /etc/nixos belongs to the generated flake now.
++    #
++    # No pkexec: the medium's desktop entry starts Calamares through it, so this
++    # job is already root, which is the same thing the plain `cp` above relies on.
++    nixos_dir = os.path.join(root_mount_point, "etc/nixos")
++    try:
++        subprocess.check_output(
++            [
++                "sh", "-c",
++                'mkdir -p -- "$1" '
++                '&& cp -rT --no-preserve=mode,ownership -- "$2" "$1" '
++                '&& chmod -R u+w -- "$1"',
++                "stage", os.path.join(nixos_dir, "config"), "@source@",
++            ],
++            stderr=subprocess.STDOUT,
++        )
++    except subprocess.CalledProcessError as e:
++        output = e.output.decode("utf8") if e.output is not None else str(e)
++        return (
++            _("Failed to stage the NixOS configuration source"),
++            _(output),
++        )
++
+     status = _("Installing NixOS")
+     libcalamares.job.setprogress(INSTALL_PROGRESS_START)
+ 

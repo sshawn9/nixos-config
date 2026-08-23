@@ -1,0 +1,136 @@
+Description: Write and lock the installed system's flake in the target's /etc/nixos
+ The medium does not point nixos-install at a host that some other file declared
+ installable. It writes a flake whose single output hands the staged repository
+ the modules that only exist because a wizard just ran: the configuration
+ upstream generated from the disks it partitioned, and the identity the operator
+ typed, already in the form the modules read it in.
+ .
+ Nothing is unpacked on the other side. The composition takes that list as its
+ one mandatory argument, which is why a machine installed without being told
+ what it is being installed onto is not a value that can be constructed, and why
+ nothing has to be asserted about it on either side of the two evaluations.
+ .
+ Locking is part of writing it, not a separate concern: an unlocked flake is not
+ one nixos-install can install. It resolves the flake to a locked URL carrying a
+ narHash, then builds that URL -- and resolving is also what creates flake.lock.
+ Left to nixos-install the directory gains a file after its hash was taken, and
+ the build dies with "NAR hash mismatch in input". Locking beforehand makes the
+ tree it measures the tree it evaluates.
+ .
+ The target's name and mkpasswd executable are holes that calamares.nix fills
+ while it prepares this patch. The password is de-obscured only in memory and
+ passed to mkpasswd over stdin; only its yescrypt hash enters the generated
+ flake.
+Forwarded: not-needed
+
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -1030,12 +1030,107 @@
+         output = e.output.decode("utf8") if e.output is not None else str(e)
+         return (
+             _("Failed to stage the NixOS configuration source"),
+             _(output),
+         )
+ 
++    obscured_password = gs.value("password")
++    if not isinstance(obscured_password, str) or not obscured_password:
++        return (
++            _("Failed to read the user password"),
++            _("Calamares did not provide the password entered in the users page."),
++        )
++
++    password = None
++    try:
++        # Calamares stores this value with a symmetric obscuring function;
++        # applying the same function again recovers the text entered in the UI.
++        password = libcalamares.utils.obscure(obscured_password)
++        password_hash = subprocess.check_output(
++            ["@mkpasswd@", "--method=yescrypt", "--stdin"],
++            input=(password + "\n").encode("utf8"),
++            stderr=subprocess.STDOUT,
++        ).decode("utf8").strip()
++    except (OSError, subprocess.CalledProcessError) as e:
++        output = getattr(e, "output", None)
++        output = output.decode("utf8", errors="replace") if output else str(e)
++        return (_("Failed to hash the user password"), _(output))
++    finally:
++        password = None
++
++    if not password_hash.startswith("$y$") or "\n" in password_hash:
++        return (
++            _("Failed to hash the user password"),
++            _("mkpasswd did not return a single yescrypt password hash."),
++        )
++
++    username = gs.value("username") or ""
++
++    # The installed system is composed here rather than looked up: the staged
++    # repository supplies the machine, and this flake hands it the values only
++    # the wizard could know -- the generated hardware, identity, and password
++    # hash. JSON strings are also valid Nix strings and preserve escaping.
++    installed_flake = (
++        '{{\n'
++        '  inputs.repo.url = "path:./config";\n'
++        '\n'
++        '  outputs =\n'
++        '    {{ repo, ... }}:\n'
++        '    {{\n'
++        '      nixosConfigurations.installed = repo.installedSystems."@target@" [\n'
++        '        ./configuration.nix\n'
++        '        {{\n'
++        '          my.shared = {{\n'
++        '            hostname = {};\n'
++        '            username = {};\n'
++        '          }};\n'
++        '          users.users.{}.hashedPassword = {};\n'
++        '        }}\n'
++        '      ];\n'
++        '    }};\n'
++        '}}\n'
++    ).format(
++        json.dumps(variables["hostname"]),
++        json.dumps(username),
++        json.dumps(username),
++        json.dumps(password_hash),
++    )
++    try:
++        subprocess.check_output(
++            [
++                "sh", "-c", 'printf %s "$2" > "$1"',
++                "write", os.path.join(nixos_dir, "flake.nix"), installed_flake,
++            ],
++            stderr=subprocess.STDOUT,
++        )
++    except subprocess.CalledProcessError as e:
++        output = e.output.decode("utf8") if e.output is not None else str(e)
++        return (
++            _("Failed to write the installed system's flake"),
++            _(output),
++        )
++
++    # Lock it here, as its own step, rather than leaving it to nixos-install.
++    # nixos-install resolves the flake to a locked URL -- narHash and all --
++    # before it builds, and resolving is also what writes flake.lock. Leaving
++    # the lock to it means the directory gains a file after the hash was taken
++    # and the build dies with a NAR hash mismatch.
++    try:
++        subprocess.check_output(
++            [
++                "nix", "flake", "lock", nixos_dir,
++            ],
++            stderr=subprocess.STDOUT,
++        )
++    except subprocess.CalledProcessError as e:
++        output = e.output.decode("utf8") if e.output is not None else str(e)
++        return (
++            _("Failed to lock the installed system's flake"),
++            _(output),
++        )
++
+     status = _("Installing NixOS")
+     libcalamares.job.setprogress(INSTALL_PROGRESS_START)
+ 
+     try:
+         subprocess.check_output(
+             ["pkexec", "chmod", "755", root_mount_point],

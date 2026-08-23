@@ -1,0 +1,26 @@
+Description: Drop the welcome page's internet requirement
+ Applied only when my.installer.offline.enable is set, which already means the
+ installation must not depend on the network. Everything it needs is on the
+ medium, so the preflight check would refuse a machine that installs perfectly.
+Forwarded: not-needed
+
+diff --git a/config/modules/welcome.conf b/config/modules/welcome.conf
+--- a/config/modules/welcome.conf
++++ b/config/modules/welcome.conf
+@@ -5,16 +5,12 @@ requirements:
+     requiredStorage: 10
+     requiredRam: 3.0
+ 
+-    internetCheckUrl: [ https://geoip.kde.org/v1/calamares, https://cache.nixos.org/ ]
+-
+     check:
+         - storage
+         - ram
+         - power
+-        - internet
+         - screen
+ 
+     required:
+         - storage
+         - ram
+-        - internet
