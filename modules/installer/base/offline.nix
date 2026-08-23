@@ -42,7 +42,6 @@ let
   # top-level builder/check outputs that those cheap builds need.
   configurationBuildInputs = [
     prebuilt.config.environment.etc."systemd/generator-environment.json".source.inputDerivation
-    prebuilt.config.system.systemBuilderArgs.perl
     prebuilt.pkgs.getconf
     prebuilt.pkgs.kmod.dev
     prebuilt.pkgs.libcap.dev
