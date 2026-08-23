@@ -17,8 +17,7 @@ let
   # only the installer can know. The argument is mandatory, so a system that was
   # never told what it is being installed onto is not a value that exists.
   mkInstalledSystem =
-    system: hostname:
-    generated: # modules the installer wrote, already in their final form
+    system: hostname: generated: # modules the installer wrote, already in their final form
     inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       # `hostname` is the directory key, not a machine name, so it is not passed
