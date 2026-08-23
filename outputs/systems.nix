@@ -5,6 +5,7 @@
   myLib,
   repoTree,
   nixpkgsPolicy,
+  ...
 }:
 let
   systemsTree = repoTree.systems or { };
@@ -47,15 +48,15 @@ let
     let
       matchingSystems = lib.filterAttrs (system: _: systemPredicate system) systemsTree;
 
-      hostnameSystems = lib.foldlAttrs (
-        acc: system: hosts:
+      hostnameCounts = lib.foldlAttrs (
+        counts: _system: hosts:
         lib.foldlAttrs (
-          acc': hostname: _:
-          acc'
+          counts': hostname: _:
+          counts'
           // {
-            ${hostname} = (acc'.${hostname} or [ ]) ++ [ system ];
+            ${hostname} = (counts'.${hostname} or 0) + 1;
           }
-        ) acc hosts
+        ) counts hosts
       ) { } matchingSystems;
     in
     lib.concatMapAttrs (
@@ -73,7 +74,7 @@ let
         {
           "${hostname}@${system}" = configuration;
         }
-        // lib.optionalAttrs (builtins.length hostnameSystems.${hostname} == 1) {
+        // lib.optionalAttrs (hostnameCounts.${hostname} == 1) {
           ${hostname} = configuration;
         }
       ) hosts
@@ -85,8 +86,6 @@ in
 {
   inherit systemsTree;
 
-  # Still plain values because outputs/checks.nix turns every configuration into
-  # a buildable check; the flake module below is only about publishing them.
   inherit nixosConfigurations darwinConfigurations;
 
   flakeModule = {
@@ -94,5 +93,25 @@ in
     systems = builtins.attrNames systemsTree;
 
     flake = { inherit nixosConfigurations darwinConfigurations; };
+
+    perSystem =
+      { system, ... }:
+      {
+        # Standard flake outputs are evaluated by `nix flake check` already;
+        # explicit checks additionally make every system closure buildable.
+        checks =
+          lib.mapAttrs'
+            (name: configuration: lib.nameValuePair "nixos-${name}" configuration.config.system.build.toplevel)
+            (
+              lib.filterAttrs (
+                _name: configuration: configuration.pkgs.stdenv.hostPlatform.system == system
+              ) nixosConfigurations
+            )
+          // lib.mapAttrs' (name: configuration: lib.nameValuePair "darwin-${name}" configuration.system) (
+            lib.filterAttrs (
+              _name: configuration: configuration.pkgs.stdenv.hostPlatform.system == system
+            ) darwinConfigurations
+          );
+      };
   };
 }

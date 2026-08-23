@@ -5,15 +5,13 @@
   myLib,
   repoTree,
   nixpkgsPolicy,
+  ...
 }:
 let
   # Every entry is a platform directory holding real installers. The shared
   # module layer lives in modules/installer, so this tree needs no reserved name
   # and stays the same shape as systems/ and homes/.
   installersTree = repoTree.installers or { };
-
-  installerConfigurationsFor =
-    system: lib.mapAttrs (name: _: mkInstaller system name) (installersTree.${system} or { });
 
   mkInstaller =
     system: name:
@@ -44,7 +42,9 @@ let
   # can be inspected directly. Nested by system to stay one to one with the
   # packages they produce, which also means two platforms may carry installers
   # of the same name without any disambiguation rule.
-  installerConfigurations = lib.genAttrs (builtins.attrNames installersTree) installerConfigurationsFor;
+  installerConfigurations = lib.mapAttrs (
+    system: installers: lib.mapAttrs (name: _: mkInstaller system name) installers
+  ) installersTree;
 in
 {
   # Contributed rather than assigned: any other module may define packages of
@@ -60,12 +60,19 @@ in
 
     perSystem =
       { system, ... }:
+      let
+        configurations = installerConfigurations.${system} or { };
+      in
       {
         # One directory under installers/<system>/ is one installer, named
         # after it. Each medium declares which build product it publishes.
-        packages = lib.mapAttrs (_name: installer: installer.config.my.installer.image) (
-          installerConfigurationsFor system
-        );
+        packages = lib.mapAttrs (_name: installer: installer.config.my.installer.image) configurations;
+
+        # Reuse the same enumerated configurations as packages. Adding any kind
+        # of installation image therefore adds its build check automatically.
+        checks = lib.mapAttrs' (
+          name: installer: lib.nameValuePair "installer-${name}" installer.config.my.installer.image
+        ) configurations;
       };
   };
 }

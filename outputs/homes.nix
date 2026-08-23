@@ -5,27 +5,23 @@
   myLib,
   repoTree,
   nixpkgsPolicy,
+  ...
 }:
 let
   homesTree = repoTree.homes or { };
 
   # Layout under homes/:
   #   homes/<system>/<user>/**.nix         -> homeConfigurations."<user>@<system>"
-  #   homes/<system>/<user>@<host>/**.nix  -> homeConfigurations."<user>@<host>"
-  # A host-pinned key shared by multiple systems gains a final @<system> suffix,
-  # preventing concatMapAttrs from silently retaining only one architecture.
-  defaultName = system: key: if lib.hasInfix "@" key then key else "${key}@${system}";
-
-  nameCounts = lib.foldlAttrs (
-    counts: system: entries:
+  #   homes/<system>/<user>@<host>/**.nix  -> homeConfigurations."<user>@<host>@<system>"
+  # The directory key is also published as an alias when it identifies exactly
+  # one configuration across all systems.
+  keyCounts = lib.foldlAttrs (
+    counts: _system: entries:
     lib.foldlAttrs (
       counts': key: _:
-      let
-        name = defaultName system key;
-      in
       counts'
       // {
-        ${name} = (counts'.${name} or 0) + 1;
+        ${key} = (counts'.${key} or 0) + 1;
       }
     ) counts entries
   ) { } homesTree;
@@ -60,25 +56,38 @@ let
 
   homeConfigurations = lib.concatMapAttrs (
     system: entries:
-    lib.mapAttrs' (
+    lib.concatMapAttrs (
       key: _:
       let
-        name = defaultName system key;
-        finalName = if nameCounts.${name} == 1 then name else "${name}@${system}";
+        configuration = mkHome system key;
       in
-      lib.nameValuePair finalName (mkHome system key)
+      {
+        "${key}@${system}" = configuration;
+      }
+      // lib.optionalAttrs (keyCounts.${key} == 1) {
+        ${key} = configuration;
+      }
     ) entries
   ) homesTree;
 in
 {
-  # Still a plain value because outputs/checks.nix turns every configuration into
-  # a buildable check; the flake module below is only about publishing them.
-  inherit homeConfigurations;
-
   flakeModule = {
     # Every module contributes the platforms it needs; flake-parts merges them.
     systems = builtins.attrNames homesTree;
 
     flake = { inherit homeConfigurations; };
+
+    perSystem =
+      { system, ... }:
+      {
+        checks =
+          lib.mapAttrs'
+            (name: configuration: lib.nameValuePair "home-${name}" configuration.activationPackage)
+            (
+              lib.filterAttrs (
+                _name: configuration: configuration.pkgs.stdenv.hostPlatform.system == system
+              ) homeConfigurations
+            );
+      };
   };
 }

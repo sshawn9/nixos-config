@@ -5,6 +5,7 @@
   myLib,
   repoTree,
   nixpkgsPolicy,
+  ...
 }:
 let
   # Machines that only exist once an installer fills them in, kept in their own
@@ -60,19 +61,54 @@ let
       ];
     };
 
+  # Installer targets need values which only exist after the wizard runs. A
+  # generic generated module makes every target concrete enough to build while
+  # deliberately describing no real machine.
+  checkGeneratedModules = [
+    {
+      hardware.enableAllHardware = true;
+
+      boot.loader.efi.canTouchEfiVariables = true;
+
+      fileSystems."/" = {
+        device = "/dev/disk/by-uuid/00000000-0000-0000-0000-000000000001";
+        fsType = "ext4";
+      };
+
+      my.shared = {
+        hostname = "prebuild";
+        username = "prebuild";
+      };
+
+      users.allowNoPasswordLogin = true;
+    }
+  ];
+
   # Published so the flake the installer writes onto the target can call it, and
   # so a medium can prebuild the closure it has to carry. Keyed the way hosts
   # are: from the installed machine's point of view this is what it is.
-  installedSystems = lib.foldlAttrs (
-    acc: system: hosts:
-    acc
-    // lib.mapAttrs' (
+  installedSystems = lib.concatMapAttrs (
+    system: hosts:
+    lib.mapAttrs' (
       hostname: _: lib.nameValuePair "${hostname}@${system}" (mkInstalledSystem system hostname)
     ) hosts
-  ) { } installerSystemsTree;
+  ) installerSystemsTree;
 in
 {
   flakeModule = {
+    # A target may exist before a medium for its platform does. Contribute its
+    # platform independently so it cannot disappear from per-system checks.
+    systems = builtins.attrNames installerSystemsTree;
+
     flake = { inherit installedSystems; };
+
+    perSystem =
+      { system, ... }:
+      {
+        checks = lib.mapAttrs' (
+          hostname: _:
+          lib.nameValuePair "installer-system-${hostname}" (mkInstalledSystem system hostname checkGeneratedModules).config.system.build.toplevel
+        ) (installerSystemsTree.${system} or { });
+      };
   };
 }

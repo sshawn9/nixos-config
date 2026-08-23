@@ -24,16 +24,11 @@ let
   homes = import ./homes.nix commonArgs;
   installers = import ./installer.nix commonArgs;
   installerSystems = import ./installer-systems.nix commonArgs;
-  configurationChecks = import ./checks.nix {
-    inherit (nixpkgs) lib;
-    inherit systems homes;
-  };
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     nixpkgsPolicy.flakeModule
     inputs.treefmt-preset.flakeModules.default
-    configurationChecks.flakeModule
     systems.flakeModule
     homes.flakeModule
     installers.flakeModule

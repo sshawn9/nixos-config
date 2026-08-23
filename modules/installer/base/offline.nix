@@ -19,7 +19,7 @@ let
     };
   };
 
-  prebuilt = self.installedSystems.${config.my.installer.target} [
+  prebuildSystem = self.installedSystems.${config.my.installer.target} [
     prebuildHardware
     {
       my.shared = {
@@ -35,25 +35,25 @@ let
 
   # Small, configuration-building inputs which are deliberately absent from a
   # system's runtime closure. Most generated outputs can be substituted from
-  # the prebuilt system below once always-allow-substitutes overrides their
+  # the prebuild system below once always-allow-substitutes overrides their
   # preferLocalBuild/allowSubstitutes flags. The outputs which really do vary
   # with the hardware or identity still have to be made locally, and these are
   # the non-runtime tools, secondary outputs, hardware-selected firmware, and
   # top-level builder/check outputs that those cheap builds need.
   configurationBuildInputs = [
-    prebuilt.config.environment.etc."systemd/generator-environment.json".source.inputDerivation
-    prebuilt.pkgs.getconf
-    prebuilt.pkgs.kmod.dev
-    prebuilt.pkgs.libcap.dev
-    prebuilt.pkgs.libxml2Python
-    prebuilt.pkgs.libxslt.bin
-    prebuilt.pkgs.lndir
-    prebuilt.pkgs.microcode-amd
-    prebuilt.pkgs.microcode-intel
-    prebuilt.pkgs.texinfo
+    prebuildSystem.config.environment.etc."systemd/generator-environment.json".source.inputDerivation
+    prebuildSystem.pkgs.getconf
+    prebuildSystem.pkgs.kmod.dev
+    prebuildSystem.pkgs.libcap.dev
+    prebuildSystem.pkgs.libxml2Python
+    prebuildSystem.pkgs.libxslt.bin
+    prebuildSystem.pkgs.lndir
+    prebuildSystem.pkgs.microcode-amd
+    prebuildSystem.pkgs.microcode-intel
+    prebuildSystem.pkgs.texinfo
   ]
-  ++ prebuilt.config.system.checks
-  ++ prebuilt.config.boot.initrd.services.udev.packages;
+  ++ prebuildSystem.config.system.checks
+  ++ prebuildSystem.config.boot.initrd.services.udev.packages;
 in
 {
   # Any store path needed by the installation must already be present on the
@@ -65,7 +65,7 @@ in
       flake-registry = "";
 
       # NixOS' small configuration generators normally force local builds even
-      # when their exact output is already in the prebuilt target closure. Let
+      # when their exact output is already in the prebuild target closure. Let
       # the target store copy those outputs from the medium; outputs containing
       # the installer-supplied hostname or username have different hashes and
       # therefore continue to be built on the target.
@@ -76,6 +76,9 @@ in
     # has to be on the medium already. The official ISO module carries the live
     # system; the target's own closure is the part it does not know about, and
     # it is needed exactly because there is nowhere to fetch it from.
-    isoImage.storeContents = [ prebuilt.config.system.build.toplevel ] ++ configurationBuildInputs;
+    isoImage.storeContents = [
+      prebuildSystem.config.system.build.toplevel
+    ]
+    ++ configurationBuildInputs;
   };
 }
