@@ -61,5 +61,6 @@
   // Markdown
   "[markdown]": {
     "editor.formatOnSave": false
-  }
+  },
+  "codexAccounts.hourlyQuotaControlEnabled": true
 }
