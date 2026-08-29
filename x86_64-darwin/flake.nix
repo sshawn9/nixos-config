@@ -113,6 +113,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    codex-cli-nix = {
+      url = "github:sadjow/codex-cli-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-index-database = {
       url = "github:nix-community/nix-index-database/2026-07-05-062608";
       inputs.nixpkgs.follows = "nixpkgs";

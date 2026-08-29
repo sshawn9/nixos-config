@@ -12,6 +12,8 @@ in
 
       my = {
         paths.dotfilesLayers.overrideDirs = [ "x" ];
+
+        services.zeroclaw.enable = true;
       };
     };
   };

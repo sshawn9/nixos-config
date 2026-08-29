@@ -198,6 +198,19 @@
     };
 
     # Upstream inputs:
+    # codex-cli-nix
+    # ├── nixpkgs
+    # └── flake-utils
+    #     └── systems
+    #
+    # Follow policy: partial — nixpkgs is shared because rebuilding the fixed upstream
+    # binary's thin wrapper is cheap; the unique flake-utils input has no root counterpart.
+    codex-cli-nix = {
+      url = "github:sadjow/codex-cli-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Upstream inputs:
     # nix-index-database
     # └── nixpkgs
     #

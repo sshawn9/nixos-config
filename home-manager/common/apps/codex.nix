@@ -1,4 +1,5 @@
 {
+  inputs,
   lib,
   pkgs,
   config,
@@ -12,7 +13,7 @@
 
   programs = {
     codex = {
-      package = lib.mkDefault pkgs.unstable.codex;
+      package = lib.mkDefault inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
   };
 }
