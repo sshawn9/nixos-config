@@ -23,11 +23,12 @@
     # ├── nixpkgs
     # └── nixpkgs-2605-darwin
     #
-    # Follow policy: partial — lightweight wrappers share the root unstable package
-    # set; the unique x86_64-darwin compatibility pin remains upstream.
+    # Follow policy: none — this repository enables sshawn9.cachix.org, which is
+    # populated by building nix-packages against its own pinned nixpkgs.
+    # Following the root package set changes every store path in that flake and
+    # turns every one of its packages into a local build.
     nix-packages = {
       url = "github:sshawn9/nix-packages";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # Upstream inputs:
