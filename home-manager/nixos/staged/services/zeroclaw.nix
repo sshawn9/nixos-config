@@ -15,52 +15,26 @@ let
 
   sopsEnabled = config.my.shared.sops.enable;
 
-  # Every OpenCode Zen alias is served by the same subscription, so they all
-  # take the same key. ZeroClaw has no type-level `api_key`, so the key has to
-  # be repeated once per alias; the alias list is read straight out of the
-  # config the daemon uses, so adding a model needs no change here.
-  # Highest-priority dotfiles layer that carries the file, matching how the
-  # layered symlink helpers resolve a path.
-  zeroclawConfigLayers = lib.filter builtins.pathExists (
-    map (layer: config.my.paths.store.dotfilesPath "${layer}/.zeroclaw/config.toml") (
-      [ config.my.paths.dotfilesLayers.baseDir ] ++ config.my.paths.dotfilesLayers.overrideDirs
-    )
-  );
+  environmentFiles = lib.optional (cfg.environmentFile != null) cfg.environmentFile;
 
-  opencodeAliases =
-    if zeroclawConfigLayers == [ ] then
-      [ ]
-    else
-      lib.attrNames (
-        (fromTOML (builtins.readFile (lib.last zeroclawConfigLayers))).providers.models.opencode or { }
-      );
-
-  apiKeyEnvLines = map (
-    alias:
-    "ZEROCLAW_providers__models__opencode__${alias}__api_key=${config.sops.placeholder.opencode_zamgalang3_key}"
-  ) opencodeAliases;
-
-  # The alias rides inside an environment-variable name, so it is bound by
-  # ZeroClaw's alias grammar: lowercase ASCII, digits, single underscores. A
-  # hyphen or a dot silently produces a name no shell can export.
-  badAliases = lib.filter (
-    alias: builtins.match "[a-z0-9](_?[a-z0-9])*" alias == null
-  ) opencodeAliases;
-
-  # systemd loads EnvironmentFile= entries in order, so the operator's own file
-  # comes last and wins on any collision. Keeping the generated key file as a
-  # separate entry leaves `environmentFile` free for unrelated variables.
-  environmentFiles =
-    lib.optional (apiKeyEnvLines != [ ]) config.sops.templates."zeroclaw.env".path
-    ++ lib.optional (cfg.environmentFile != null) cfg.environmentFile;
+  # Seed ZeroClaw's own encrypted secret store from sops, rather than handing
+  # the daemon an environment variable it cannot share with the CLI. Both read
+  # `config.toml`, so one write covers both. The value only ever reaches the
+  # command line, never the Nix store.
+  apiKeySeed = pkgs.writeShellApplication {
+    name = "zeroclaw-seed-api-keys";
+    runtimeInputs = [ cfg.package ];
+    text = lib.concatMapStringsSep "\n" (entry: ''
+      if ! zeroclaw config get ${lib.escapeShellArg entry.path} 2>/dev/null | grep -q '\*\*\*\*'; then
+        zeroclaw config set --no-interactive ${lib.escapeShellArg entry.path} \
+          "$(cat ${lib.escapeShellArg config.sops.secrets.${entry.secret}.path})"
+      fi
+    '') cfg.apiKeys;
+  };
 
   # Units the daemon must not start before. Collected into one list so the two
   # sources cannot overwrite each other's Wants=/After=.
-  daemonAfter =
-    # sops-nix renders the provider-key file during activation; without the
-    # ordering the daemon races it and dies on its own ConditionPathExists.
-    lib.optional (apiKeyEnvLines != [ ]) "sops-nix.service"
-    ++ lib.optional cfg.codexAuth.enable "zeroclaw-codex-auth.service";
+  daemonAfter = lib.optional cfg.codexAuth.enable "zeroclaw-codex-auth.service";
 
   codexAuthImport = pkgs.writeShellApplication {
     name = "zeroclaw-codex-auth-import";
@@ -87,11 +61,55 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.unstable.zeroclaw;
-      defaultText = lib.literalExpression "pkgs.unstable.zeroclaw";
+      default = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.zeroclaw-full;
+      defaultText = lib.literalExpression "inputs.nix-packages.packages.\${system}.zeroclaw-full";
       description = ''
-        Package providing the `zeroclaw` binary. The nixpkgs build also ships
-        the gateway's web dashboard under `$out/bin/web/dist`.
+        Package providing the `zeroclaw` binary.
+
+        Defaults to the `zeroclaw-full` build rather than nixpkgs' own, which
+        compiles with Cargo's default features and so leaves out every channel
+        outside the lean `default-channels` bundle — WeChat among them. The
+        full build also ships shell completions and the gateway's web
+        dashboard.
+      '';
+    };
+
+    apiKeys = lib.mkOption {
+      type = lib.types.listOf (
+        lib.types.submodule {
+          options = {
+            path = lib.mkOption {
+              type = lib.types.str;
+              example = "providers.models.opencode.model.api_key";
+              description = "Dotted config path of the credential field to fill.";
+            };
+
+            secret = lib.mkOption {
+              type = lib.types.str;
+              example = "opencode_api_key";
+              description = "Name of the sops secret holding the raw value.";
+            };
+          };
+        }
+      );
+      default = [ ];
+      description = ''
+        Credentials to seed into ZeroClaw's own encrypted store at activation.
+
+        Each entry runs `zeroclaw config set` once, which encrypts the value
+        into `config.toml` under the config directory's `.secret_key`. Both the
+        daemon and the CLI read that file, so unlike a systemd
+        `EnvironmentFile=` this makes one credential work for both, and edits
+        made later through the gateway persist instead of being masked back out
+        on save.
+
+        The write is skipped when the field already holds a value, so a switch
+        does not re-encrypt on every activation. To rotate, clear the field
+        first.
+
+        The value passes through the seeding process's command line, so it is
+        briefly visible in `/proc` to processes running as the same user. It
+        never reaches the Nix store.
       '';
     };
 
@@ -101,15 +119,13 @@ in
       example = lib.literalExpression "config.sops.secrets.zeroclaw_env.path";
       description = ''
         Optional `KEY=VALUE` file loaded via systemd `EnvironmentFile=`, for
-        variables of your own. It is a separate entry from the sops-rendered
-        provider-key file and is loaded after it, so the two never contend and
-        yours wins on a collision.
+        variables of your own.
 
-        Only needed to keep credentials out of ZeroClaw's own store: values
-        such as `ZEROCLAW_providers__models__anthropic__home__api_key=…`
+        Values such as `ZEROCLAW_providers__models__anthropic__home__api_key=…`
         override the matching config path at load time and are never persisted
-        to disk. Leave it `null` to let `zeroclaw quickstart` manage
-        credentials the way it does on any other distribution.
+        to disk — but they reach only the daemon, not the CLI, and
+        `Config::save()` masks them back to the on-disk value. Prefer
+        {option}`apiKeys` for credentials.
       '';
     };
 
@@ -155,20 +171,24 @@ in
 
       forceRefresh = lib.mkOption {
         type = lib.types.bool;
-        default = true;
+        default = false;
         description = ''
           Drive one `codex exec` turn before importing, so the Codex CLI — the
           side that owns the refresh — writes a fresh token to
           {option}`authFile` first.
 
-          This matters after the machine has been off longer than the token
-          lifetime: importing the stale file would leave ZeroClaw holding an
-          expired token, and its own refresh would then rotate the credential
-          out from under the Codex CLI. That is the one direction of the
-          conflict that does not heal itself on the next import.
+          Off by default because the turn is a real model call against the
+          subscription and buys very little. Upstream states plainly that no
+          separate refresh command exists: the CLI renews when `last_refresh`
+          passes roughly eight days or when a request comes back `401`, so a
+          real run is the only thing that can force it. The access token itself
+          has been observed to carry a seven-day expiry, and
+          {option}`stripRefreshToken` already removes the daemon's ability to
+          rotate the shared credential. Between the two, the cold-start window
+          this guards against needs the machine to stay off for about a week.
 
-          The turn is a real model call and draws on the subscription's
-          allowance. Set to `false` to skip it and accept the cold-start race.
+          Turn it on only if the box really does sit idle that long and the
+          import must not land a stale token.
         '';
       };
 
@@ -197,49 +217,43 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ cfg.package ];
-
     assertions = [
       {
-        assertion = opencodeAliases == [ ] || sopsEnabled;
+        assertion = cfg.apiKeys == [ ] || sopsEnabled;
         message = ''
-          The OpenCode Zen key reaches ZeroClaw through sops-nix. Enable
-          my.shared.sops, or set my.services.zeroclaw.environmentFile yourself.
-        '';
-      }
-      {
-        assertion = badAliases == [ ];
-        message = ''
-          providers.models.opencode alias(es) ${toString badAliases} fall outside
-          ZeroClaw's alias grammar (lowercase ASCII, digits, single underscores;
-          no hyphen, no dot). The alias appears verbatim in an
-          environment-variable name, so anything else cannot be exported.
+          my.services.zeroclaw.apiKeys reads its values from sops. Enable
+          my.shared.sops, or seed the credentials with `zeroclaw config set`
+          yourself.
         '';
       }
     ];
 
-    sops = lib.mkIf (opencodeAliases != [ ]) {
-      secrets.opencode_zamgalang3_key = { };
+    sops.secrets = lib.genAttrs (map (entry: entry.secret) cfg.apiKeys) (_: { });
 
-      templates."zeroclaw.env" = {
-        content = lib.concatStringsSep "\n" apiKeyEnvLines;
-        mode = "0400";
+    home = {
+      packages = [ cfg.package ];
+
+      # Runs after sops-nix has decrypted, and only writes fields that are
+      # still empty. `zeroclaw config set` rewrites config.toml, so this
+      # deliberately happens outside any file the module links.
+      activation.seedZeroclawApiKeys = lib.mkIf (cfg.apiKeys != [ ]) (
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          run ${lib.getExe apiKeySeed}
+        ''
+      );
+
+      file = {
+        ".zeroclaw/agents/primary/workspace/AGENTS.md".source =
+          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/AGENTS.md";
+        ".zeroclaw/agents/primary/workspace/SOUL.md".source =
+          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/SOUL.md";
+        ".zeroclaw/agents/primary/workspace/IDENTITY.md".source =
+          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/IDENTITY.md";
+        ".zeroclaw/agents/primary/workspace/USER.md".source =
+          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/USER.md";
+        ".zeroclaw/agents/primary/workspace/HEARTBEAT.md".source =
+          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/HEARTBEAT.md";
       };
-    };
-
-    home.file = {
-      ".zeroclaw/config.toml".source = dotfilesLayeredSource ".zeroclaw/config.toml";
-
-      ".zeroclaw/agents/primary/workspace/AGENTS.md".source =
-        dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/AGENTS.md";
-      ".zeroclaw/agents/primary/workspace/SOUL.md".source =
-        dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/SOUL.md";
-      ".zeroclaw/agents/primary/workspace/IDENTITY.md".source =
-        dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/IDENTITY.md";
-      ".zeroclaw/agents/primary/workspace/USER.md".source =
-        dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/USER.md";
-      ".zeroclaw/agents/primary/workspace/HEARTBEAT.md".source =
-        dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/HEARTBEAT.md";
     };
 
     systemd.user = {
