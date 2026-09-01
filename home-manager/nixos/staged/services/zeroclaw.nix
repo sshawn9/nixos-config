@@ -7,8 +7,6 @@
 }:
 
 let
-  inherit (config.my.paths.local) dotfilesLayeredSource;
-
   cfg = config.my.services.zeroclaw;
 
   authFile = lib.escapeShellArg cfg.codexAuth.authFile;
@@ -241,19 +239,6 @@ in
           run ${lib.getExe apiKeySeed}
         ''
       );
-
-      file = {
-        ".zeroclaw/agents/primary/workspace/AGENTS.md".source =
-          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/AGENTS.md";
-        ".zeroclaw/agents/primary/workspace/SOUL.md".source =
-          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/SOUL.md";
-        ".zeroclaw/agents/primary/workspace/IDENTITY.md".source =
-          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/IDENTITY.md";
-        ".zeroclaw/agents/primary/workspace/USER.md".source =
-          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/USER.md";
-        ".zeroclaw/agents/primary/workspace/HEARTBEAT.md".source =
-          dotfilesLayeredSource ".zeroclaw/agents/primary/workspace/HEARTBEAT.md";
-      };
     };
 
     systemd.user = {
