@@ -266,7 +266,6 @@ in
             RestartSec = 3;
             TimeoutStopSec = 15;
             Environment = [ "HOME=%h" ];
-            PassEnvironment = "DISPLAY XDG_RUNTIME_DIR";
             NoNewPrivileges = true;
             PrivateTmp = true;
             RestrictSUIDSGID = true;
