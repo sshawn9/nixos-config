@@ -21,6 +21,8 @@ in
 
         claude-code.enable = true;
         codex.enable = true;
+
+        discord.enable = true;
       };
     };
   };
