@@ -8,7 +8,6 @@
 {
   config = lib.mkIf config.my.shared.desktops.gnome.enable {
     services = {
-      displayManager.gdm.enable = lib.mkDefault true;
       desktopManager.gnome.enable = lib.mkDefault true;
       gnome = {
         core-developer-tools.enable = lib.mkDefault false;
@@ -16,11 +15,18 @@
       };
     };
     environment = {
-      sessionVariables = {
-        GTK_IM_MODULE = "fcitx";
-      };
+      # greetd removes XDG_SESSION_CLASS after PAM. Restore it for GNOME so
+      # gnome-session imports it into the user manager, where LocalSearch's
+      # upstream service checks ConditionEnvironment=XDG_SESSION_CLASS=user.
+      extraInit = ''
+        if [ -z "''${XDG_SESSION_CLASS-}" ]; then
+          case ":''${XDG_CURRENT_DESKTOP-}:" in
+            *:GNOME:*) export XDG_SESSION_CLASS=user ;;
+          esac
+        fi
+      '';
+
       gnome.excludePackages = with pkgs; [
-        gnome-photos
         gnome-tour
         gnome-music
         epiphany

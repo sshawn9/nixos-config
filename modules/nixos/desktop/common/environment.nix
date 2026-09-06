@@ -8,12 +8,11 @@ let
 in
 {
   # ── Wayland session defaults ────────────────────────────────
-  # Applies to any Wayland desktop whose login path sources /etc/profile
-  # (e.g. GDM → GNOME). For compositors started directly by greetd without
-  # a login shell (e.g. niri), also set these at the compositor level.
+  # greetd (with its default source_profile=true) loads these through
+  # /etc/profile before starting the selected desktop session.
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron apps Wayland support
     XCURSOR_THEME = "catppuccin-${flavor}-${accent}-cursors";
-    XCURSOR_SIZE = "24";
+    XCURSOR_SIZE = "32";
   };
 }

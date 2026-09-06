@@ -28,8 +28,8 @@
     # Keep them gated to Linux to avoid evaluation failure on macOS.
     cursors.enable = pkgs.stdenv.hostPlatform.isLinux;
 
-    # GTK 4 theme module was archived upstream; only the icon sub-module
-    # remains. Provides the Papirus-derived Catppuccin icon set.
+    # The Catppuccin GTK theme port is archived; this sub-module only
+    # provides the Papirus-derived Catppuccin icon set.
     gtk.icon.enable = pkgs.stdenv.hostPlatform.isLinux;
   };
 }

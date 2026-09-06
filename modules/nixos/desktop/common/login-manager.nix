@@ -18,12 +18,12 @@ let
     "--window-padding 2"
     "--container-padding 3"
     "--remember"
-    "--remember-session"
+    "--remember-user-session"
     "--sessions ${sessionDir}"
   ];
 in
 {
-  config = lib.mkIf config.my.shared.desktops.niri.enable {
+  config = lib.mkIf (config.my.shared.desktops.active != [ ]) {
     services.greetd = {
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.greetd;
