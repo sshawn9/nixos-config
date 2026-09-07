@@ -2,8 +2,31 @@
 order = ["main"]
 
 [bar.main]
-start = ["session", "launcher", "keybinds", "clock", "group:system-monitor", "lock_keys", "workspaces", "taskbar", "media"]
-end = ["clipboard", "tray", "udiskie", "notifications", "caffeine", "network", "bluetooth", "volume", "brightness", "battery", "settings", "control-center"]
+start = [
+  "session",
+  "launcher",
+  "keybinds",
+  "clock",
+  "group:system-monitor",
+  "lock_keys",
+  "workspaces",
+  "taskbar",
+  "media",
+]
+end = [
+  "clipboard",
+  "tray",
+  "udiskie",
+  "notifications",
+  "caffeine",
+  "network",
+  "bluetooth",
+  "volume",
+  "brightness",
+  "battery",
+  "settings",
+  "control-center",
+]
 position = "top"
 enabled = true
 auto_hide = false
@@ -35,7 +58,15 @@ accordion = false
 accordion_direction = "end"
 enabled = true
 id = "system-monitor"
-members = ["cpu-usage", "cpu-temp", "gpu-temp", "ram-used", "disk-used", "net-rx", "net-tx"]
+members = [
+  "cpu-usage",
+  "cpu-temp",
+  "gpu-temp",
+  "ram-used",
+  "disk-used",
+  "net-rx",
+  "net-tx",
+]
 fill = "surface_variant"
 opacity = 0.80000001192092896
 padding = 6.0
