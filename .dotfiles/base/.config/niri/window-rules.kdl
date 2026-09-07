@@ -17,6 +17,12 @@ window-rule {
     }
 }
 
+// Noctalia's settings window should not enter the scrolling layout.
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+}
+
 // Give floating windows enough separation from the tiled layer.
 window-rule {
     match is-floating=true

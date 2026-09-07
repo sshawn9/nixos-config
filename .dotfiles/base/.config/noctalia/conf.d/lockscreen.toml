@@ -1,0 +1,7 @@
+[lockscreen]
+enabled = true
+lock_before_suspend = true
+fingerprint = true
+allow_empty_password = true
+blur_intensity = 0.7
+tint_intensity = 0.0

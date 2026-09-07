@@ -127,20 +127,12 @@
 
     # Upstream inputs:
     # noctalia
-    # ├── nixpkgs
-    # └── noctalia-qs
-    #     ├── nixpkgs (shared with noctalia/nixpkgs)
-    #     ├── systems
-    #     └── treefmt-nix
-    #         └── nixpkgs (shared with noctalia/noctalia-qs/nixpkgs)
+    # └── nixpkgs
     #
-    # Follow policy: partial — the runtime graph stays upstream for Noctalia's Cachix;
-    # only its formatting-only treefmt-nix input is shared with the root.
+    # Follow policy: none — retain the upstream package set for Noctalia's Cachix
+    # builds of the native shell.
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell/v4.7.7";
-      inputs.noctalia-qs = {
-        inputs.treefmt-nix.follows = "treefmt-nix";
-      };
+      url = "github:noctalia-dev/noctalia/v5.0.1";
     };
 
     # Upstream inputs:

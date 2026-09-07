@@ -1,0 +1,10 @@
+[plugin_settings]
+
+[plugin_settings."nightwatch75/todo"]
+todo_folder = "~/Documents/Todo"
+
+[plugin_settings."aristides/udiskie"]
+enable_notifications = true
+auto_open_filemanager = false
+file_manager_cmd = "kitty -e yazi"
+manager_open_near_click = true

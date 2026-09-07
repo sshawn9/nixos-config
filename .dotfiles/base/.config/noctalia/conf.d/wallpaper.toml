@@ -1,0 +1,27 @@
+[wallpaper]
+enabled = true
+fill_mode = "crop"
+fill_color = "#000000"
+transition = ["fade", "disc", "stripes", "wipe", "honeycomb"]
+transition_duration = 1500
+edge_smoothness = 0.05
+transition_on_startup = false
+directory = "~/.config/noctalia/Wallpapers"
+
+[wallpaper.default]
+path = "~/.config/noctalia/Wallpapers/another-01.jpg"
+
+[wallpaper.last]
+path = "/home/star/.config/noctalia/Wallpapers/another-01.jpg"
+
+[wallpaper.monitors.HDMI-A-1]
+path = "/home/star/.config/noctalia/Wallpapers/another-01.jpg"
+
+[wallpaper.monitors.eDP-1]
+path = "/home/star/.config/noctalia/Wallpapers/another-01.jpg"
+
+[wallpaper.automation]
+enabled = true
+interval_seconds = 300
+order = "random"
+recursive = true

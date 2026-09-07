@@ -1,0 +1,6 @@
+[notification]
+enable_daemon = true
+position = "top_right"
+layer = "overlay"
+background_opacity = 0.7
+border = false

@@ -10,7 +10,6 @@ hotkey-overlay { skip-at-startup; }
 
 environment {
     "NIXOS_OZONE_WL" "1"
-    "QS_ICON_THEME" "Adwaita"
 }
 
-spawn-at-startup "noctalia-shell"
+spawn-at-startup "noctalia"

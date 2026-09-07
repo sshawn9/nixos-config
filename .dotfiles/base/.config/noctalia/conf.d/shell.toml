@@ -1,0 +1,56 @@
+[shell]
+font_family = "JetBrains Mono"
+lang = "zh-Hans"
+time_format = "{:%H:%M:%S}"
+date_format = "%a %b %-d"
+external_ip_enabled = true
+niri_overview_type_to_launch_enabled = true
+screen_time_enabled = true
+telemetry_enabled = false
+setup_wizard_enabled = false
+polkit_agent = true
+password_style = "random"
+clipboard_auto_paste = "off"
+avatar_path = "~/.config/noctalia/avatar.jpeg"
+button_borders = false
+input_borders = false
+popup_borders = false
+popup_shadows = false
+card_borders = false
+
+[shell.animation]
+enabled = false
+
+[shell.shadow]
+alpha = 0.0
+
+[shell.panel]
+transparency_mode = "solid"
+borders = false
+shadow = false
+clipboard_position = "auto"
+open_near_click_clipboard = true
+control_center_placement = "floating"
+open_near_click_control_center = true
+session_placement = "floating"
+open_near_click_session = true
+
+[shell.launcher]
+categories = false
+compact = false
+show_app_actions = true
+
+[shell.screenshot]
+remember_last_region = true
+
+[shell.session]
+actions = [
+  { action = "lock", shortcut = "1", countdown_seconds = 10 },
+  { action = "lock_and_suspend", shortcut = "2", countdown_seconds = 10 },
+  { action = "command", command = "systemctl hibernate", label = "Hibernate", glyph = "hibernate", shortcut = "3", countdown_seconds = 10 },
+  { action = "logout", shortcut = "4", countdown_seconds = 10 },
+  { action = "reboot", shortcut = "5", countdown_seconds = 10 },
+  { action = "command", command = "systemctl soft-reboot", label = "Userspace Reboot", glyph = "reboot", shortcut = "6", countdown_seconds = 10 },
+  { action = "command", command = "systemctl reboot --firmware-setup", label = "Reboot to UEFI", glyph = "reboot", shortcut = "7", countdown_seconds = 10 },
+  { action = "shutdown", shortcut = "8", variant = "destructive", countdown_seconds = 10 },
+]

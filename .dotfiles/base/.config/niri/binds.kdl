@@ -7,7 +7,7 @@ binds {
     Mod+Shift+Tab { focus-window-previous; }
     Mod+Ctrl+R repeat=false { spawn "niri" "msg" "action" "load-config-file"; }
 
-    Mod+Escape repeat=false { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Escape repeat=false { spawn "noctalia" "msg" "session" "lock"; }
     Mod+Shift+E repeat=false { quit skip-confirmation=false; }
     Mod+Shift+P repeat=false { power-off-monitors; }
 
@@ -15,7 +15,7 @@ binds {
     // Launchers and everyday apps
     // -------------------------------------------------------------------------
     Mod+Return repeat=false { spawn "ghostty"; }
-    Mod+D repeat=false { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+D repeat=false { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+B repeat=false { spawn "google-chrome"; }
     Mod+E repeat=false { spawn "nautilus"; }
 
@@ -89,7 +89,7 @@ binds {
     Mod+Alt+Minus { set-window-width "-10%"; }
     Mod+Alt+Equal { set-window-width "+10%"; }
     Mod+0 { reset-window-height; }
-    Mod+V repeat=false allow-inhibiting=false { spawn "sh" "-c" "exec bash \"${XDG_CONFIG_HOME:-$HOME/.config}/niri/fit-window-to-height.sh\""; }
+    Mod+V repeat=false allow-inhibiting=false { spawn "fit-window-to-height"; }
 
     Mod+A { expand-column-to-available-width; }
     Mod+C { center-column; }

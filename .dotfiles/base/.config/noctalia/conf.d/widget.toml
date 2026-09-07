@@ -1,0 +1,145 @@
+[widget]
+
+[widget.launcher]
+enabled = false
+glyph = "rocket"
+
+[widget.keybinds]
+type = "kenn/keybind-cheatsheet:keybinds"
+
+[widget.clock]
+format = "{:%H:%M:%S %a %b %-d}"
+vertical_format = "{:%H %M - %d %m}"
+
+[widget.cpu-usage]
+type = "sysmon"
+stat = "cpu_usage"
+visualization = "none"
+font_family = "monospace"
+label_min_width = 30
+
+[widget.cpu-temp]
+type = "sysmon"
+stat = "cpu_temp"
+visualization = "none"
+font_family = "monospace"
+
+[widget.gpu-temp]
+type = "sysmon"
+stat = "gpu_temp"
+visualization = "none"
+font_family = "monospace"
+
+[widget.ram-used]
+type = "sysmon"
+stat = "ram_used"
+visualization = "none"
+font_family = "monospace"
+
+[widget.disk-used]
+type = "sysmon"
+stat = "disk_used"
+path = "/"
+visualization = "none"
+font_family = "monospace"
+
+[widget.net-rx]
+type = "sysmon"
+stat = "net_rx"
+visualization = "none"
+font_family = "monospace"
+label_min_width = 85
+
+[widget.net-tx]
+type = "sysmon"
+stat = "net_tx"
+visualization = "none"
+font_family = "monospace"
+label_min_width = 85
+
+[widget.lock_keys]
+display = "short"
+show_caps_lock = true
+show_num_lock = true
+show_scroll_lock = false
+hide_when_off = false
+
+[widget.workspaces]
+style = "regular"
+show_labels = true
+show_icons = false
+label_source = "name"
+max_label_chars = 6
+font_weight = 700
+pill_scale = 0.6
+focused_color = "primary"
+occupied_color = "secondary"
+empty_color = "secondary"
+labels_only_when_occupied = false
+hide_when_empty = true
+
+[widget.taskbar]
+show_all_outputs = false
+only_active_workspace = true
+icon_scale = 1.0
+taskbar_max_width = 1000
+show_window_title = true
+window_title_max_width = 120
+
+[widget.media]
+artist_first = true
+max_length = 120
+title_scroll = "on_hover"
+show_progress = true
+hide_when_no_media = true
+
+[widget.todo]
+type = "nightwatch75/todo:todo"
+
+[widget.udiskie]
+type = "aristides/udiskie:status"
+show_count = true
+hide_when_empty = false
+
+[widget.tray]
+hide_passive = false
+drawer = false
+
+[widget.notifications]
+enabled = false
+hide_when_no_unread = false
+
+[widget.network]
+enabled = false
+show_label = false
+
+[widget.bluetooth]
+enabled = false
+
+[widget.brightness]
+enabled = false
+
+[widget.battery-time]
+type = "battery"
+display_mode = "graphic"
+show_label = true
+label_content = "time"
+device = "auto"
+
+[widget.battery-rate]
+type = "battery"
+display_mode = "none"
+show_label = true
+label_content = "rate"
+device = "auto"
+
+[widget.settings]
+enabled = false
+
+[widget.volume]
+
+[widget.volume.actions]
+middle = "exec pwvucontrol || pavucontrol"
+
+[widget.session]
+color = "error"
