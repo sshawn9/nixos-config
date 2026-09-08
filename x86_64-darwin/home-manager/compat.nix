@@ -24,4 +24,13 @@
   config.home.sessionVariables = lib.mkIf (config.programs.fzf.historyWidget.command != null) {
     FZF_CTRL_R_COMMAND = config.programs.fzf.historyWidget.command;
   };
+
+  options.programs.devenv = {
+    enable = lib.mkEnableOption "devenv";
+    package = lib.mkOption {
+      type = lib.types.package;
+    };
+  };
+
+  config.programs.devenv.enable = lib.mkForce false;
 }
