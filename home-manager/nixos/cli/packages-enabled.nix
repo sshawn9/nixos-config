@@ -39,6 +39,9 @@ in
       iotop = {
         enable = true;
       };
+      apx = {
+        enable = true;
+      };
     })
   ];
 }

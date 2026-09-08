@@ -26,9 +26,6 @@ in
         enable = true;
         description = "net-tools, including netstat";
       };
-      apx = {
-        enable = true;
-      };
       gdu = {
         enable = true;
       };
