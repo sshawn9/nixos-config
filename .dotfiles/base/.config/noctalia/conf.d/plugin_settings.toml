@@ -2,6 +2,7 @@
 
 [plugin_settings."nightwatch75/todo"]
 todo_folder = "~/Documents/Todo"
+panel_placement = "floating"
 
 [plugin_settings."aristides/udiskie"]
 enable_notifications = true

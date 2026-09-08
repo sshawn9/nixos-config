@@ -1,3 +1,3 @@
 [plugins]
-enabled = ["kenn/keybind-cheatsheet", "aristides/udiskie"]
+enabled = ["kenn/keybind-cheatsheet", "aristides/udiskie", "nightwatch75/todo"]
 auto_update = "all"

@@ -1,6 +1,6 @@
 [shell]
 font_family = "JetBrains Mono"
-lang = "zh-Hans"
+lang = "en"
 time_format = "{:%H:%M:%S}"
 date_format = "%a %b %-d"
 external_ip_enabled = true
