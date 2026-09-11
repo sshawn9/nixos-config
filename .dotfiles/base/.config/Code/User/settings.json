@@ -47,7 +47,7 @@
   "python.analysis.typeCheckingMode": "standard",
   "codexAccounts.displayLanguage": "zh",
   "codexAccounts.codexAppRestartEnabled": false,
-  "codexAccounts.autoRefreshMinutes": 15,
+  "codexAccounts.autoRefreshMinutes": 60,
   "codexAccounts.backgroundTokenRefreshEnabled": true,
   "codexAccounts.quotaWarningEnabled": false,
   "github.copilot.nextEditSuggestions.enabled": false,
