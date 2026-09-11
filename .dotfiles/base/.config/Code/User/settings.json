@@ -1,6 +1,7 @@
 {
   // Window
   "window.zoomLevel": 3,
+  "window.density.layout": "compact",
   // Editor
   "editor.fontFamily": "'JetBrainsMono Nerd Font Mono', 'Noto Sans Mono CJK SC', monospace",
   "editor.fontSize": 20,
