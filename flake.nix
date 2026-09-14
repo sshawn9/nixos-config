@@ -132,7 +132,7 @@
     # Follow policy: none — retain the upstream package set for Noctalia's Cachix
     # builds of the native shell.
     noctalia = {
-      url = "github:noctalia-dev/noctalia/v5.0.1";
+      url = "github:noctalia-dev/noctalia/v5.1.0";
     };
 
     # Upstream inputs:
