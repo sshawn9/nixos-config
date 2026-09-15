@@ -6,50 +6,48 @@
 }:
 
 let
-  sopsEnabled = config.my.shared.sops.enable;
+  cfg = config.my.security.bluetoothAuth;
 in
 {
   imports = [ inputs.bluetooth-auth.nixosModules.bluetooth-auth ];
 
   my.security.bluetoothAuth = {
     enable = lib.mkDefault false;
+    trustedUser = lib.mkDefault config.my.shared.username;
 
-    user = lib.mkDefault config.my.shared.username;
-    bluetoothAddressFile = lib.mkIf sopsEnabled config.sops.secrets.auth_bluetooth_address.path;
-    autoConnect = {
+    device.address = {
+      sopsSecretName = "auth_bluetooth_address";
+    };
+
+    autoConnect.enable = lib.mkDefault true;
+
+    noctaliaAutoLock = {
       enable = lib.mkDefault true;
-      deviceUnvailableGraceSeconds = 30;
-      exceptionGraceSeconds = 30;
     };
-    autoLock = {
-      enable = lib.mkDefault false;
-      checkIntervalSeconds = 120;
-      sleepAfterLockSeconds = 120;
+
+    auth = {
+      sudo.enable = lib.mkDefault true;
+      polkit.enable = lib.mkDefault true;
+      locker.enable = lib.mkDefault true;
+      greetd.enable = lib.mkDefault true;
     };
-    sudoAuth.enable = lib.mkDefault true;
-    polkitAuth.enable = lib.mkDefault true;
-    lockerAuth.enable = lib.mkDefault true;
-  };
 
-  users.groups.bluetooth-auth.members = [
-    config.my.security.bluetoothAuth.user
-    "polkituser"
-  ];
-
-  sops.secrets.auth_bluetooth_address = lib.mkIf sopsEnabled {
-    group = "bluetooth-auth";
-    mode = "0440";
+    gnomeKeyringUnlock = {
+      enable = lib.mkDefault true;
+      password = {
+        sopsFile = ../../../../sops/secrets/keyring.yaml;
+        sopsField = "password";
+        ageKeyFile = config.home-manager.users.${cfg.trustedUser}.sops.age.keyFile;
+      };
+    };
   };
 
   assertions = [
     {
-      assertion =
-        config.my.security.bluetoothAuth.enable
-        -> config.my.security.bluetoothAuth.bluetoothAddressFile != "";
+      assertion = cfg.enable -> cfg.device.address.file != "";
       message = ''
-        my.security.bluetoothAuth.enable needs bluetoothAddressFile, which normally
-        comes from sops. Either enable my.shared.sops or point bluetoothAddressFile
-        at a file yourself.
+        my.security.bluetoothAuth.enable requires device.address.sopsSecretName or device.address.file.
+        Fill in the phone identity address secret name or an existing runtime address file.
       '';
     }
   ];

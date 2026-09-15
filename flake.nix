@@ -139,19 +139,9 @@
     # bluetooth-auth
     # ├── flake-parts
     # │   └── nixpkgs-lib (shared with bluetooth-auth/nixpkgs)
-    # ├── nixpkgs
-    # ├── pyproject-build-systems
-    # │   ├── nixpkgs (shared with bluetooth-auth/nixpkgs)
-    # │   ├── pyproject-nix (shared with bluetooth-auth/pyproject-nix)
-    # │   └── uv2nix (shared with bluetooth-auth/uv2nix)
-    # ├── pyproject-nix
-    # │   └── nixpkgs (shared with bluetooth-auth/nixpkgs)
-    # └── uv2nix
-    #     ├── nixpkgs (shared with bluetooth-auth/nixpkgs)
-    #     └── pyproject-nix (shared with bluetooth-auth/pyproject-nix)
+    # └── nixpkgs
     #
-    # Follow policy: partial — common nixpkgs and flake-parts inputs are shared; the
-    # Python-specific toolchain remains upstream because it has no root counterpart.
+    # Follow policy: shared — reuse the root nixpkgs-unstable and flake-parts inputs.
     bluetooth-auth = {
       url = "github:sshawn9/bluetooth-auth";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
