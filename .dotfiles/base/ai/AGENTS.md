@@ -7,15 +7,6 @@
 - Ask before irreversible or data-destructive actions. Removing reproducible build artifacts is allowed only when necessary and within task scope.
 - Start with the narrowest relevant files and commands. Expand scope only when evidence requires it.
 
-## Cost-aware Subagent Delegation
-
-- For substantial tasks, proactively delegate independent work when it lowers total cost, including coordination, review, and rework, without reducing quality.
-- Keep trivial or tightly sequential work local. Avoid duplicate work and concurrent edits to overlapping files.
-- Choose from available models and supported reasoning levels, preferring the least costly configuration capable of the task. Use configured defaults when capability or cost information is insufficient.
-- When overriding defaults, explicitly set both model and reasoning effort.
-- Provide minimal sufficient context, reuse agent threads when useful, and request concise results with evidence, validation, and remaining uncertainty.
-- The root agent owns planning, consequential decisions, integration, and final verification. Review critical subagent conclusions before relying on them.
-
 ## Decision Making & Problem Framing
 
 _(Apply to architecture/complex tasks. Execute routine fixes directly without over-engineering.)_
