@@ -1,4 +1,6 @@
 patch:
+  engine/translators/+:
+    - echo_translator
   speller/algebra/+:
     - derive/^([a-z]+)an$/$1ang/
     - derive/^([a-z]+)ang$/$1an/
