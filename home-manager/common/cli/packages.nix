@@ -122,6 +122,12 @@ in
       shellcheck = {
         enable = true;
       };
+      actionlint = {
+        enable = true;
+      };
+      ruff = {
+        enable = true;
+      };
       shfmt = {
         enable = true;
       };

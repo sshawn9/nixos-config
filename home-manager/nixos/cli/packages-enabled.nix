@@ -42,6 +42,9 @@ in
       apx = {
         enable = true;
       };
+      wtype = {
+        enable = true;
+      };
     })
   ];
 }
