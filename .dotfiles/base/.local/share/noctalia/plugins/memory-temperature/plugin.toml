@@ -1,0 +1,9 @@
+id = "local/memory-temperature"
+name = "Memory Temperature"
+version = "1.0.0"
+plugin_api = 23
+description = "Display detected DDR5 memory temperatures."
+
+[[widget]]
+id = "temperatures"
+entry = "widget.luau"

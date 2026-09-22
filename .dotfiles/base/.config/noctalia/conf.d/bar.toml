@@ -64,6 +64,7 @@ members = [
   "cpu-temp",
   "gpu-temp",
   "ram-used",
+  "ram-temp",
   "disk-used",
   "net-rx",
   "net-tx",

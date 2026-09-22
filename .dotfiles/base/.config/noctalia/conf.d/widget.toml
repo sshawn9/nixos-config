@@ -36,6 +36,9 @@ stat = "ram_used"
 visualization = "none"
 font_family = "monospace"
 
+[widget.ram-temp]
+type = "local/memory-temperature:temperatures"
+
 [widget.disk-used]
 type = "sysmon"
 stat = "disk_used"
