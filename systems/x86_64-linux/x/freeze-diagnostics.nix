@@ -14,6 +14,18 @@ let
   captureDirectory = "/var/log/freeze-diagnostics";
   crashDirectory = "/var/lib/freeze-diagnostics/crashes";
 
+  recordAtop = pkgs.writeShellApplication {
+    name = "freeze-record-atop";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      # Never append to a file left by a crash, including restarts on the same day.
+      logfile="$LOGPATH/atop_$(date +%Y%m%d-%H%M%S-%N)_$(cat /proc/sys/kernel/random/boot_id)"
+      ln -sfnT "$logfile" "$LOGPATH/current"
+      read -r -a logOptions <<< "''${LOGOPTS-}"
+      exec ${config.programs.atop.package}/bin/atop "''${logOptions[@]}" -w "$logfile" "$LOGINTERVAL"
+    '';
+  };
+
   capture = pkgs.writeShellApplication {
     name = "freeze-capture";
     runtimeInputs = with pkgs; [
@@ -90,6 +102,19 @@ let
       mkdir -p ${crashDirectory}
       destination=$(mktemp -d ${crashDirectory}/"$(date -u +%Y%m%dT%H%M%SZ)"-XXXXXX)
       echo "Saving crash evidence to $destination; do not power off."
+      started=$(date +%s)
+      # freeze-capture-result-v2: persist the outcome before ExecStopPost reboots.
+      save_result() {
+        result=$?
+        trap - EXIT
+        set +e
+        finished=$(date +%s)
+        printf '{"format":2,"exit_code":%s,"started_epoch":%s,"finished_epoch":%s}\n' \
+          "$result" "$started" "$finished" > "$destination/result.json"
+        sync -f "$destination"
+        return "$result"
+      }
+      trap save_result EXIT
 
       # Save the small original-kernel log even if there is insufficient dump space.
       vmcore-dmesg /proc/vmcore > "$destination/dmesg.txt" || true
@@ -115,7 +140,7 @@ let
       sync -f "$destination"
       touch "$destination/complete"
       sync -f "$destination"
-      echo "Crash dump complete: $destination. Remaining in rescue mode."
+      echo "Crash dump complete: $destination. Rebooting automatically."
     '';
   };
 in
@@ -181,8 +206,10 @@ in
       "freeze-diagnostics/README".text = ''
         本机卡死取证
 
-        atop: /var/log/atop/atop_YYYYMMDD，每 ${toString sampleInterval} 秒采样，约保留 ${toString retentionDays} 天。
-        回看: sudo atop -r /var/log/atop/atop_YYYYMMDD -b HH:MM:SS
+        atop: /var/log/atop/atop_日期-启动时间_boot-id，每 ${toString sampleInterval} 秒采样，约保留 ${toString retentionDays} 天。
+        每次启动采集都新建文件，避免强制关机留下的不完整文件阻止后续记录。
+        当前文件: /var/log/atop/current；回看旧记录时选择对应日期和 boot-id 的文件。
+        回看: sudo atop -r /var/log/atop/current -b HH:MM:SS
         GPU: journalctl -b -1 -u freeze-gpu.service
         手动快照: sudo freeze-capture（写入 ${captureDirectory}）
         需要 niri 用户态调用栈时加 --niri-backtrace；调试器附加时会暂时暂停 niri。
@@ -195,7 +222,9 @@ in
         自动 hardlockup panic 当前为 ${lib.boolToString panicOnHardLockup}，验证后才修改模块中的开关并重启。
         即使打开该开关，也只会在崩溃内核成功预加载后启用自动 panic。
         转储存放在 ${crashDirectory}，complete 文件表示写入完成。
-        转储期间不要断电；完成或失败后都停留在救援模式，不自动重启。
+        保存程序结束后自动重启；不要求观察屏幕。重启后检查 complete 与 result.json。
+        result.json 记录成功/失败和时间；程序或转储内核卡住时仍可能无法自动重启。
+        等待上限必须依据本机实际转储测试确定，不能把固定分钟数当成已写完的保证。
         vmcore.zst 是完整内存映像，可能含敏感数据；目录只允许 root 访问。
         解压后的 vmcore 可配合同目录 vmlinux 分析；不自动删除崩溃证据。
         日志、SysRq 和 kdump 均不能保证捕获固件或硬件层面的彻底锁死。
@@ -212,10 +241,18 @@ in
     ];
 
     services = {
-      atop.serviceConfig = {
-        LogsDirectory = "atop";
-        LogsDirectoryMode = "0700";
-        UMask = "0077";
+      atop = {
+        # Keep old evidence unchanged; convert older formats on a copy when needed.
+        preStart = lib.mkForce "";
+        serviceConfig = {
+          ExecStart = [
+            ""
+            (lib.getExe recordAtop)
+          ];
+          LogsDirectory = "atop";
+          LogsDirectoryMode = "0700";
+          UMask = "0077";
+        };
       };
 
       freeze-atop-sync = {
@@ -227,7 +264,7 @@ in
         };
         path = [ pkgs.coreutils ];
         script = ''
-          logfile="/var/log/atop/atop_$(date +%Y%m%d)"
+          logfile="/var/log/atop/current"
           if [ -f "$logfile" ]; then
             sync -d "$logfile"
           fi
@@ -241,7 +278,7 @@ in
           Type = "oneshot";
           ExecStart = lib.concatStringsSep " " [
             "${pkgs.util-linux}/bin/flock --nonblock --conflict-exit-code=75 /run/lock/freeze-gpu.lock"
-            "${config.hardware.nvidia.package}/bin/nvidia-smi"
+            "${lib.getBin config.hardware.nvidia.package}/bin/nvidia-smi"
             "--query-gpu=timestamp,index,utilization.gpu,memory.used,memory.total,temperature.gpu,power.draw,pstate"
             "--format=csv,noheader,nounits"
           ];
@@ -292,6 +329,16 @@ in
           ConditionPathExists = "/proc/vmcore";
           RequiresMountsFor = [ crashDirectory ];
         };
+        # Runs after success and ordinary startup/execution failures. Never reboot
+        # a normal kernel, including when this unit is skipped in normal rescue.
+        postStop = ''
+          if [ -r /proc/vmcore ]; then
+            echo "Crash capture ended: ''${SERVICE_RESULT-unknown}; requesting reboot."
+            ${pkgs.coreutils}/bin/timeout --kill-after=2s 5s \
+              ${pkgs.systemd}/bin/journalctl --sync || true
+            ${pkgs.systemd}/bin/systemctl --no-block reboot
+          fi
+        '';
         serviceConfig = {
           Type = "oneshot";
           ExecStart = lib.getExe saveCrash;
