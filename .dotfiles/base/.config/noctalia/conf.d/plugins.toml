@@ -1,3 +1,8 @@
 [plugins]
-enabled = ["kenn/keybind-cheatsheet", "aristides/udiskie", "nightwatch75/todo", "local/memory-temperature"]
+enabled = [
+  "kenn/keybind-cheatsheet",
+  "aristides/udiskie",
+  "nightwatch75/todo",
+  "local/memory-temperature",
+]
 auto_update = "all"
