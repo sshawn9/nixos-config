@@ -151,11 +151,10 @@
     # │   └── nixpkgs-lib (shared with bluetooth-auth/nixpkgs)
     # └── nixpkgs
     #
-    # Follow policy: shared — reuse the root nixpkgs-unstable and flake-parts inputs.
+    # Follow policy: none — use the upstream package and dependency pins to match
+    # the builds published to sshawn9.cachix.org.
     bluetooth-auth = {
       url = "github:sshawn9/bluetooth-auth";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-      inputs.flake-parts.follows = "flake-parts";
     };
 
     rime-ice = {

@@ -40,6 +40,8 @@ in
         ageKeyFile = config.home-manager.users.${cfg.trustedUser}.sops.age.keyFile;
       };
     };
+
+    gattQuery.enable = true;
   };
 
   assertions = [
