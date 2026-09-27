@@ -13,7 +13,12 @@
 
   programs = {
     codex = {
-      package = lib.mkDefault inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      # Preserve the complete upstream package layout required by the app-server daemon.
+      package = lib.mkDefault (
+        inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.codex-node.override {
+          nodeBinName = "codex";
+        }
+      );
     };
   };
 }
