@@ -126,6 +126,16 @@
     };
 
     # Upstream inputs:
+    # x-laptune
+    # └── nixpkgs
+    #
+    # Follow policy: none — use the upstream CLI package with its pinned nixpkgs
+    # to preserve compatibility with the sshawn9.cachix.org builds.
+    x-laptune = {
+      url = "github:sshawn9/x-laptune";
+    };
+
+    # Upstream inputs:
     # noctalia
     # └── nixpkgs
     #

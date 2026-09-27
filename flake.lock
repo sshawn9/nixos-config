@@ -515,6 +515,22 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst"
       }
     },
+    "nixpkgs_6": {
+      "locked": {
+        "lastModified": 1789921291,
+        "narHash": "sha256-Ft/BRnIqw1MywFoXydKobjjWmDFgDdYtSpJliE8+yUw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "44a91898084f46797b5fac650c7e8c9ac38c43d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "noctalia": {
       "inputs": {
         "nixpkgs": "nixpkgs_5"
@@ -608,7 +624,8 @@
         "sops-nix": "sops-nix",
         "t2fanrd": "t2fanrd",
         "treefmt-nix": "treefmt-nix",
-        "treefmt-preset": "treefmt-preset"
+        "treefmt-preset": "treefmt-preset",
+        "x-laptune": "x-laptune"
       }
     },
     "rust-flake": {
@@ -789,6 +806,24 @@
       "original": {
         "owner": "sshawn9",
         "repo": "treefmt-preset",
+        "type": "github"
+      }
+    },
+    "x-laptune": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1790501349,
+        "narHash": "sha256-P2WVwF+Xmy1LaJF1lvvHJLcTZiac1F5QAiqOwsaRetQ=",
+        "owner": "sshawn9",
+        "repo": "x-laptune",
+        "rev": "c06cb280e43da908abe122309f70b0f07703c36f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sshawn9",
+        "repo": "x-laptune",
         "type": "github"
       }
     }
