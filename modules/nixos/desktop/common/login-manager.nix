@@ -20,6 +20,8 @@ let
     "--remember"
     "--remember-user-session"
     "--sessions ${sessionDir}"
+    # Fall back to niri when the remembered session's store path has changed.
+    (lib.optionalString config.programs.niri.enable "--cmd ${config.programs.niri.package}/bin/niri-session")
   ];
 in
 {
