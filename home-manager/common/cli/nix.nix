@@ -38,6 +38,9 @@ in
       nix-melt = {
         enable = true;
       };
+      npc = {
+        enable = true;
+      };
       nurl = {
         enable = true;
       };
