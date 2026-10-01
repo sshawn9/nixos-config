@@ -7,12 +7,11 @@
 }:
 
 {
-  imports = [
-    inputs.noctalia.homeModules.default
-  ];
-
   config = lib.mkIf config.my.shared.desktops.niri.enable {
-    programs.noctalia.enable = lib.mkDefault true;
+    programs.noctalia = {
+      enable = lib.mkDefault true;
+      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    };
 
     xdg.configFile."noctalia" = config.my.paths.local.xdgConfigLayeredTree "noctalia";
     xdg.dataFile."noctalia/plugins" = config.my.paths.local.xdgDataLayeredTree "noctalia/plugins";
