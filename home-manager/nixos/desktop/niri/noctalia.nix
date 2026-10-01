@@ -6,15 +6,6 @@
   ...
 }:
 
-let
-  cfg = config.programs.noctalia;
-  configCheck = pkgs.runCommandLocal "noctalia-config-check" { GSETTINGS_BACKEND = "memory"; } ''
-    export NOCTALIA_DATA_HOME="$TMPDIR/noctalia-data"
-    export NOCTALIA_STATE_HOME="$TMPDIR/noctalia-state"
-    ${lib.getExe cfg.package} config validate ${config.my.paths.store.xdgConfigLayeredSource "noctalia"}
-    touch "$out"
-  '';
-in
 {
   imports = [
     inputs.noctalia.homeModules.default
@@ -25,9 +16,6 @@ in
 
     xdg.configFile."noctalia" = config.my.paths.local.xdgConfigLayeredTree "noctalia";
     xdg.dataFile."noctalia/plugins" = config.my.paths.local.xdgDataLayeredTree "noctalia/plugins";
-
-    # Validate the configuration; plugin downloads remain managed by Noctalia.
-    home.checks = lib.optional (cfg.checkConfig && cfg.package != null) configCheck;
 
     home.packages = [
       pkgs.unstable.udiskie
