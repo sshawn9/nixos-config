@@ -40,6 +40,12 @@ lint:
 lock-view:
     nix-melt flake.lock
 
+# Automatically build and mark revisions in an npc bisect session
+[group("repo")]
+[positional-arguments]
+npc-bisect *ARGS:
+    bash "{{ justfile_directory() }}/scripts/npc-bisect.sh" "$@"
+
 # Original: nix build {{ FLAGS }} --print-build-logs .#nixosConfigurations.{{ HOST }}.config.system.build.toplevel
 # Build a NixOS host (default: current hostname)
 [group("nixos")]
