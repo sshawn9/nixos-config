@@ -53,7 +53,8 @@
       # Let scx_lavd and systemd own CPU placement/cgroup policy.
       cgroup_load = lib.mkDefault false;
       apply_cgroup = lib.mkDefault false;
-      cgroup_realtime_workaround = lib.mkDefault false;
+      # nixpkgs uses a normal assignment here, overriding mkDefault.
+      cgroup_realtime_workaround = lib.mkForce false;
       apply_cpuset = lib.mkDefault false;
     };
   };
