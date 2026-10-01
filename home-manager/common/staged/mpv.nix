@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   ...
 }:
@@ -6,11 +7,16 @@
   programs.mpv = {
     defaultProfiles = [ "high-quality" ];
 
-    scripts = with pkgs.mpvScripts; [
-      mpris
-      uosc
-      thumbfast
-    ];
+    # Keep the compiled player on nix-packages' pins; only rebuild its script wrapper.
+    package = pkgs.mpv.override {
+      mpv-unwrapped = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mpv.unwrapped;
+      # Home Manager only wraps programs.mpv.scripts with its default package.
+      scripts = with pkgs.mpvScripts; [
+        mpris
+        uosc
+        thumbfast
+      ];
+    };
     config = {
       loop-playlist = "inf";
       autocreate-playlist = "same";
@@ -29,8 +35,8 @@
       cache = true;
       cache-on-disk = false;
       cache-secs = 3600000;
-      demuxer-max-bytes = "16384MiB";
-      demuxer-max-back-bytes = "4096MiB";
+      demuxer-max-bytes = "2048MiB";
+      demuxer-max-back-bytes = "512MiB";
       demuxer-seekable-cache = true;
       demuxer-cache-wait = false;
       cache-pause-initial = false;
@@ -41,7 +47,9 @@
       video-sync = "display-resample";
       interpolation = true;
 
-      vf-add = ''@triple:!lavfi="[in]split=3[a][b][c];[a][b][c]hstack=inputs=3[out]"'';
+      vo = "gpu-next";
+      gpu-api = "vulkan";
+      hwdec = "auto";
     };
 
     bindings = {
@@ -69,7 +77,7 @@
       "f" = "cycle fullscreen";
       "s" = "screenshot";
 
-      "Ctrl+3" = "vf toggle @triple";
+      "Ctrl+3" = "cycle video-triple";
     };
   };
 }

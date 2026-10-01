@@ -362,11 +362,11 @@
         "nixpkgs-2605-darwin": "nixpkgs-2605-darwin"
       },
       "locked": {
-        "lastModified": 1790722419,
-        "narHash": "sha256-2SaIEOPpv412gKB3Mgks/afcpSh7yazJnXiTXTtI6pk=",
+        "lastModified": 1790827867,
+        "narHash": "sha256-t1GEaqATxnW81wl5rznSbvu6Y2DWwpcTqUZ1FXcSaGk=",
         "owner": "sshawn9",
         "repo": "nix-packages",
-        "rev": "2bd30dc07bf27f891173d2f94948c71da1ec8585",
+        "rev": "25ff0688df6937305fb86076b893e49f196ef0d0",
         "type": "github"
       },
       "original": {
