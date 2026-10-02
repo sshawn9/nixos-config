@@ -137,10 +137,13 @@ in
     Unit.X-Restart-Triggers = [ aria2BaseConfig ];
 
     Service.ExecStartPre = [
+      "${lib.getExe' pkgs.networkmanager "nm-online"} --quiet --timeout=60"
       "${pkgs.coreutils}/bin/mkdir -p ${aria2CacheDir}"
       "${pkgs.coreutils}/bin/mkdir -p ${aria2StateDir}"
       "${pkgs.coreutils}/bin/touch ${aria2Session}"
       "${aria2UpdateConfig}"
     ];
+
+    Service.RestartSec = "5s";
   };
 }
