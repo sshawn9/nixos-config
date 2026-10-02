@@ -24,6 +24,9 @@ in
       mtr = {
         enable = true;
       };
+      sshfs = {
+        enable = true;
+      };
       ethtool = {
         enable = true;
       };
