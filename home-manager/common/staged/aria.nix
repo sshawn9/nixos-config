@@ -7,106 +7,65 @@
 }:
 let
   inherit (myLib) mkHomePackages;
-  aria2ConfigDir = "${config.xdg.configHome}/aria2";
-  aria2ConfigFile = "${aria2ConfigDir}/aria2.conf";
-  aria2BtPort = 6881;
+  aria2ConfigFile = "${config.xdg.configHome}/aria2/aria2.conf";
   aria2CacheDir = "${config.xdg.cacheHome}/aria2";
   aria2StateDir = "${config.xdg.stateHome}/aria2";
   aria2Session = "${aria2StateDir}/aria2.session";
   aria2TrackersFile = "${aria2StateDir}/trackers.txt";
   aria2TrackersUrl = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt";
-  aria2Settings = {
-    dir = "${config.home.homeDirectory}/Downloads";
-    input-file = aria2Session;
-    save-session = aria2Session;
-    save-session-interval = 60;
-    force-save = true;
-    continue = true;
+  aria2Start = pkgs.writeShellScript "aria2-start" ''
+    set -euo pipefail
 
-    enable-rpc = true;
-    rpc-listen-all = false;
-    rpc-allow-origin-all = true;
-    rpc-listen-port = 6800;
+    trackers_file=${lib.escapeShellArg aria2TrackersFile}
+    args=(--conf-path=${lib.escapeShellArg aria2ConfigFile})
+    if [ -s "$trackers_file" ]; then
+      args+=("--bt-tracker=$(${pkgs.coreutils}/bin/paste -sd, "$trackers_file")")
+    fi
 
-    max-concurrent-downloads = 5;
-    max-connection-per-server = 8;
-    split = 8;
-    min-split-size = "10M";
-    disk-cache = "64M";
-    file-allocation = "falloc";
+    exec ${lib.getExe config.programs.aria2.package} "''${args[@]}"
+  '';
+  aria2UpdateTrackers = pkgs.writeShellScript "aria2-update-trackers" ''
+    set -euo pipefail
 
-    bt-save-metadata = true;
-    bt-load-saved-metadata = true;
-    bt-max-peers = 128;
-    dht-file-path = "${aria2CacheDir}/dht.dat";
-    dht-file-path6 = "${aria2CacheDir}/dht6.dat";
-    dht-listen-port = aria2BtPort;
-    enable-dht = true;
-    enable-peer-exchange = true;
-    listen-port = aria2BtPort;
-    seed-ratio = 0.0;
-    seed-time = 0;
-    max-overall-upload-limit = "100K";
-    auto-file-renaming = true;
-  };
-  aria2BaseConfig = (pkgs.formats.keyValue { }).generate "aria2.conf" aria2Settings;
-  aria2UpdateConfig = pkgs.writeShellScript "aria2-update-config" ''
-    set -o pipefail
-
-    config_dir=${lib.escapeShellArg aria2ConfigDir}
-    config_file=${lib.escapeShellArg aria2ConfigFile}
-    config_tmp="$config_file.tmp"
-    base_config=${lib.escapeShellArg aria2BaseConfig}
     trackers_dir=${lib.escapeShellArg aria2StateDir}
     trackers_file=${lib.escapeShellArg aria2TrackersFile}
     trackers_url=${lib.escapeShellArg aria2TrackersUrl}
-    trackers_tmp="$trackers_file.tmp"
 
-    ${pkgs.coreutils}/bin/mkdir -p "$config_dir"
     ${pkgs.coreutils}/bin/mkdir -p "$trackers_dir"
+    trackers_tmp="$(${pkgs.coreutils}/bin/mktemp "$trackers_file.XXXXXX")"
+    trap '${pkgs.coreutils}/bin/rm -f "$trackers_tmp"' EXIT
 
-    if ${pkgs.curl}/bin/curl -fsSL --connect-timeout 8 --retry 2 --retry-delay 1 "$trackers_url" \
+    if ! ${pkgs.curl}/bin/curl -fsSL --connect-timeout 8 --max-time 20 --retry 2 --retry-delay 1 "$trackers_url" \
       | ${pkgs.gnugrep}/bin/grep -E '^(udp|http|https)://' > "$trackers_tmp"; then
-      if [ -s "$trackers_tmp" ]; then
-        ${pkgs.coreutils}/bin/mv "$trackers_tmp" "$trackers_file"
-        echo "Updated aria2 trackers from $trackers_url"
-      else
-        ${pkgs.coreutils}/bin/rm -f "$trackers_tmp"
-        echo "Fetched aria2 trackers list was empty; keeping existing cache if present." >&2
-      fi
+      echo "Could not fetch a non-empty tracker list; keeping the existing cache." >&2
+      exit 1
+    fi
+
+    ${pkgs.coreutils}/bin/mv "$trackers_tmp" "$trackers_file"
+    echo "Updated aria2 tracker cache."
+
+    if ! ${pkgs.systemd}/bin/systemctl --user --quiet is-active aria2.service; then
+      exit 0
+    fi
+
+    trackers="$(${pkgs.coreutils}/bin/paste -sd, "$trackers_file")"
+    rpc_port="$(
+      ${pkgs.gawk}/bin/awk -F= '
+        /^[[:space:]]*rpc-listen-port[[:space:]]*=/ { port = $2 }
+        END { gsub(/[[:space:]]/, "", port); print port == "" ? 6800 : port }
+      ' ${lib.escapeShellArg aria2ConfigFile}
+    )"
+    if ${pkgs.jq}/bin/jq -cn --arg trackers "$trackers" \
+      '{jsonrpc: "2.0", id: "update-trackers", method: "aria2.changeGlobalOption", params: [{"bt-tracker": $trackers}]}' \
+      | ${pkgs.curl}/bin/curl -fsS --connect-timeout 2 --max-time 5 \
+        -H 'Content-Type: application/json' --data-binary @- \
+        "http://127.0.0.1:$rpc_port/jsonrpc" \
+      | ${pkgs.jq}/bin/jq -e '.result == "OK" and .error == null' >/dev/null; then
+      echo "Updated running aria2 tracker options."
     else
-      ${pkgs.coreutils}/bin/rm -f "$trackers_tmp"
-      echo "Failed to update aria2 trackers; keeping existing cache if present." >&2
+      echo "Tracker cache updated, but RPC update failed; cached trackers will load on the next aria2 start." >&2
+      exit 1
     fi
-
-    ${pkgs.coreutils}/bin/rm -f "$config_tmp"
-    ${pkgs.coreutils}/bin/install -m 0644 "$base_config" "$config_tmp"
-
-    if [ -s "$trackers_file" ]; then
-      trackers="$(
-        ${pkgs.gnugrep}/bin/grep -E '^(udp|http|https)://' "$trackers_file" \
-          | ${pkgs.coreutils}/bin/tr '\n' ',' \
-          | ${pkgs.gnused}/bin/sed 's/,$//'
-      )"
-
-      if [ -n "$trackers" ]; then
-        printf 'bt-tracker=%s\n' "$trackers" >> "$config_tmp"
-
-        escaped_trackers="$(
-          printf '%s' "$trackers" \
-            | ${pkgs.gnused}/bin/sed 's/\\/\\\\/g; s/"/\\"/g'
-        )"
-
-        if ${pkgs.curl}/bin/curl -fsS --connect-timeout 2 \
-          -H 'Content-Type: application/json' \
-          --data "{\"jsonrpc\":\"2.0\",\"id\":\"update-trackers\",\"method\":\"aria2.changeGlobalOption\",\"params\":[{\"bt-tracker\":\"$escaped_trackers\"}]}" \
-          http://127.0.0.1:6800/jsonrpc >/dev/null 2>&1; then
-          echo "Updated running aria2 tracker options."
-        fi
-      fi
-    fi
-
-    ${pkgs.coreutils}/bin/mv "$config_tmp" "$config_file"
   '';
 in
 {
@@ -115,6 +74,10 @@ in
       ariang = { };
     })
   ];
+
+  xdg.configFile."aria2/aria2.conf" = lib.mkIf config.programs.aria2.enable {
+    source = config.my.paths.local.xdgConfigLayeredSource "aria2/aria2.conf";
+  };
 
   programs = {
     aria2 = {
@@ -127,23 +90,46 @@ in
     };
   };
 
-  home.activation.updateAria2Config = lib.mkIf config.programs.aria2.enable (
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${aria2UpdateConfig}
-    ''
-  );
+  systemd.user.services = lib.mkIf config.programs.aria2.enable {
+    aria2.Unit.Wants = [ "aria2-update-trackers.timer" ];
+    aria2.Service = {
+      ExecStart = lib.mkForce (toString aria2Start);
+      ExecStartPre = [
+        "${lib.getExe' pkgs.networkmanager "nm-online"} --quiet --timeout=60"
+        "${pkgs.coreutils}/bin/mkdir -p ${aria2CacheDir}"
+        "${pkgs.coreutils}/bin/mkdir -p ${aria2StateDir}"
+        "${pkgs.coreutils}/bin/touch ${aria2Session}"
+      ];
+      RestartSec = "5s";
+    };
 
-  systemd.user.services.aria2 = lib.mkIf config.programs.aria2.enable {
-    Unit.X-Restart-Triggers = [ aria2BaseConfig ];
+    aria2-update-trackers = {
+      Unit = {
+        Description = "Update aria2 tracker cache and running options";
+        After = [ "aria2.service" ];
+        BindsTo = [ "aria2.service" ];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStartPre = "${lib.getExe' pkgs.networkmanager "nm-online"} --quiet --timeout=60";
+        ExecStart = toString aria2UpdateTrackers;
+        Restart = "on-failure";
+        RestartSec = "5min";
+      };
+    };
+  };
 
-    Service.ExecStartPre = [
-      "${lib.getExe' pkgs.networkmanager "nm-online"} --quiet --timeout=60"
-      "${pkgs.coreutils}/bin/mkdir -p ${aria2CacheDir}"
-      "${pkgs.coreutils}/bin/mkdir -p ${aria2StateDir}"
-      "${pkgs.coreutils}/bin/touch ${aria2Session}"
-      "${aria2UpdateConfig}"
-    ];
-
-    Service.RestartSec = "5s";
+  systemd.user.timers.aria2-update-trackers = lib.mkIf config.programs.aria2.enable {
+    Unit = {
+      Description = "Update aria2 trackers after startup and daily";
+      # Allow ordering after aria2, which starts after basic.target/timers.target.
+      DefaultDependencies = false;
+      After = [ "aria2.service" ];
+      BindsTo = [ "aria2.service" ];
+    };
+    Timer = {
+      OnActiveSec = "5min";
+      OnUnitInactiveSec = "1d";
+    };
   };
 }
