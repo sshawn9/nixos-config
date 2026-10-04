@@ -23,11 +23,6 @@
       historyWidget.command = "";
     };
 
-    carapace = {
-      enable = lib.mkDefault true;
-      package = lib.mkDefault pkgs.unstable.carapace;
-    };
-
     tealdeer = {
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.tealdeer;

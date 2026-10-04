@@ -27,10 +27,6 @@ in
     enable = lib.mkDefault true;
     package = lib.mkDefault pkgs.unstable.nushell;
 
-    environmentVariables = {
-      CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense";
-    };
-
     settings = {
       show_banner = false;
 

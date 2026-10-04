@@ -8,20 +8,20 @@
 let
   inherit (myLib) mkHomePackages;
 
-  carapaceConfig = ''
-    export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
-  '';
-
   completionStyles = ''
+    # Include dotfiles in completion without changing ordinary shell globs.
+    _comp_options+=(globdots)
     zstyle ':completion:*:descriptions' format '[%d]'
     zstyle ':completion:*' menu select
+    # Force listing so fzf-tab does not rewrite the unambiguous prefix.
+    zstyle ':completion:*' force-list always
     zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
     zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
   '';
 
   fzfTabStyles = ''
     # zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
-    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -a -1 --color=always $realpath'
     zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ''${(P)word}'
   '';
 
@@ -202,7 +202,6 @@ in
             ''
               # general
             ''
-            + carapaceConfig
             + completionStyles
             + fzfTabStyles
             + rosCompletions
