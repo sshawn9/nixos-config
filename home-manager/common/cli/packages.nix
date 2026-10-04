@@ -176,6 +176,9 @@ in
       sops = {
         enable = true;
       };
+      easytier = {
+        enable = true;
+      };
     })
   ];
 
