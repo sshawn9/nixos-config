@@ -5,12 +5,6 @@
 }:
 
 {
-  services.caddy.virtualHosts."http://homepage.localhost" = {
-    extraConfig = ''
-      reverse_proxy 127.0.0.1:8082
-    '';
-  };
-
   systemd.services.homepage-dashboard.serviceConfig = {
     SupplementaryGroups = [
       "docker"

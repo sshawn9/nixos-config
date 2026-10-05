@@ -32,11 +32,4 @@ in
     webui = "/var/lib/mihomo/ui";
   };
   systemd.services.mihomo.wantedBy = lib.mkForce [ ];
-
-  services.caddy.virtualHosts."http://zashboard.localhost" = {
-    extraConfig = ''
-      rewrite /ui{uri}
-      reverse_proxy 127.0.0.1:9090
-    '';
-  };
 }

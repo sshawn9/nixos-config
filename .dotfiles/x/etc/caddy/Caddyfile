@@ -1,0 +1,22 @@
+{
+	log {
+		level ERROR
+	}
+}
+
+http://homepage.localhost {
+	log {
+		output file /var/log/caddy/access-http:__homepage.localhost.log
+	}
+
+	reverse_proxy 127.0.0.1:8082
+}
+
+http://zashboard.localhost {
+	log {
+		output file /var/log/caddy/access-http:__zashboard.localhost.log
+	}
+
+	rewrite /ui{uri}
+	reverse_proxy 127.0.0.1:9090
+}
