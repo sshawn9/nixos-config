@@ -20,3 +20,11 @@ http://zashboard.localhost {
 	rewrite /ui{uri}
 	reverse_proxy 127.0.0.1:9090
 }
+
+http://foldergram.localhost, http://foldergram.x.sshawn9.com {
+	log {
+		output file /var/log/caddy/access-foldergram.log
+	}
+
+	reverse_proxy 127.0.0.1:4141
+}
