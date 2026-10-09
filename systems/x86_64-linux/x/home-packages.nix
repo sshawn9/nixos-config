@@ -21,9 +21,9 @@ in
           microsoft-edge.enable = true;
 
           jetbrains = {
-            clion.enable = true;
-            pycharm.enable = true;
-            rust-rover.enable = true;
+            # clion.enable = true;
+            # pycharm.enable = true;
+            # rust-rover.enable = true;
           };
 
           telegram-desktop.enable = true;
