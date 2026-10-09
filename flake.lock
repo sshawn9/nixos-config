@@ -54,11 +54,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1790952814,
-        "narHash": "sha256-Dy5pz46c/B+dtJjQ1S0B6CvgGw1NyMuzYFZl2KMbIzQ=",
+        "lastModified": 1791542158,
+        "narHash": "sha256-g6jlW2kKAudfVzSyb/+WZE1orkAS6tmI5uLtSGmBO0c=",
         "owner": "sshawn9",
         "repo": "bluetooth-auth",
-        "rev": "105c2b6d51ef33ffcf573fced6ebec76f1be05af",
+        "rev": "bf78bdcbe060083f66518e491c0b7c0cf432f4f4",
         "type": "github"
       },
       "original": {
@@ -537,19 +537,6 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1790323409,
-        "narHash": "sha256-m4DGo58Fza5ImOegtWOeE18nhpSO1IGzsVA6Lpsb4zw=",
-        "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1079315.e94cb152ed51/nixexprs.tar.zst"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst"
-      }
-    },
-    "nixpkgs_7": {
-      "locked": {
         "lastModified": 1789921291,
         "narHash": "sha256-Ft/BRnIqw1MywFoXydKobjjWmDFgDdYtSpJliE8+yUw=",
         "owner": "NixOS",
@@ -561,25 +548,6 @@
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "noctalia": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_6"
-      },
-      "locked": {
-        "lastModified": 1790905070,
-        "narHash": "sha256-ukT5U54WQSpq6sktl5QJOZ8S4ZF3LLmP8CAFel1XJf0=",
-        "owner": "noctalia-dev",
-        "repo": "noctalia",
-        "rev": "6ef43e2bf2f3d5b4205ec72a72e34a2ab76ce3b4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "noctalia-dev",
-        "ref": "v5.2.1",
-        "repo": "noctalia",
         "type": "github"
       }
     },
@@ -650,7 +618,6 @@
           "nixpkgs-2605"
         ],
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "noctalia": "noctalia",
         "openfang": "openfang",
         "rime-ice": "rime-ice",
         "rust-overlay": "rust-overlay_2",
@@ -844,7 +811,7 @@
     },
     "x-laptune": {
       "inputs": {
-        "nixpkgs": "nixpkgs_7"
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
         "lastModified": 1790713733,
