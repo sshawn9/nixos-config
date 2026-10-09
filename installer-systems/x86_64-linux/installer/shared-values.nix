@@ -2,7 +2,8 @@ _:
 
 {
   my.shared = {
-    desktops.active = [ "niri" ];
+    desktop.active = [ "niri" ];
+    desktop.noctalia.enable = true;
 
     sops.enable = false;
   };

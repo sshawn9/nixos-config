@@ -4,7 +4,8 @@ _:
   my.shared = {
     username = "star";
 
-    desktops.active = [ "niri" ];
+    desktop.active = [ "niri" ];
+    desktop.noctalia.enable = true;
 
     containers.enable = true;
   };

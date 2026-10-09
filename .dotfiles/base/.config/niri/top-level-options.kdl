@@ -11,5 +11,3 @@ hotkey-overlay { skip-at-startup; }
 environment {
     "NIXOS_OZONE_WL" "1"
 }
-
-spawn-at-startup "noctalia"

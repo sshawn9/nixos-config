@@ -1,0 +1,7 @@
+require("input")
+require("binds")
+require("layout")
+require("window-rules")
+require("gestures")
+require("top-level-options")
+require("outputs")

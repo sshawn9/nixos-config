@@ -1,0 +1,2 @@
+# greetd removes this after PAM; let UWSM export it before starting user services.
+export XDG_SESSION_CLASS=user

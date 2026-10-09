@@ -6,7 +6,7 @@
 }:
 {
   services.flatpak = {
-    enable = lib.mkDefault (config.my.shared.desktops.active != [ ]);
+    enable = lib.mkDefault (config.my.shared.desktop.active != [ ]);
     package = lib.mkDefault pkgs.unstable.flatpak;
   };
 }

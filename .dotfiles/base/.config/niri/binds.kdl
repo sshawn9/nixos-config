@@ -197,17 +197,16 @@ binds {
 
     // -------------------------------------------------------------------------
     // Screenshots and recording
-    // Bare Print uses niri's picker. Shift/Ctrl/Alt scope it down.
-    // The Satty variants immediately open an editor.
+    // Print/Ctrl+Print/Alt+Print use niri's picker/screen/window capture.
+    // Shift+Print opens Flameshot; Ctrl+Shift+Print preselects the whole capture.
     // -------------------------------------------------------------------------
     Print repeat=false { screenshot; }
     Ctrl+Print repeat=false { screenshot-screen; }
     Alt+Print repeat=false { screenshot-window; }
-    Shift+Print repeat=false { spawn "sh" "-c" "grim -g \"$(slurp)\" - | satty -f -"; }
-    Ctrl+Shift+Print repeat=false { spawn "sh" "-c" "grim - | satty -f -"; }
-    Alt+Shift+Print repeat=false { spawn "sh" "-c" "niri msg action screenshot-window && sleep 0.1 && satty -f \"$(ls -t ~/Pictures/Screenshots/*.png | head -1)\""; }
+    Shift+Print repeat=false { spawn "flameshot" "gui"; }
+    Ctrl+Shift+Print repeat=false { spawn "flameshot" "gui" "--region" "all"; }
 
-    Mod+Print repeat=false { spawn "gpu-screen-recorder-gtk"; }
+    Mod+Print repeat=false { spawn "gsr-ui" "launch-show"; }
     Mod+Shift+Print repeat=false { spawn "kooha"; }
 
     // -------------------------------------------------------------------------

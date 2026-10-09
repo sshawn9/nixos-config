@@ -2,7 +2,7 @@
 
 {
   xdg.portal = {
-    enable = lib.mkDefault (config.my.shared.desktops.active != [ ]);
-    xdgOpenUsePortal = lib.mkDefault (config.my.shared.desktops.active != [ ]);
+    enable = lib.mkDefault (config.my.shared.desktop.active != [ ]);
+    xdgOpenUsePortal = lib.mkDefault (config.my.shared.desktop.active != [ ]);
   };
 }

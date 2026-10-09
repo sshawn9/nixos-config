@@ -6,7 +6,7 @@
 }:
 
 {
-  config = lib.mkIf config.my.shared.desktops.gnome.enable {
+  config = lib.mkIf config.my.shared.desktop.gnome.enable {
     services = {
       desktopManager.gnome.enable = lib.mkDefault true;
       gnome = {

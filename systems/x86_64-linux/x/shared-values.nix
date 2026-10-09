@@ -4,10 +4,12 @@ _:
   my.shared = {
     username = "star";
 
-    desktops.active = [
+    desktop.active = [
       "niri"
       "gnome"
+      "hyprland"
     ];
+    desktop.noctalia.enable = true;
 
     nvidia.enable = true;
 

@@ -18,6 +18,14 @@ popup_borders = false
 popup_shadows = false
 card_borders = false
 
+# Keep direct launching outside the UWSM-managed Hyprland session.
+launch_apps_custom_command = """sh -c '
+if uwsm check is-active hyprland.desktop >/dev/null 2>&1; then
+  exec uwsm app -- "$@"
+else
+  exec "$@"
+fi' noctalia-launch $CMD"""
+
 [shell.animation]
 enabled = false
 
@@ -48,7 +56,7 @@ actions = [
   { action = "lock", shortcut = "1", countdown_seconds = 10 },
   { action = "lock_and_suspend", shortcut = "2", countdown_seconds = 10 },
   { action = "command", command = "systemctl hibernate", label = "Hibernate", glyph = "hibernate", shortcut = "3", countdown_seconds = 10 },
-  { action = "logout", shortcut = "4", countdown_seconds = 10 },
+  { action = "command", command = "if uwsm check is-active hyprland.desktop >/dev/null 2>&1; then exec uwsm stop; else exec noctalia msg session logout; fi", label = "Logout", glyph = "logout", shortcut = "4", countdown_seconds = 10 },
   { action = "reboot", shortcut = "5", countdown_seconds = 10 },
   { action = "command", command = "systemctl soft-reboot", label = "Userspace Reboot", glyph = "reboot", shortcut = "6", countdown_seconds = 10 },
   { action = "command", command = "systemctl reboot --firmware-setup", label = "Reboot to UEFI", glyph = "reboot", shortcut = "7", countdown_seconds = 10 },

@@ -93,10 +93,10 @@ let
 in
 {
   fonts = {
-    enableDefaultPackages = lib.mkDefault config.my.shared.desktops.active != [ ];
+    enableDefaultPackages = lib.mkDefault config.my.shared.desktop.active != [ ];
     fontDir.enable = lib.mkDefault true;
 
-    packages = lib.optionals (config.my.shared.desktops.active != [ ]) fullFontPackages;
+    packages = lib.optionals (config.my.shared.desktop.active != [ ]) fullFontPackages;
 
     fontconfig = {
       # Shadow the upstream file with a higher-priority no-op configuration.

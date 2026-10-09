@@ -25,7 +25,7 @@ let
   ];
 in
 {
-  config = lib.mkIf (config.my.shared.desktops.active != [ ]) {
+  config = lib.mkIf (config.my.shared.desktop.active != [ ]) {
     services.greetd = {
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.greetd;
