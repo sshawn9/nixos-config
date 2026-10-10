@@ -1,7 +1,22 @@
+// Host displays: the first matching output wins, so prefer DMS.
+include optional=true "dms/outputs.kdl"
+include optional=true "outputs.kdl"
+
+// Shared configuration.
+include "top-level-options.kdl"
 include "input.kdl"
-include "binds.kdl"
+include "gestures.kdl"
 include "layout.kdl"
 include "window-rules.kdl"
-include "gestures.kdl"
-include "top-level-options.kdl"
-include optional=true "outputs.kdl"
+include "binds.kdl"
+
+// DMS Include Configs
+// Load after shared settings so GUI changes take precedence.
+include "dms/input.kdl"
+include "dms/cursor.kdl"
+include "dms/layout.kdl"
+include "dms/colors.kdl"
+include "dms/alttab.kdl"
+include "dms/wpblur.kdl"
+include "dms/windowrules.kdl"
+include "dms/binds.kdl"

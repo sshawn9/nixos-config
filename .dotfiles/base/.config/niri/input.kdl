@@ -9,12 +9,8 @@ input {
         repeat-delay 300
         repeat-rate 50
         track-layout "global"
-        numlock
     }
     touchpad {
-        tap
-        dwt
-        natural-scroll
         scroll-method "two-finger"
     }
     focus-follows-mouse max-scroll-amount="10%"

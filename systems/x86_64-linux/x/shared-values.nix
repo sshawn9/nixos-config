@@ -9,7 +9,7 @@ _:
       "gnome"
       "hyprland"
     ];
-    desktop.noctalia.enable = true;
+    desktop.dms.enable = true;
 
     nvidia.enable = true;
 

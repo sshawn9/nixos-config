@@ -44,6 +44,7 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     {
       treefmt.settings.excludes = [
         ".dotfiles/*/.config/Code/User/**"
+        ".dotfiles/*/.config/DankMaterialShell/**"
         "sops/secrets/**"
       ];
 

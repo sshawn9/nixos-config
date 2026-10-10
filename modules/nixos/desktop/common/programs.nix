@@ -27,6 +27,9 @@
 
     # File manager
     nautilus
+
+    # GTK3 theme
+    adw-gtk3
   ];
 
   programs = {

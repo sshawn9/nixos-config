@@ -1,0 +1,120 @@
+// DMS Window Rules - Managed by DankMaterialShell
+// Do not edit manually - changes may be overwritten
+
+// @id=noctalia-settings @name=Noctalia Settings
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+}
+
+// @id=portal-auth-dialogs @name=Portal and Authentication Dialogs
+window-rule {
+    match app-id="^xdg-desktop-portal"
+    match app-id="^org\\.freedesktop\\.impl\\.portal"
+    match app-id="^org\\.gnome\\.PolkitAgent$"
+    match app-id="^polkit-gnome-authentication-agent-1$"
+    match app-id="^org\\.kde\\.polkit-kde-authentication-agent-1$"
+    match app-id="^lxqt-policykit-agent$"
+    match title="(?i)^(Authentication Required|Authenticate|Password Required|Unlock Login Keyring|Enter Password|Permission Required)$"
+    open-floating true
+    open-focused true
+    default-column-width { fixed 560; }
+}
+
+// @id=file-pickers @name=File Pickers
+window-rule {
+    match title="(?i)^(Open File|Open Files|Save File|Save As|Open Folder|Save Folder|Select File|Select Files|Select Folder|Choose File|Choose Files|Choose Folder|File Upload|File Chooser)$"
+    match title="(?i)^(Open|Save|Select|Choose|Pick)( a)? (File|Files|Folder|Directory)$"
+    open-floating true
+    open-focused true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 650; }
+}
+
+// @id=generic-dialogs @name=Generic Dialogs
+window-rule {
+    match title="(?i)^(Preferences|Settings|Options|Properties|About|Rename|Confirm|Confirmation|Error|Warning)$"
+    open-floating true
+    open-focused true
+    default-column-width { fixed 680; }
+}
+
+// @id=system-utilities @name=System Utilities
+window-rule {
+    match app-id="(?i)^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|blueman-manager|blueberry|overskride|iwgtk|wdisplays|arandr|nwg-displays|nwg-look|qt5ct|qt6ct|kvantummanager|org\\.gnome\\.Settings|gnome-control-center|org\\.gnome\\.Tweaks|gnome-tweaks)$"
+    open-floating true
+    default-column-width { fixed 780; }
+    default-window-height { fixed 560; }
+}
+
+// @id=desktop-utilities @name=Desktop Utilities
+window-rule {
+    match app-id="(?i)^(org\\.gnome\\.Calculator|gnome-calculator|qalculate-gtk|io\\.github\\.qalculate\\.qalculate-gtk|galculator|org\\.gnome\\.Characters|org\\.gnome\\.Clocks|org\\.gnome\\.Weather|org\\.gnome\\.Calendar|zenity|yad)$"
+    open-floating true
+    default-column-width { fixed 620; }
+    default-window-height { fixed 520; }
+}
+
+// @id=clipboard-color-emoji @name=Clipboard, Color and Emoji Tools
+window-rule {
+    match app-id="(?i)^(copyq|com\\.github\\.hluk\\.copyq|cliphist|gcolor3|gpick|org\\.gnome\\.design\\.Palette|org\\.gnome\\.Eyedropper|emoji-picker)$"
+    open-floating true
+    default-column-width { fixed 560; }
+    default-window-height { fixed 460; }
+}
+
+// @id=browser-picture-in-picture @name=Browser Picture-in-Picture
+window-rule {
+    match app-id="(?i)^(firefox|org\\.mozilla\\.firefox|librewolf|io\\.gitlab\\.librewolf-community|floorp|zen|chromium|google-chrome|google-chrome-beta|google-chrome-unstable|brave-browser|com\\.brave\\.Browser|microsoft-edge|com\\.microsoft\\.Edge|vivaldi-stable|opera|thorium-browser)$" title="(?i)^Picture[- ]in[- ]Picture$"
+    open-floating true
+    default-column-width { fixed 520; }
+    default-window-height { fixed 292; }
+    default-floating-position x=24 y=24 relative-to="bottom-right"
+}
+
+// @id=media-players @name=Media Players
+window-rule {
+    match app-id="(?i)^(mpv|celluloid|io\\.github\\.celluloid_player\\.Celluloid|vlc|org\\.videolan\\.VLC)$"
+    open-floating true
+    default-column-width { proportion 0.55; }
+    default-window-height { proportion 0.55; }
+    variable-refresh-rate true
+    default-floating-position x=24 y=24 relative-to="bottom-right"
+}
+
+// @id=steam-vrr @name=Steam Game VRR
+window-rule {
+    match app-id="^steam_app_\\d+$"
+    variable-refresh-rate true
+}
+
+// @id=steam-dialogs @name=Steam Dialogs
+window-rule {
+    match app-id="(?i)^steam$" title="(?i)^(Friends List|Steam Settings|Settings|.* - Chat|.* Properties)$"
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 620; }
+}
+
+// @id=capture-utilities @name=Screenshot and Camera Utilities
+window-rule {
+    match app-id="(?i)^(flameshot|org\\.flameshot\\.Flameshot|org\\.kde\\.spectacle|gnome-screenshot|org\\.gnome\\.Snapshot|cheese|org\\.gnome\\.Cheese|guvcview)$"
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 560; }
+}
+
+// @id=wine-dialogs @name=Wine Dialogs
+window-rule {
+    match app-id="(?i)^(winecfg|winetricks)$"
+    match title="(?i)^(Wine configuration|Winetricks|Browse For Folder)$"
+    open-floating true
+    default-column-width { fixed 720; }
+    default-window-height { fixed 560; }
+}
+
+// @id=dms-floating-windows @name=DMS Floating Windows
+window-rule {
+    match app-id="^com.danklinux.dms$"
+    open-floating true
+}

@@ -1,15 +1,9 @@
 layout {
-    gaps 4
     struts {
         left 0
         right 0
         top -3
         bottom 0
-    }
-    focus-ring {
-        width 1
-        active-color "#4a5472"
-        inactive-color "#00000000"
     }
     border { off; }
     default-column-width { proportion 1.000000; }

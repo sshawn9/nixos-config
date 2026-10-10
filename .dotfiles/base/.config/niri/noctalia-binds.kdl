@@ -1,0 +1,4 @@
+binds {
+    Mod+D repeat=false { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+Escape repeat=false { spawn "noctalia" "msg" "session" "lock"; }
+}

@@ -6,9 +6,9 @@
 }:
 
 {
-  xdg.configFile."ghostty" = lib.mkIf config.programs.ghostty.enable {
-    source = config.my.paths.local.xdgConfigLayeredSource "ghostty";
-  };
+  xdg.configFile."ghostty" = lib.mkIf config.programs.ghostty.enable (
+    config.my.paths.local.xdgConfigLayeredTree "ghostty"
+  );
 
   programs = {
     ghostty = {
