@@ -1,0 +1,21 @@
+binds {
+    Mod+Return repeat=false { spawn "ghostty"; }
+    Mod+B repeat=false { spawn "google-chrome"; }
+    Mod+E repeat=false { spawn "nautilus"; }
+
+    Ctrl+Shift+V repeat=false hotkey-overlay-title="Paste plain text / file paths" {
+        spawn-sh r#"
+            set -eu
+            mime=$(wl-paste --list-types | grep -m1 -E '^(text/plain(;charset=utf-8)?|UTF8_STRING)$')
+            # The sentinel preserves trailing newlines in command substitution.
+            text=$(wl-paste --no-newline --type "$mime" && printf .)
+            text=${text%.}
+            [ -n "$text" ] || exit 0
+            printf '%s' "$text" | wl-copy --type 'text/plain;charset=utf-8'
+            if niri msg --json focused-window | jq -e '.app_id == "com.mitchellh.ghostty"' >/dev/null; then
+                exec wtype -M ctrl -M shift -k v -m shift -m ctrl
+            fi
+            exec wtype -M ctrl -k v -m ctrl
+        "#;
+    }
+}

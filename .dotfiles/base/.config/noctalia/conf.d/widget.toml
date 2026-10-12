@@ -99,17 +99,15 @@ hide_when_no_media = true
 [widget.todo]
 type = "nightwatch75/todo:todo"
 
-[widget.udiskie]
-type = "aristides/udiskie:status"
-show_count = true
-hide_when_empty = false
+[widget.screen-toolkit]
+type = "alexander/screen-toolkit:widget"
 
 [widget.tray]
 hide_passive = false
 drawer = false
 
 [widget.notifications]
-enabled = false
+enabled = true
 hide_when_no_unread = false
 
 [widget.network]

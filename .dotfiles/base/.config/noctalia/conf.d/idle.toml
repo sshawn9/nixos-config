@@ -11,10 +11,10 @@ action = "lock"
 
 [idle.behavior.screen-off]
 enabled = true
-timeout = 600
+timeout = 420
 action = "screen_off"
 
 [idle.behavior.suspend]
 enabled = true
-timeout = 1800
+timeout = 1200
 action = "lock_and_suspend"

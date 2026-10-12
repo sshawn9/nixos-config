@@ -16,8 +16,8 @@ start = [
 end = [
   "todo",
   "clipboard",
+  "screen-toolkit",
   "tray",
-  "udiskie",
   "notifications",
   "caffeine",
   "network",

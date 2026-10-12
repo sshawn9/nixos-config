@@ -1,2 +1,10 @@
 [control_center]
 sidebar = "full"
+width = 1200
+shortcuts = [
+  { type = "wifi" },
+  { type = "bluetooth" },
+  { type = "caffeine" },
+  { type = "notification" },
+  { type = "power_profile" },
+]

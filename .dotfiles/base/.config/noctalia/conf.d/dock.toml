@@ -1,2 +1,3 @@
 [dock]
 enabled = false
+smart_auto_hide = true

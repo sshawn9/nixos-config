@@ -1,0 +1,34 @@
+window-rule {
+    match app-id=r#"(?i)^code$"#
+    match app-id=r#"(?i)^google-chrome(-beta|-unstable)?$"#
+    match app-id=r#"(?i)^jetbrains-(clion|pycharm|rustrover)$"#
+    match app-id=r#"(?i)^(microsoft-edge|com\.microsoft\.Edge)$"#
+    match app-id=r#"(?i)^(antigravity-ide|Antigravity IDE)$"#
+    match app-id=r#"(?i)^sqlitebrowser$"#
+    match app-id=r#"(?i)^losslesscut$"#
+
+    // Keep Code's confirmation dialogs floating at their requested size.
+    exclude app-id=r#"(?i)^code$"# title="^Visual Studio Code$"
+    // Keep picture-in-picture windows floating at their requested size.
+    exclude title="(?i)^(Picture[- ]in[- ]Picture|画中画)$"
+
+    open-floating false
+    default-column-width { proportion 1.0; }
+    default-window-height { proportion 1.0; }
+}
+
+window-rule {
+    match app-id=r#"^com\.mitchellh\.ghostty$"#
+    match app-id=r#"(?i)^(github-desktop|GitHub Desktop)$"#
+    match app-id=r#"(?i)^(obsidian|md\.obsidian\.Obsidian)$"#
+
+    open-floating false
+    default-column-width { proportion 0.666667; }
+}
+
+window-rule {
+    match app-id=r#"^org\.gnome\.Nautilus$"#
+
+    open-floating false
+    default-column-width { proportion 0.5; }
+}

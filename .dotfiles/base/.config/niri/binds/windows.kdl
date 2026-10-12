@@ -1,0 +1,78 @@
+binds {
+    // Window basics
+    Mod+Q repeat=false { close-window; }
+    Mod+F repeat=false {
+        spawn-sh "niri msg action set-column-width 100% && niri msg action set-window-height 100%";
+    }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { toggle-windowed-fullscreen; }
+    Mod+Ctrl+I { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Ctrl+T { toggle-column-tabbed-display; }
+
+    // Focus navigation
+    // H/L move across columns, J/K move within a column or across workspaces.
+    Mod+Shift+Tab { focus-window-previous; }
+
+    Mod+H { focus-column-left-or-last; }
+    Mod+J { focus-window-or-workspace-down; }
+    Mod+K { focus-window-or-workspace-up; }
+    Mod+L { focus-column-right-or-first; }
+
+    Mod+Left { focus-column-left-or-last; }
+    Mod+Down { focus-window-or-workspace-down; }
+    Mod+Up { focus-window-or-workspace-up; }
+    Mod+Right { focus-column-right-or-first; }
+
+    Mod+Home { focus-column-first; }
+    Mod+End { focus-column-last; }
+
+    // Move windows and columns
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+J { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K { move-window-up-or-to-workspace-up; }
+    Mod+Shift+L { move-column-right; }
+
+    Mod+Shift+Left { move-column-left; }
+    Mod+Shift+Down { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Right { move-column-right; }
+
+    Mod+Shift+Home { move-column-to-first; }
+    Mod+Shift+End { move-column-to-last; }
+
+    Mod+Alt+H { swap-window-left; }
+    Mod+Alt+L { swap-window-right; }
+    Mod+Alt+Left { swap-window-left; }
+    Mod+Alt+Right { swap-window-right; }
+
+    // Columns, stacks, and layout shape
+    Mod+BracketLeft { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Ctrl+BracketLeft { consume-window-into-column; }
+    Mod+Ctrl+BracketRight { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Alt+R { switch-preset-column-width-back; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Alt+Shift+R { switch-preset-window-height-back; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Alt+Minus { set-window-width "-10%"; }
+    Mod+Alt+Equal { set-window-width "+10%"; }
+    Mod+0 { reset-window-height; }
+    Mod+V repeat=false allow-inhibiting=false { spawn "fit-window-to-height"; }
+
+    Mod+A { expand-column-to-available-width; }
+    Mod+C { center-column; }
+    Mod+Shift+C { center-window; }
+    Mod+Ctrl+C { center-visible-columns; }
+
+    // Floating layer
+    Mod+Space { switch-focus-between-floating-and-tiling; }
+    Mod+Shift+Space { toggle-window-floating; }
+    Mod+Alt+Space { move-window-to-floating; }
+    Mod+Ctrl+Space { move-window-to-tiling; }
+}

@@ -1,0 +1,7 @@
+binds {
+    Mod+D repeat=false { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+Escape repeat=false { spawn "noctalia" "msg" "session" "lock"; }
+    Print repeat=false { spawn "noctalia" "msg" "screenshot-region"; }
+    Ctrl+Print repeat=false { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Alt+Print repeat=false { spawn "noctalia" "msg" "plugin" "alexander/screen-toolkit:service" "all" "annotateWindow"; }
+}

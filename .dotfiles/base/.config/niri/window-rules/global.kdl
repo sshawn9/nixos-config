@@ -1,0 +1,12 @@
+window-rule {
+    open-floating true
+    default-column-width {}
+    default-window-height {}
+
+    geometry-corner-radius 10
+    clip-to-geometry true
+
+    popups {
+        geometry-corner-radius 12
+    }
+}

@@ -4,3 +4,7 @@ position = "bottom_center"
 position_vertical = "bottom_center"
 background_opacity = 0.7
 border = false
+hide_delay_ms = 800
+
+[osd.kinds]
+media = false

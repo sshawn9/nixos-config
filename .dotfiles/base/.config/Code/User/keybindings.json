@@ -1,0 +1,15 @@
+[
+  {
+    "key": "alt+up",
+    "command": "workbench.action.increaseViewSize"
+  },
+  {
+    "key": "alt+down",
+    "command": "workbench.action.decreaseViewSize"
+  },
+  {
+    "key": "ctrl+v",
+    "command": "workbench.action.terminal.paste",
+    "when": "terminalFocus"
+  }
+]

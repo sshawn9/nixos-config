@@ -43,11 +43,11 @@ show_weather = true
 [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
 box_height = 196.0
 box_width = 810.0
-cx = 1066.5
-cy = 1148.5
+cx = 1024.0
+cy = 1102.835693359375
 output = "eDP-1"
-placement_height = 1333.0
-placement_width = 2133.0
+placement_height = 1280.0
+placement_width = 2048.0
 rotation = 0.0
 type = "login_box"
 
@@ -70,11 +70,11 @@ show_weather = true
 [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
 box_height = 128.0
 box_width = 336.0
-cx = 1066.5
-cy = 954.5
+cx = 1024.0
+cy = 916.5491333007812
 output = "eDP-1"
-placement_height = 1333.0
-placement_width = 2133.0
+placement_height = 1280.0
+placement_width = 2048.0
 rotation = 0.0
 type = "clock"
 
@@ -96,11 +96,11 @@ timezone = ""
 [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
 box_height = 464.0
 box_width = 416.0
-cx = 306.5
-cy = 370.5
+cx = 294.2859802246094
+cy = 355.7690124511719
 output = "eDP-1"
-placement_height = 1333.0
-placement_width = 2133.0
+placement_height = 1280.0
+placement_width = 2048.0
 rotation = 0.0
 type = "calendar"
 

@@ -1,5 +1,16 @@
 screenshot-path "~/Pictures/Screenshots/%Y-%m-%d_%H-%M-%S.png"
-prefer-no-csd
+// prefer-no-csd
+
+cursor {
+    xcursor-theme "catppuccin-mocha-mauve-cursors"
+    xcursor-size 28
+}
+
+recent-windows {
+    highlight {
+        corner-radius 12
+    }
+}
 
 hotkey-overlay { skip-at-startup; }
 

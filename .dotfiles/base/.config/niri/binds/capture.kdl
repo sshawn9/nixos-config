@@ -1,0 +1,10 @@
+binds {
+    Print repeat=false { screenshot; }
+    Ctrl+Print repeat=false { screenshot-screen; }
+    Alt+Print repeat=false { screenshot-window; }
+    Shift+Print repeat=false { spawn "flameshot" "gui"; }
+    Ctrl+Shift+Print repeat=false { spawn "flameshot" "gui" "--region" "all"; }
+
+    Mod+Print repeat=false { spawn "gsr-ui" "launch-show"; }
+    Mod+Shift+Print repeat=false { spawn "kooha"; }
+}
