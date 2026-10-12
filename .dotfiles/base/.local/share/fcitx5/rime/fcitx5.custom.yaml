@@ -1,2 +1,3 @@
 patch:
   "app_options/com.mitchellh.ghostty/ascii_mode": true
+  "app_options/google-chrome/ascii_mode": false
