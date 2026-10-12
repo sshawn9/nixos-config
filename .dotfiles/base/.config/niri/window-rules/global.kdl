@@ -1,8 +1,25 @@
 window-rule {
+    // Default to floating; these apps use Niri's native tiling/dialog detection.
+    // Keep this allowlist in sync with the app sizes in tiled-apps.kdl.
+    exclude app-id=r#"(?i)^code$"#
+    exclude app-id=r#"(?i)^google-chrome(-beta|-unstable)?$"#
+    exclude app-id=r#"(?i)^jetbrains-(clion|pycharm|rustrover)$"#
+    exclude app-id=r#"(?i)^(microsoft-edge|com\.microsoft\.Edge)$"#
+    exclude app-id=r#"(?i)^(antigravity-ide|Antigravity IDE)$"#
+    exclude app-id=r#"(?i)^sqlitebrowser$"#
+    exclude app-id=r#"(?i)^losslesscut$"#
+    exclude app-id=r#"^com\.mitchellh\.ghostty$"#
+    exclude app-id=r#"(?i)^(github-desktop|GitHub Desktop)$"#
+    exclude app-id=r#"(?i)^(obsidian|md\.obsidian\.Obsidian)$"#
+    exclude app-id=r#"^org\.gnome\.Nautilus$"#
+
     open-floating true
     default-column-width {}
     default-window-height {}
+}
 
+// Apply appearance to every window, independently of its layout policy.
+window-rule {
     geometry-corner-radius 10
     clip-to-geometry true
 

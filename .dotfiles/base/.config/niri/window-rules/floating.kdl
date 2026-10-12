@@ -1,3 +1,13 @@
+// Keep browser picture-in-picture floating at its requested size.
+window-rule {
+    match app-id=r#"(?i)^google-chrome(-beta|-unstable)?$"# title="(?i)^(Picture[- ]in[- ]Picture|画中画)$"
+    match app-id=r#"(?i)^(microsoft-edge|com\.microsoft\.Edge)$"# title="(?i)^(Picture[- ]in[- ]Picture|画中画)$"
+
+    open-floating true
+    default-column-width {}
+    default-window-height {}
+}
+
 window-rule {
     match is-floating=true
 
