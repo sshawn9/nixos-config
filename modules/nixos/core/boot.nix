@@ -83,7 +83,7 @@ let
 in
 {
   system.nixos.label = "${dateStr}.${timeStr}.${suffix}";
-  system.configurationRevision = if (self ? rev) then self.rev else null;
+  system.configurationRevision = self.rev or self.dirtyRev or null;
 
   boot = {
     loader = {

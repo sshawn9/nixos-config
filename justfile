@@ -383,21 +383,21 @@ gc-older DAYS="180":
 list-generations:
     nixos-rebuild list-generations
 
-# List non-current system generations whose NixOS label contains "dirty"
+# List non-current system generations whose configuration revision ends with "-dirty"
 [group("maintenance")]
 dirty-generations:
-    nixos-rebuild list-generations --json | jq -r '.[] | select((.nixosVersion // "" | contains("dirty")) and (.current | not)) | "\(.generation)\t\(.date)\t\(.nixosVersion)"'
+    nixos-rebuild list-generations --json | jq -r '.[] | select((.configurationRevision // "" | endswith("-dirty")) and (.current | not)) | "\(.generation)\t\(.date)\t\(.configurationRevision)"'
 
 # Delete non-current dirty system generations from the default system profile
 [group("maintenance")]
 delete-dirty-generations:
-    nixos-rebuild list-generations --json | jq -r '.[] | select((.nixosVersion // "" | contains("dirty")) and (.current | not)) | .generation' | xargs -r sudo nix-env -p /nix/var/nix/profiles/system --delete-generations
+    nixos-rebuild list-generations --json | jq -r '.[] | select((.configurationRevision // "" | endswith("-dirty")) and (.current | not)) | .generation' | xargs -r sudo nix-env -p /nix/var/nix/profiles/system --delete-generations
     just refresh-boot-entries
 
 # Dry-run deletion of non-current dirty system generations
 [group("maintenance")]
 delete-dirty-generations-dry-run:
-    nixos-rebuild list-generations --json | jq -r '.[] | select((.nixosVersion // "" | contains("dirty")) and (.current | not)) | .generation' | xargs -r sudo nix-env -p /nix/var/nix/profiles/system --delete-generations --dry-run
+    nixos-rebuild list-generations --json | jq -r '.[] | select((.configurationRevision // "" | endswith("-dirty")) and (.current | not)) | .generation' | xargs -r sudo nix-env -p /nix/var/nix/profiles/system --delete-generations --dry-run
 
 # List systemd-boot NixOS entries as generation rows
 [group("maintenance")]
