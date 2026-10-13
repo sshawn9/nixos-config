@@ -11,7 +11,7 @@
   "editor.formatOnSaveMode": "file",
   // Diff editor
   "diffEditor.ignoreTrimWhitespace": false,
-  "diffEditor.renderSideBySide": true,
+  "diffEditor.renderSideBySide": false,
   // Files
   "files.autoSave": "onFocusChange",
   // Direnv
