@@ -1,5 +1,15 @@
 [plugin_settings]
 
-[plugin_settings."nightwatch75/todo"]
-todo_folder = "~/Documents/Todo"
+[plugin_settings."alexander/screen-toolkit"]
+panel-legacy_open_near_click = true
+panel-legacy_position = "auto"
+panel_open_near_click = true
+panel_position = "auto"
+record-audio-out = true
+result_open_near_click = true
+result_position = "auto"
+
+[plugin_settings."baizhu/paged-todo"]
+panel_open_near_click = true
 panel_placement = "floating"
+panel_position = "auto"

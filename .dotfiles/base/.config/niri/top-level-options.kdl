@@ -12,6 +12,26 @@ recent-windows {
     }
 }
 
+// Disable all compositor background blur, including client requests.
+blur {
+    off
+}
+
+// Global blur-off still permits xray; block background effects on all layers.
+layer-rule {
+    background-effect {
+        blur false
+        xray false
+    }
+
+    popups {
+        background-effect {
+            blur false
+            xray false
+        }
+    }
+}
+
 hotkey-overlay { skip-at-startup; }
 
 environment {

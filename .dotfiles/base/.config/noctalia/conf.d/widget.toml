@@ -1,7 +1,7 @@
 [widget]
 
 [widget.launcher]
-enabled = false
+enabled = true
 glyph = "rocket"
 
 [widget.keybinds]
@@ -85,9 +85,9 @@ hide_when_empty = true
 show_all_outputs = false
 only_active_workspace = true
 icon_scale = 1.0
-taskbar_max_width = 1000
+taskbar_max_width = 2000
 show_window_title = true
-window_title_max_width = 120
+window_title_max_width = 200
 
 [widget.media]
 artist_first = true
@@ -96,8 +96,11 @@ title_scroll = "on_hover"
 show_progress = true
 hide_when_no_media = true
 
-[widget.todo]
-type = "nightwatch75/todo:todo"
+[widget.bar]
+type = "baizhu/paged-todo:bar"
+
+[widget.bar_3]
+type = "baizhu/paged-todo:bar"
 
 [widget.screen-toolkit]
 type = "alexander/screen-toolkit:widget"
@@ -105,20 +108,22 @@ type = "alexander/screen-toolkit:widget"
 [widget.tray]
 hide_passive = false
 drawer = false
+match_adjacent_spacing = true
 
 [widget.notifications]
 enabled = true
 hide_when_no_unread = false
 
 [widget.network]
-enabled = false
-show_label = false
+enabled = true
+show_label = true
 
 [widget.bluetooth]
-enabled = false
+enabled = true
+show_label = true
 
 [widget.brightness]
-enabled = false
+enabled = true
 
 [widget.battery-time]
 type = "battery"
@@ -135,7 +140,7 @@ label_content = "rate"
 device = "auto"
 
 [widget.settings]
-enabled = false
+enabled = true
 
 [widget.volume]
 
