@@ -1,113 +1,55 @@
 ---
 name: refresh-flake-input-comments
-description: Audit and update Nix flake input comments that document non-trivial upstream dependency trees and the local all/partial/none follow policy, while skipping raw flake=false sources and trivial nixpkgs pins or aliases. Use when flake inputs, flake.lock, follows overrides, package consumption, or binary-cache configuration changes, or when asked to verify or refresh the input comments in this repository.
+description: 核验并更新 flake 输入的上游依赖树和 follows 策略注释。用于输入、锁文件、依赖覆盖、软件包使用方式或相关缓存配置变化，以及用户要求检查或刷新注释时。
 ---
 
-# Refresh Flake Input Comments
+# 刷新 Flake 输入注释
 
-Keep the `# Upstream inputs:` trees faithful to each locked upstream flake and
-keep the separate `# Follow policy:` rationale faithful to this repository.
+默认处理仓库根目录的 `flake.nix`，也可使用用户指定的嵌套 flake。
+仅修改输入注释；策略不符合下述规则或证据不足时明确指出，不自行改动配置或锁文件。
 
-## Guardrails
+## 获取上游依赖树
 
-- Treat the upstream graph and local follow policy as separate facts.
-- Reconstruct upstream graphs from each input's exact locked revision. Never use
-  this repository's already-collapsed lock graph as the upstream graph.
-- Skip `flake = false` sources, trivial nixpkgs pins with no upstream inputs,
-  and local aliases that only point to those nixpkgs pins. Do not generate or
-  compare comment blocks for them.
-- Change comments only. Do not change URLs, `follows`, `flake = false`, or lock
-  files unless the user explicitly requests policy implementation.
-- Do not invent a rationale. If the current policy conflicts with the rules
-  below, call that out instead of disguising it as intentional.
-- Preserve unrelated worktree changes and use read-only Git commands.
+在仓库根目录运行，`--flake` 指向目标 flake 目录：
 
-## Workflow
+```console
+python3 .agents/skills/refresh-flake-input-comments/scripts/inspect_upstream_inputs.py --flake .
+```
 
-1. Select the target flake. Default to the repository-root `flake.nix`; accept a
-   nested flake directory when the user names one.
-2. Rebuild independent upstream trees:
+脚本按各输入的确切锁定版本独立生成上游树，不能用本仓库经 `follows` 合并的锁定依赖图替代。
+它跳过 `flake = false` 源码输入、无上游输入的 nixpkgs 固定版本输入及其别名，无需为它们维护注释。
+获取失败时保留对应原注释，并说明无法核实的部分。
 
-   ```console
-   python3 .agents/skills/refresh-flake-input-comments/scripts/inspect_upstream_inputs.py --flake .
-   ```
+## 判断 follows 策略
 
-   The script is read-only and uses `nix flake metadata --no-write-lock-file`.
-   It emits only non-trivial flake inputs. Treat failures as unknown data: do
-   not guess or delete the existing tree.
+根据目标 flake 的输入定义和本地覆盖分类；上游自身的共享依赖不计为本地跟随：
 
-3. Inspect local overrides and existing comments:
+- `N/A`：没有上游输入的非 nixpkgs flake。
+- `all (alias)`：完全通过 `.follows` 实现的根输入别名。
+- `all`：所有直接上游输入都重定向到对应的根输入。
+- `partial`：仅重定向部分直接输入，或只重定向嵌套输入，未覆盖完整的上游依赖图。
+- `none`：该根输入下的任何层级都不存在本地跟随覆盖。
 
-   ```console
-   rg -n 'Upstream inputs:|Follow policy:|\.follows|flake = false' flake.nix
-   ```
+检查实际使用输入的代码和缓存配置，考虑根输入未来更新后的情况，不能仅凭当前输出路径一致判断：
 
-4. Classify each root input from the target flake's own definitions:
-   - `N/A`: a non-nixpkgs flake with no upstream inputs.
-   - `all (alias)`: a root alias implemented entirely with `.follows`.
-   - `all`: every direct upstream input is redirected to a root counterpart.
-   - `partial`: only some direct inputs are redirected, or only nested inputs
-     are redirected while the complete upstream graph is not.
-   - `none`: no local follow override exists anywhere below that root input.
+- 实际使用的软件包构建成本高，且预期上游缓存提供其确切派生结果时，保留影响该派生的上游依赖版本。
+- 其他情况优先 `follows`，包括轻量包装、应共享宿主包集的求值或模块依赖，
+  以及已确认不参与实际软件包派生的格式化或检查依赖。
+- 没有对应根输入的独有依赖可保留上游版本，作为 `partial` 的理由。
 
-   Do not count an upstream flake's native shared edge as a local follow.
+## 更新注释
 
-5. Re-evaluate the reason; never copy it blindly. Search actual consumers and
-   cache configuration:
+在输入定义上方使用以下格式，依赖树采用脚本输出，不混入本地 `follows`；策略理由简短且基于实际使用和缓存情况。
 
-   ```console
-   rg -n --glob '*.nix' 'inputs\.<input-name>\b' .
-   rg -n 'substituters|trusted-public-keys|cache\.enable|cachix|garnix|attic' .
-   ```
+```nix
+# Upstream inputs:
+# input-name
+# ├── direct-input
+# │   └── transitive-input
+# └── shared-input (shared with input-name/direct-input)
+#
+# Follow policy: partial — 基于实际使用和缓存成本的简要理由。
+input-name = { };
+```
 
-   Apply these repository rules against future root-input updates, not merely
-   the revisions that happen to match today:
-   - Preserve upstream dependency pins when a consumed package is expensive and
-     an upstream binary cache is expected to supply that exact derivation.
-   - Follow shared roots when a cache miss only rebuilds a cheap wrapper or other
-     lightweight derivation.
-   - Otherwise prefer follows to remove redundant inputs.
-   - Follow evaluation-only and module-only dependencies when they should share
-     the host package set.
-   - A formatting/check-only transitive input may follow without invalidating a
-     runtime package cache; verify that it does not enter the consumed derivation.
-   - Unique dependencies with no root counterpart may remain upstream and can
-     explain a `partial` policy.
-   - Never justify follows by saying current output paths happen to match; the
-     root nixpkgs pins are intentionally updateable.
-
-6. Update the immediately preceding comment block with `apply_patch`:
-
-   ```nix
-   # Upstream inputs:
-   # input-name
-   # ├── direct-input
-   # │   └── transitive-input
-   # └── shared-input (shared with input-name/direct-input)
-   #
-   # Follow policy: partial — concise reason tied to consumption and cache cost.
-   input-name = { };
-   ```
-
-   Keep trees structural and glanceable. Show upstream-native shared nodes as
-   `(shared with <path>)`; do not annotate tree edges with this repository's
-   follows. Keep policy reasons to one to three lines.
-
-7. Re-run the inspector and compare every emitted root input with its comment.
-   Do not require comments for skipped sources or nixpkgs pins. Then run:
-
-   ```console
-   nix fmt flake.nix
-   nix flake metadata --no-write-lock-file
-   nix flake check --all-systems --no-build --keep-going
-   git diff -- flake.nix flake.lock
-   ```
-
-   For a nested flake, pass its directory to Nix and inspect its own lock file.
-   Confirm `flake.lock` is unchanged when the request is comment-only.
-
-## Report
-
-State which upstream trees or policy classifications changed, which evidence
-changed the rationale, and which checks passed. Mention unresolved metadata or
-cache uncertainty explicitly.
+完成后对照脚本输出核对依赖树，并检查 diff 仅包含目标注释，未引入锁文件改动。
