@@ -1,19 +1,10 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      sqlite = {
-        enable = true;
-      };
-      sqlitebrowser = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages = {
+    sqlite = lib.mkDefault true;
+    sqlitebrowser = lib.mkDefault true;
+  };
 }

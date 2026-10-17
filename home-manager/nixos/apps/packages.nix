@@ -1,14 +1,7 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      github-desktop = { };
-    })
-  ];
+  my.packages.github-desktop = lib.mkDefault false;
 }

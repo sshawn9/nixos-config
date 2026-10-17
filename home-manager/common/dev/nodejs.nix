@@ -1,16 +1,7 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      nodejs = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages.nodejs = lib.mkDefault true;
 }

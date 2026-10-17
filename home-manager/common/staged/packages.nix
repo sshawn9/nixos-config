@@ -1,17 +1,12 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      antigravity-ide = { };
-      code-cursor = { };
-      inshellisense = { };
-      warp-terminal = { };
-    })
-  ];
+  my.packages = {
+    antigravity-ide = lib.mkDefault false;
+    code-cursor = lib.mkDefault false;
+    inshellisense = lib.mkDefault false;
+    warp-terminal = lib.mkDefault false;
+  };
 }

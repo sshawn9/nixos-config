@@ -160,16 +160,15 @@ layers. Later override layers win for the same relative file path.
 
 `packages.nix` and `programs.nix` are fallback files inside a domain.
 
-Use `packages.nix` for package enable options that do not yet deserve a more
-specific module:
+Use `packages.nix` for package defaults that do not yet deserve a more specific
+module. Configure the shared [`my.packages` option](../../shared-options/README.md#package-selection)
+directly; `utils/packages.nix` installs the enabled entries:
 
 ```nix
-imports = [
-  (myLib.mkHomePackages {
-    curl.enable = true;
-    unzip.enable = true;
-  })
-];
+my.packages = {
+  curl = lib.mkDefault true;
+  unzip = lib.mkDefault true;
+};
 ```
 
 Use `programs.nix` for Home Manager `programs.*` configuration that does not
@@ -221,5 +220,5 @@ Hosts can then override the shared baseline explicitly:
 
 ```nix
 programs.foo.enable = false;
-my.packages.bar.enable = true;
+my.packages.bar = true;
 ```

@@ -1,19 +1,11 @@
+{ lib, pkgs, ... }:
 {
-  myLib,
-  pkgs,
-  ...
-}:
-let
-  inherit (myLib) mkSystemPackages;
-in
-{
-  imports = [
-    (mkSystemPackages {
-      llama-cpp = {
-        package = pkgs.unstable.llama-cpp.override {
-          cudaSupport = true;
-        };
-      };
-    })
-  ];
+  my.packages.llama-cpp = {
+    enable = lib.mkDefault false;
+    package = lib.mkDefault (
+      pkgs.unstable.llama-cpp.override {
+        cudaSupport = true;
+      }
+    );
+  };
 }

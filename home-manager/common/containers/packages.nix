@@ -1,19 +1,10 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      regctl = {
-        enable = true;
-      };
-      skopeo = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages = {
+    regctl = lib.mkDefault true;
+    skopeo = lib.mkDefault true;
+  };
 }

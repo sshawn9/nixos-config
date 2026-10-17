@@ -1,16 +1,7 @@
+{ lib, pkgs, ... }:
 {
-  myLib,
-  ...
-}:
-let
-  inherit (myLib) mkHomePackages;
-in
-{
-  imports = [
-    (mkHomePackages {
-      stdenv.cc = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages.cc = {
+    enable = lib.mkDefault true;
+    package = lib.mkDefault (pkgs.unstable or pkgs).stdenv.cc;
+  };
 }

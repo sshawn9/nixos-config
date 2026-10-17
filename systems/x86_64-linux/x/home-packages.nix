@@ -10,29 +10,27 @@ in
     users.${username} = {
       my = {
         packages = {
-          nvtopPackages.full.enable = true;
+          nvtop = true;
 
-          ariang.enable = true;
+          ariang = true;
 
-          obsidian.enable = true;
-          github-desktop.enable = true;
+          obsidian = true;
+          github-desktop = true;
 
-          google-chrome.enable = true;
-          microsoft-edge.enable = true;
+          google-chrome = true;
+          microsoft-edge = true;
 
-          jetbrains = {
-            # clion.enable = true;
-            # pycharm.enable = true;
-            # rust-rover.enable = true;
-          };
+          # clion = true;
+          # pycharm = true;
+          # rust-rover = true;
 
-          telegram-desktop.enable = true;
+          telegram-desktop = true;
 
-          ffmpeg-full.enable = true;
+          ffmpeg-full = true;
 
-          losslesscut.enable = true;
+          losslesscut = true;
 
-          antigravity-ide.enable = true;
+          antigravity-ide = true;
         };
       };
     };

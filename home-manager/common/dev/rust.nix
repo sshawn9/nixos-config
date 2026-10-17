@@ -1,16 +1,7 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      rustup = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages.rustup = lib.mkDefault true;
 }

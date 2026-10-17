@@ -13,8 +13,6 @@ myLib = import ./lib { inherit inputs; };
 ## Files
 
 - [`loader.nix`](./loader.nix): module path discovery helpers backed by haumea.
-- [`mk-packages.nix`](./mk-packages.nix): package enable-option helpers for
-  `home.packages` and `environment.systemPackages`.
 - [`module-context.nix`](./module-context.nix): runtime-target detection
   helper for modules shared between NixOS, nix-darwin, and Home Manager.
 - [`default.nix`](./default.nix): public export surface for this directory.
@@ -25,10 +23,8 @@ myLib = import ./lib { inherit inputs; };
 
 ```nix
 myLib.loader.loadShallowModulePathList
-myLib.mkPackages.mkHomePackages
 
-myLib.loadAsModulesShallow
-myLib.mkHomePackages
+myLib.loadShallowModulePathList
 ```
 
 ### Module Loaders
@@ -68,71 +64,6 @@ the discovered tree:
 repoTree = myLib.loadModules self.outPath;
 repoTree.systems.${system}.${hostname}.default
 ```
-
-### Package Options
-
-Public helpers:
-
-```nix
-mkHomePackages
-mkSystemPackages
-```
-
-`mkHomePackages` is for Home Manager modules. It generates options under
-`my.home.package` and writes enabled packages to `home.packages`.
-
-```nix
-imports = [
-  (myLib.mkHomePackages {
-    ripgrep = { enable = true; };
-    fd = { };
-    nvtopPackages.full = { };
-    custom-tool = { pkg = pkgs.custom-tool; };
-  })
-];
-
-my.home.package.fd.enable = true;
-```
-
-`mkSystemPackages` is for NixOS and nix-darwin modules. It generates options
-under `my.system.package` and writes enabled packages to
-`environment.systemPackages`.
-
-```nix
-imports = [
-  (myLib.mkSystemPackages {
-    smartmontools = { };
-    btrfs-progs = { enable = true; };
-  })
-];
-
-my.system.package.smartmontools.enable = true;
-```
-
-Package catalog leaves support these forms:
-
-```nix
-{
-  ripgrep = { };
-  fd = { enable = true; description = "fd file finder"; };
-  custom-tool = { pkg = pkgs.custom-tool; };
-  direct = pkgs.direct-package;
-}
-```
-
-An empty leaf such as `ripgrep = { };` resolves by path from `pkgs.unstable` when
-available, otherwise from `pkgs`. Nested leaves work the same way:
-
-```nix
-nvtopPackages.full = { };
-# => pkgs.unstable.nvtopPackages.full or pkgs.nvtopPackages.full
-```
-
-If the option name should not match the package path, use explicit `pkg`.
-
-Internal package helpers are intentionally not exported from `default.nix`.
-Keeping the public surface to `mkHomePackages` and `mkSystemPackages` makes the
-package catalog easy to change without creating a larger API contract.
 
 ### Module Context
 

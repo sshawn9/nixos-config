@@ -2,14 +2,10 @@
 let
   inherit (inputs.nixpkgs) lib;
   loader = import ./loader.nix { inherit inputs lib; };
-  mkPackages = import ./mk-packages.nix { inherit lib; };
   moduleContextLib = import ./module-context.nix { };
 in
 {
-  inherit
-    loader
-    mkPackages
-    ;
+  inherit loader;
 
   inherit (moduleContextLib)
     inHomeManager
@@ -27,10 +23,5 @@ in
     loadRecursiveModulePathAttrs
     loadShallowModulePathList
     loadShallowModulePathAttrs
-    ;
-
-  inherit (mkPackages)
-    mkHomePackages
-    mkSystemPackages
     ;
 }

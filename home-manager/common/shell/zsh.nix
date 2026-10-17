@@ -2,12 +2,9 @@
   lib,
   pkgs,
   config,
-  myLib,
   ...
 }:
 let
-  inherit (myLib) mkHomePackages;
-
   completionStyles = ''
     # Include dotfiles in completion without changing ordinary shell globs.
     _comp_options+=(globdots)
@@ -158,13 +155,7 @@ let
   '';
 in
 {
-  imports = [
-    (mkHomePackages {
-      zsh-completions = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages.zsh-completions = lib.mkDefault true;
 
   programs = {
     zsh = {

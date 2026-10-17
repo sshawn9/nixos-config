@@ -10,12 +10,12 @@ in
     users.${username} = {
       my = {
         packages = {
-          ariang.enable = true;
+          ariang = true;
 
-          obsidian.enable = true;
-          github-desktop.enable = true;
+          obsidian = true;
+          github-desktop = true;
 
-          google-chrome.enable = true;
+          google-chrome = true;
         };
       };
     };

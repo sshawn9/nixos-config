@@ -1,22 +1,11 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      ghq = {
-        enable = true;
-      };
-      gfold = {
-        enable = true;
-      };
-      gita = {
-        enable = true;
-      };
-    })
-  ];
+  my.packages = {
+    ghq = lib.mkDefault true;
+    gfold = lib.mkDefault true;
+    gita = lib.mkDefault true;
+  };
 }

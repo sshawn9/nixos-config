@@ -1,14 +1,7 @@
+{ lib, pkgs, ... }:
 {
-  myLib,
-  ...
-}:
-let
-  inherit (myLib) mkHomePackages;
-in
-{
-  imports = [
-    (mkHomePackages {
-      nvtopPackages.full = { };
-    })
-  ];
+  my.packages.nvtop = {
+    enable = lib.mkDefault false;
+    package = lib.mkDefault pkgs.unstable.nvtopPackages.full;
+  };
 }

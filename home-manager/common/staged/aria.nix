@@ -1,12 +1,10 @@
 {
-  myLib,
   pkgs,
   lib,
   config,
   ...
 }:
 let
-  inherit (myLib) mkHomePackages;
   aria2ConfigFile = "${config.xdg.configHome}/aria2/aria2.conf";
   aria2CacheDir = "${config.xdg.cacheHome}/aria2";
   aria2StateDir = "${config.xdg.stateHome}/aria2";
@@ -69,11 +67,7 @@ let
   '';
 in
 {
-  imports = [
-    (mkHomePackages {
-      ariang = { };
-    })
-  ];
+  my.packages.ariang = lib.mkDefault false;
 
   xdg.configFile."aria2/aria2.conf" = lib.mkIf config.programs.aria2.enable {
     source = config.my.paths.local.xdgConfigLayeredSource "aria2/aria2.conf";

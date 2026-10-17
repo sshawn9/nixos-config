@@ -1,19 +1,14 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      telegram-desktop = { };
-      google-chrome = { };
+  my.packages = {
+    telegram-desktop = lib.mkDefault false;
+    google-chrome = lib.mkDefault false;
 
-      ffmpeg-full = { };
+    ffmpeg-full = lib.mkDefault false;
 
-      losslesscut = { };
-    })
-  ];
+    losslesscut = lib.mkDefault false;
+  };
 }

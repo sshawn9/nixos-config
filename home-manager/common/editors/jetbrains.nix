@@ -1,18 +1,18 @@
+{ lib, pkgs, ... }:
+
 {
-  myLib,
-  ...
-}:
-let
-  inherit (myLib) mkHomePackages;
-in
-{
-  imports = [
-    (mkHomePackages {
-      jetbrains = {
-        clion = { };
-        pycharm = { };
-        rust-rover = { };
-      };
-    })
-  ];
+  my.packages = {
+    clion = {
+      enable = lib.mkDefault false;
+      package = lib.mkDefault pkgs.unstable.jetbrains.clion;
+    };
+    pycharm = {
+      enable = lib.mkDefault false;
+      package = lib.mkDefault pkgs.unstable.jetbrains.pycharm;
+    };
+    rust-rover = {
+      enable = lib.mkDefault false;
+      package = lib.mkDefault pkgs.unstable.jetbrains.rust-rover;
+    };
+  };
 }

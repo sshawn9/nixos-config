@@ -1,18 +1,13 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      # nixpkgs marks microsoft-edge unavailable on darwin (only Linux build).
-      microsoft-edge = { };
+  my.packages = {
+    # nixpkgs marks microsoft-edge unavailable on darwin (only Linux build).
+    microsoft-edge = lib.mkDefault false;
 
-      cosmic-files = { };
-      nemo = { };
-    })
-  ];
+    cosmic-files = lib.mkDefault false;
+    nemo = lib.mkDefault false;
+  };
 }

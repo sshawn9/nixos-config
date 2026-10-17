@@ -1,16 +1,9 @@
 {
-  myLib,
+  lib,
   ...
 }:
-let
-  inherit (myLib) mkHomePackages;
-in
 {
-  imports = [
-    (mkHomePackages {
-      obsidian = { };
-    })
-  ];
+  my.packages.obsidian = lib.mkDefault false;
 
   # Obsidian's Wayland xdg_toplevel app_id is hardcoded to the literal
   # "electron" because its package.json lacks the desktopName field;
