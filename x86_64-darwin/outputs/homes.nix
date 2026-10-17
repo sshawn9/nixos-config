@@ -48,7 +48,6 @@ let
           ;
       };
       modules = [
-        repoTree.lib.inject-module-context
         repoTree.home-manager.standalone
         {
           imports =

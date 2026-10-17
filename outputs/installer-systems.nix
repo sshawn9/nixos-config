@@ -38,7 +38,6 @@ let
       modules = [
         repoTree.modules.default
         repoTree.home-manager.embedded
-        repoTree.lib.inject-module-context
         {
           # Nothing is unpacked or re-derived here: the installer writes modules,
           # and this appends them. `hostname` above stays the directory name it
@@ -52,7 +51,6 @@ let
           nixpkgs.pkgs = nixpkgsPolicy.mkPkgs system;
 
           home-manager.sharedModules = [
-            repoTree.lib.inject-module-context
             {
               imports = myLib.flattenAttrTreeToList repoTree.shared-options;
             }

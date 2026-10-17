@@ -27,14 +27,12 @@ let
       modules = [
         repoTree.modules.default
         repoTree.home-manager.embedded
-        repoTree.lib.inject-module-context
         {
           imports =
             myLib.flattenAttrTreeToList systemsTree.${system}.${hostname}
             ++ myLib.flattenAttrTreeToList repoTree.shared-options;
           nixpkgs.pkgs = nixpkgsPolicy.mkPkgs system;
           home-manager.sharedModules = [
-            repoTree.lib.inject-module-context
             {
               imports = myLib.flattenAttrTreeToList repoTree.shared-options;
             }

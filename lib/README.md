@@ -13,8 +13,8 @@ myLib = import ./lib { inherit inputs; };
 ## Files
 
 - [`loader.nix`](./loader.nix): module path discovery helpers backed by haumea.
-- [`module-context.nix`](./module-context.nix): runtime-target detection
-  helper for modules shared between NixOS, nix-darwin, and Home Manager.
+- [`module-context.nix`](./module-context.nix): pure framework-context helper
+  for modules shared between NixOS, nix-darwin, and Home Manager.
 - [`default.nix`](./default.nix): public export surface for this directory.
 
 ## Public API
@@ -25,6 +25,7 @@ myLib = import ./lib { inherit inputs; };
 myLib.loader.loadShallowModulePathList
 
 myLib.loadShallowModulePathList
+myLib.moduleContext
 ```
 
 ### Module Loaders
@@ -67,48 +68,65 @@ repoTree.systems.${system}.${hostname}.default
 
 ### Module Context
 
-Public helper:
+Call the public helper with the module's argument set:
 
 ```nix
-moduleContext
+myLib.moduleContext args
 ```
 
-`moduleContext` derives mutually exclusive boolean flags from a module's
-arguments to identify which runtime target the current evaluation is. Use it
-in modules that are shared between NixOS, nix-darwin, embedded Home Manager,
-and standalone Home Manager but need to branch on the framework.
+`moduleContext` is a pure function that reads the built-in `_class` argument
+and `specialArgs.osClass`, which Home Manager supplies when embedded in a
+system. Capture the argument set with `args@` and pass it directly:
 
 ```nix
-{ config, osConfig ? null, pkgs, lib, myLib, ... }:
+args@{ lib, myLib, ... }:
 let
-  ctx = myLib.moduleContext { inherit config osConfig pkgs; };
+  context = myLib.moduleContext args;
 in
 {
-  config = lib.mkMerge [
-    (lib.mkIf ctx.isStandaloneHM { /* standalone-HM-only */ })
-    (lib.mkIf ctx.isEmbeddedHM   { /* embedded-HM-only */ })
-    (lib.mkIf ctx.isNixOS        { /* NixOS-only */ })
-    (lib.mkIf ctx.isDarwin       { /* darwin-only */ })
-  ];
+  imports =
+    lib.optionals context.inNixOSProper [ ./nixos.nix ]
+    ++ lib.optionals context.inDarwinProper [ ./darwin.nix ]
+    ++ lib.optionals context.inHomeManager [ ./home-manager.nix ];
 }
 ```
 
-The helper returns:
+The module system includes `_class` and `specialArgs` in `args` even when
+they are not explicitly named in the module's parameter list. The helper
+does not read `config`, `osConfig`, or `pkgs`. The repository supplies
+`myLib` through `specialArgs` / `extraSpecialArgs`, so the helper is
+available while resolving `imports`.
+
+For a single check, access the result directly:
 
 ```nix
+args@{ myLib, ... }:
 {
-  isHomeManager  = bool;  # config ? home
-  isEmbeddedHM   = bool;  # HM under NixOS / nix-darwin (osConfig is set)
-  isStandaloneHM = bool;  # HM via homeConfigurations.<key>
-  isNixOS        = bool;  # NixOS system module
-  isDarwin       = bool;  # nix-darwin system module
+  my.packages.git = (myLib.moduleContext args).inHomeManager;
 }
 ```
 
-Caller contract: the consuming module must declare `osConfig ? null` (with
-the default) in its argument list, otherwise non-embedded-HM evaluations fail
-on a missing argument. Detection principles and the truth table are
-documented at the top of [`module-context.nix`](./module-context.nix).
+The result contains these boolean fields:
+
+| Field            | Meaning                                           |
+| ---------------- | ------------------------------------------------- |
+| `inHomeManager`  | Any Home Manager evaluation                       |
+| `inEmbeddedHM`   | Home Manager with a non-null `osClass`            |
+| `inStandaloneHM` | Home Manager with an absent or null `osClass`     |
+| `inNixOSProper`  | The NixOS system evaluation                       |
+| `inDarwinProper` | The nix-darwin system evaluation                  |
+| `inNixOSSystem`  | NixOS or Home Manager embedded in NixOS           |
+| `inDarwinSystem` | nix-darwin or Home Manager embedded in nix-darwin |
+
+The flags overlap: a NixOS system evaluation sets both `inNixOSProper`
+and `inNixOSSystem`. A null or unrecognized `_class` sets all fields to
+`false`.
+
+Framework membership is independent of the target platform. Standalone
+Home Manager remains standalone even when run on a NixOS machine. Use
+`pkgs.stdenv.hostPlatform` for platform checks in configuration values, or
+`lib.systems.elaborate system` for import selection when `system` is
+provided through `specialArgs`.
 
 ## Documentation Convention
 
