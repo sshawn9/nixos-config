@@ -3,7 +3,12 @@
 # $ sudo waydroid init
 # https://wiki.nixos.org/wiki/Waydroid
 
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   virtualisation = {
@@ -12,4 +17,17 @@
       package = lib.mkDefault pkgs.unstable.waydroid-nftables;
     };
   };
+
+  home-manager.users.${config.my.shared.username} =
+    {
+      config,
+      lib,
+      osConfig,
+      ...
+    }:
+    {
+      systemd.user.tmpfiles.rules = lib.mkIf (!osConfig.virtualisation.waydroid.enable) [
+        "r ${builtins.toJSON "${config.xdg.dataHome}/applications/waydroid.*.desktop"} - - - -"
+      ];
+    };
 }
