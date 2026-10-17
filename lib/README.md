@@ -13,7 +13,7 @@ myLib = import ./lib { inherit inputs; };
 ## Files
 
 - [`loader.nix`](./loader.nix): module path discovery helpers backed by haumea.
-- [`module-context.nix`](./module-context.nix): pure framework-context helper
+- [`module-context.nix`](./module-context.nix): pure framework-context predicates
   for modules shared between NixOS, nix-darwin, and Home Manager.
 - [`default.nix`](./default.nix): public export surface for this directory.
 
@@ -25,7 +25,8 @@ myLib = import ./lib { inherit inputs; };
 myLib.loader.loadShallowModulePathList
 
 myLib.loadShallowModulePathList
-myLib.moduleContext
+myLib.inHomeManager
+myLib.inNixOSProper
 ```
 
 ### Module Loaders
@@ -68,47 +69,46 @@ repoTree.systems.${system}.${hostname}.default
 
 ### Module Context
 
-Call the public helper with the module's argument set:
+Call each predicate directly with the module's argument set:
 
 ```nix
-myLib.moduleContext args
+myLib.inHomeManager args
+myLib.inNixOSProper args
+myLib.inStandaloneHM args
 ```
 
-`moduleContext` is a pure function that reads the built-in `_class` argument
-and `specialArgs.osClass`, which Home Manager supplies when embedded in a
-system. Capture the argument set with `args@` and pass it directly:
+These pure functions read the built-in `_class` argument and, where needed,
+`specialArgs.osClass`, which Home Manager supplies when embedded in a system.
+Capture the argument set with `args@` and pass it directly:
 
 ```nix
 args@{ lib, myLib, ... }:
-let
-  context = myLib.moduleContext args;
-in
 {
   imports =
-    lib.optionals context.inNixOSProper [ ./nixos.nix ]
-    ++ lib.optionals context.inDarwinProper [ ./darwin.nix ]
-    ++ lib.optionals context.inHomeManager [ ./home-manager.nix ];
+    lib.optionals (myLib.inNixOSProper args) [ ./nixos.nix ]
+    ++ lib.optionals (myLib.inDarwinProper args) [ ./darwin.nix ]
+    ++ lib.optionals (myLib.inHomeManager args) [ ./home-manager.nix ];
 }
 ```
 
 The module system includes `_class` and `specialArgs` in `args` even when
-they are not explicitly named in the module's parameter list. The helper
-does not read `config`, `osConfig`, or `pkgs`. The repository supplies
-`myLib` through `specialArgs` / `extraSpecialArgs`, so the helper is
+they are not explicitly named in the module's parameter list. The predicates
+do not read `config`, `osConfig`, or `pkgs`. The repository supplies
+`myLib` through `specialArgs` / `extraSpecialArgs`, so the predicates are
 available while resolving `imports`.
 
-For a single check, access the result directly:
+The return value can also be used directly in configuration:
 
 ```nix
 args@{ myLib, ... }:
 {
-  my.packages.git = (myLib.moduleContext args).inHomeManager;
+  my.packages.git = myLib.inHomeManager args;
 }
 ```
 
-The result contains these boolean fields:
+`default.nix` exports these predicates directly; each returns a boolean:
 
-| Field            | Meaning                                           |
+| Function         | Meaning                                           |
 | ---------------- | ------------------------------------------------- |
 | `inHomeManager`  | Any Home Manager evaluation                       |
 | `inEmbeddedHM`   | Home Manager with a non-null `osClass`            |
@@ -118,9 +118,9 @@ The result contains these boolean fields:
 | `inNixOSSystem`  | NixOS or Home Manager embedded in NixOS           |
 | `inDarwinSystem` | nix-darwin or Home Manager embedded in nix-darwin |
 
-The flags overlap: a NixOS system evaluation sets both `inNixOSProper`
-and `inNixOSSystem`. A null or unrecognized `_class` sets all fields to
-`false`.
+The predicates overlap: a NixOS system evaluation makes both `inNixOSProper`
+and `inNixOSSystem` return `true`. A null or unrecognized `_class` makes all
+predicates return `false`.
 
 Framework membership is independent of the target platform. Standalone
 Home Manager remains standalone even when run on a NixOS machine. Use

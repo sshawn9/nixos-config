@@ -1,27 +1,65 @@
-# moduleContext
-# Scope:   universal
-# Returns: framework-context booleans for the current module evaluation
-# Use:     myLib.moduleContext args in an args@{ ... }: module
-# Notes:   reads only _class and specialArgs.osClass, so it can be used in
-#          imports. *Proper selects the system evaluator; *System also includes
-#          Home Manager embedded in that framework.
-# Example:
-#   args@{ lib, myLib, ... }:
-#   let context = myLib.moduleContext args; in
-#   { imports = lib.optionals context.inNixOSProper [ ./nixos.nix ]; }
-
-{ _class, specialArgs, ... }:
-let
-  osClass = specialArgs.osClass or null;
-in
+# Pure framework-context predicates. These read only _class and
+# specialArgs.osClass, so they can be used while resolving imports.
 rec {
-  inHomeManager = _class == "homeManager";
-  inEmbeddedHM = inHomeManager && osClass != null;
-  inStandaloneHM = inHomeManager && osClass == null;
+  # inHomeManager
+  # Scope:   universal
+  # Returns: whether the current evaluation is Home Manager
+  # Use:     select Home Manager modules
+  # Notes:   includes both standalone and embedded Home Manager
+  # Example: myLib.inHomeManager { _class = "homeManager"; } => true
+  inHomeManager = { _class, ... }: _class == "homeManager";
 
-  inNixOSProper = _class == "nixos";
-  inDarwinProper = _class == "darwin";
+  # inEmbeddedHM
+  # Scope:   universal
+  # Returns: whether Home Manager is embedded in a system evaluation
+  # Use:     select configuration that needs a parent system
+  # Notes:   Home Manager supplies the parent's class in specialArgs.osClass
+  # Example: myLib.inEmbeddedHM { _class = "homeManager"; specialArgs.osClass = "nixos"; } => true
+  inEmbeddedHM =
+    args@{ specialArgs, ... }: inHomeManager args && (specialArgs.osClass or null) != null;
 
-  inNixOSSystem = inNixOSProper || (inHomeManager && osClass == "nixos");
-  inDarwinSystem = inDarwinProper || (inHomeManager && osClass == "darwin");
+  # inStandaloneHM
+  # Scope:   universal
+  # Returns: whether Home Manager is evaluated without a parent system
+  # Use:     select standalone Home Manager configuration
+  # Notes:   an absent or null osClass denotes standalone Home Manager
+  # Example: myLib.inStandaloneHM { _class = "homeManager"; specialArgs = { }; } => true
+  inStandaloneHM =
+    args@{ specialArgs, ... }: inHomeManager args && (specialArgs.osClass or null) == null;
+
+  # inNixOSProper
+  # Scope:   universal
+  # Returns: whether the current evaluation is NixOS
+  # Use:     select NixOS system modules
+  # Notes:   excludes Home Manager embedded in NixOS
+  # Example: myLib.inNixOSProper { _class = "nixos"; } => true
+  inNixOSProper = { _class, ... }: _class == "nixos";
+
+  # inDarwinProper
+  # Scope:   universal
+  # Returns: whether the current evaluation is nix-darwin
+  # Use:     select nix-darwin system modules
+  # Notes:   excludes Home Manager embedded in nix-darwin
+  # Example: myLib.inDarwinProper { _class = "darwin"; } => true
+  inDarwinProper = { _class, ... }: _class == "darwin";
+
+  # inNixOSSystem
+  # Scope:   universal
+  # Returns: whether the evaluation belongs to a NixOS system
+  # Use:     select configuration shared by NixOS and its Home Manager users
+  # Notes:   checks framework membership, independently of the target platform
+  # Example: myLib.inNixOSSystem { _class = "homeManager"; specialArgs.osClass = "nixos"; } => true
+  inNixOSSystem =
+    args@{ specialArgs, ... }:
+    inNixOSProper args || (inHomeManager args && (specialArgs.osClass or null) == "nixos");
+
+  # inDarwinSystem
+  # Scope:   universal
+  # Returns: whether the evaluation belongs to a nix-darwin system
+  # Use:     select configuration shared by nix-darwin and its Home Manager users
+  # Notes:   checks framework membership, independently of the target platform
+  # Example: myLib.inDarwinSystem { _class = "homeManager"; specialArgs.osClass = "darwin"; } => true
+  inDarwinSystem =
+    args@{ specialArgs, ... }:
+    inDarwinProper args || (inHomeManager args && (specialArgs.osClass or null) == "darwin");
 }
