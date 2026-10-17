@@ -1,7 +1,10 @@
 { inputs, ... }:
 let
   inherit (inputs.nixpkgs) lib;
-  loader = import ./loader.nix { inherit inputs lib; };
+  loader = import ./loader.nix {
+    inherit lib;
+    haumea = inputs.haumea.lib;
+  };
   moduleContext = import ./module-context.nix;
 in
 {

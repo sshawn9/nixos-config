@@ -1,16 +1,5 @@
-{ inputs, lib, ... }:
+{ lib, haumea }:
 let
-  # haumea
-  # Scope:   internal
-  # Returns: haumea library namespace
-  # Use:     shared loader backend for all public module path helpers
-  # Notes:   haumea.load provides the directory traversal and "_" visibility
-  #          convention used by this file
-  # Example:
-  #   haumea.load { src = ./features; loader = haumea.loaders.path; }
-  #   => { git = ./features/git.nix; shell.zsh = ./features/shell/zsh.nix; }
-  haumea = inputs.haumea.lib;
-
   # flattenAttrTreeToList
   # Scope:   universal
   # Returns: flat list of every non-attr value reachable in a nested attrset
@@ -29,7 +18,7 @@ let
   # Scope:   internal
   # Returns: module path for a top-level file or a subdirectory's default.nix
   # Use:     implement shallow loaders
-  # Notes:   subdirectories without default.nix fail early with a focused error
+  # Notes:   requires a default.nix file; a directory named default is invalid
   # Example:
   #   Directory:
   #     ./features/git.nix
@@ -58,8 +47,10 @@ let
   selectShallowModule =
     path: name: value:
     if lib.isAttrs value then
-      value.default
-        or (throw "myLib.loadShallowModulePathAttrs: ${toString path}/${name} is a directory without default.nix")
+      if lib.isPath (value.default or null) then
+        value.default
+      else
+        throw "myLib.loadShallowModulePathAttrs: ${toString path}/${name} is a directory without default.nix"
     else
       value;
 

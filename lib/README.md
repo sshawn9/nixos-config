@@ -31,41 +31,45 @@ myLib.inNixOSProper
 
 ### Module Loaders
 
-Canonical helpers:
+Public helpers:
 
 ```nix
 loadRecursiveModulePathAttrs
 loadShallowModulePathAttrs
 loadRecursiveModulePathList
 loadShallowModulePathList
+flattenAttrTreeToList
 ```
 
-Compatibility aliases used by existing modules:
+Load all visible Nix module paths under a directory recursively:
 
 ```nix
-loadModules = loadRecursiveModulePathAttrs;
-loadModulesShallow = loadShallowModulePathAttrs;
-loadAsModules = loadRecursiveModulePathList;
-loadAsModulesShallow = loadShallowModulePathList;
+imports = myLib.loadRecursiveModulePathList ./common;
 ```
 
-Typical use:
+For a directory's `default.nix`, use the shallow list helper:
 
 ```nix
-imports = myLib.loadAsModulesShallow ./.;
+imports = myLib.loadShallowModulePathList ./.;
 ```
 
-`loadAsModulesShallow` is the usual helper for a directory `default.nix`: it
-loads immediate child modules, collapses child directories to their
-`default.nix`, and excludes the current directory's own `default.nix`.
+`loadShallowModulePathList` loads immediate child modules, collapses child
+directories to their `default.nix`, and excludes the current directory's own
+`default.nix`. A child directory must contain a `default.nix` file; a directory
+named `default` does not qualify. `loadShallowModulePathAttrs` keeps the
+top-level `default` entry and returns an attribute set instead of a list.
 
 Use `loadRecursiveModulePathAttrs` when flake output code needs keyed access to
 the discovered tree:
 
 ```nix
-repoTree = myLib.loadModules self.outPath;
+repoTree = myLib.loadRecursiveModulePathAttrs self.outPath;
 repoTree.systems.${system}.${hostname}.default
 ```
+
+Use `myLib.flattenAttrTreeToList repoTree.shared-options` to collect the leaves
+of an already loaded subtree. The path loaders return paths without importing
+the files and omit entries whose names start with `_`.
 
 ### Module Context
 
