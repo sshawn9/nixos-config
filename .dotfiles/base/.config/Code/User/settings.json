@@ -48,11 +48,7 @@
   },
   // Python
   "python.analysis.typeCheckingMode": "standard",
-  "codexAccounts.displayLanguage": "zh",
-  "codexAccounts.codexAppRestartEnabled": false,
-  "codexAccounts.autoRefreshMinutes": 60,
-  "codexAccounts.backgroundTokenRefreshEnabled": true,
-  "codexAccounts.quotaWarningEnabled": false,
+  // GitHub Copilot
   "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.enable": {
     "*": false,
@@ -65,5 +61,11 @@
   "[markdown]": {
     "editor.formatOnSave": false
   },
+  // Codex Accounts
+  "codexAccounts.displayLanguage": "zh",
+  "codexAccounts.codexAppRestartEnabled": false,
+  "codexAccounts.autoRefreshMinutes": 60,
+  "codexAccounts.backgroundTokenRefreshEnabled": true,
+  "codexAccounts.quotaWarningEnabled": false,
   "codexAccounts.hourlyQuotaControlEnabled": true
 }
