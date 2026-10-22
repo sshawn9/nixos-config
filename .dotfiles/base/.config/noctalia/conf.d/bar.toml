@@ -12,7 +12,7 @@ end = [
   "notifications",
   "screen-toolkit",
   "clipboard",
-  "bar_3",
+  "bar",
   "volume",
   "brightness",
   "caffeine",

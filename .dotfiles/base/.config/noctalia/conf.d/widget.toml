@@ -99,9 +99,6 @@ hide_when_no_media = true
 [widget.bar]
 type = "baizhu/paged-todo:bar"
 
-[widget.bar_3]
-type = "baizhu/paged-todo:bar"
-
 [widget.screen-toolkit]
 type = "alexander/screen-toolkit:widget"
 
