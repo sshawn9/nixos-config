@@ -26,6 +26,7 @@ in
   programs.nushell = {
     enable = lib.mkDefault true;
     package = lib.mkDefault pkgs.unstable.nushell;
+    loadSessionVariables = true;
 
     settings = {
       show_banner = false;
