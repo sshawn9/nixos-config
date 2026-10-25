@@ -7,8 +7,8 @@
 }:
 
 {
-  nix.settings.extra-substituters = [ "https://attic.xuyh0120.win/lantian" ];
-  nix.settings.extra-trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+  nix.settings.extra-substituters = [ "https://cache.lantian.pub/lantian" ];
+  nix.settings.extra-trusted-public-keys = [ "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ=" ];
 
   nixpkgs.overlays = [
     inputs.nix-cachyos-kernel.overlays.pinned
