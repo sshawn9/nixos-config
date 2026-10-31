@@ -1,5 +1,8 @@
 binds {
     Mod+Return repeat=false { spawn "ghostty"; }
+    Ctrl+grave repeat=false hotkey-overlay-title="Toggle Ghostty Quick Terminal" {
+        spawn "ghostty" "+toggle-quick-terminal";
+    }
     Mod+B repeat=false { spawn "google-chrome"; }
     Mod+E repeat=false { spawn "nautilus"; }
 
