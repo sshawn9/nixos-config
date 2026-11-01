@@ -28,6 +28,7 @@
 
       slang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
       alang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
+      sub-file-paths = "sub:subs:subtitles";
 
       screenshot-format = "png";
       screenshot-directory = "~/Pictures/Screenshots";
