@@ -1,12 +1,21 @@
 {
+  config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
 {
-  programs.mpv = {
-    defaultProfiles = [ "high-quality" ];
+  xdg.configFile = lib.mkIf config.programs.mpv.enable {
+    "mpv/mpv.conf".source = config.my.paths.local.xdgConfigLayeredSource "mpv/mpv.conf";
+    "mpv/input.conf".source = config.my.paths.local.xdgConfigLayeredSource "mpv/input.conf";
 
+    # Expose Catppuccin's selected theme without hard-coding its store path in mpv.conf.
+    "mpv/catppuccin.conf".source =
+      config.programs.mpv.config.include or (pkgs.writeText "mpv-no-theme.conf" "");
+  };
+
+  programs.mpv = {
     # Keep the compiled player on nix-packages' pins; only rebuild its script wrapper.
     package = pkgs.mpv.override {
       mpv-unwrapped = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mpv.unwrapped;
@@ -16,69 +25,6 @@
         uosc
         thumbfast
       ];
-    };
-    config = {
-      loop-playlist = "inf";
-      autocreate-playlist = "same";
-
-      osc = false;
-      osd-bar = false;
-      border = false;
-      force-window = true;
-
-      slang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
-      alang = "zh-CN,zh-Hans,chi,zho,zh,en,eng";
-      sub-file-paths = "sub:subs:subtitles";
-
-      screenshot-format = "png";
-      screenshot-directory = "~/Pictures/Screenshots";
-
-      cache = true;
-      cache-on-disk = false;
-      cache-secs = 3600000;
-      demuxer-max-bytes = "2048MiB";
-      demuxer-max-back-bytes = "512MiB";
-      demuxer-seekable-cache = true;
-      demuxer-cache-wait = false;
-      cache-pause-initial = false;
-      demuxer-hysteresis-secs = 0;
-      prefetch-playlist = true;
-
-      audio-buffer = 1;
-      video-sync = "display-resample";
-      interpolation = true;
-
-      vo = "gpu-next";
-      gpu-api = "vulkan";
-      hwdec = "auto";
-    };
-
-    bindings = {
-      "RIGHT" = "seek  5 exact";
-      "LEFT" = "seek -5 exact";
-
-      "UP" = "add volume  5";
-      "DOWN" = "add volume -5";
-
-      "Alt+RIGHT" = "seek  30";
-      "Alt+LEFT" = "seek -30";
-
-      "Shift+RIGHT" = "seek  120";
-      "Shift+LEFT" = "seek -120";
-
-      "[" = "cycle playlist-pos down";
-      "]" = "cycle playlist-pos up";
-
-      "p" = "script-binding uosc/items";
-      "o" = "script-binding uosc/open-file";
-      "m" = "script-binding uosc/menu";
-      "t" = "script-message-to uosc toggle-elements timeline";
-
-      "SPACE" = "cycle pause";
-      "f" = "cycle fullscreen";
-      "s" = "screenshot";
-
-      "Ctrl+3" = "cycle video-triple";
     };
   };
 }
