@@ -27,6 +27,7 @@
       '';
 
       gnome.excludePackages = with pkgs; [
+        gst-thumbnailers
         gnome-tour
         gnome-music
         epiphany
