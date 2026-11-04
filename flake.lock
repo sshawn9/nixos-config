@@ -814,11 +814,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1790713733,
-        "narHash": "sha256-3iaUmDY+20eutL3+Ud1hBC92Y97xWFCSsP+J8QqDL5E=",
+        "lastModified": 1793771518,
+        "narHash": "sha256-tp7yvect6Zg+OILJ2ymGjfQIlKCJuVQyffD7eo7fWjk=",
         "owner": "sshawn9",
         "repo": "x-laptune",
-        "rev": "3ce20c811a2eb3e0931037891ee02c6dd52de418",
+        "rev": "d8ca43abac682d5d87a350c5a89e42233f88228d",
         "type": "github"
       },
       "original": {
