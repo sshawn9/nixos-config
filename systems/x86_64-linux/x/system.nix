@@ -6,4 +6,6 @@ _:
   boot.tmp.useTmpfs = true;
 
   # boot.kernelPackages = pkgs.stable.linuxPackages_6_18;
+
+  virtualisation.libvirtd.enable = true;
 }

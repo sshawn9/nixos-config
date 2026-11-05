@@ -12,7 +12,7 @@ let
   inherit (config.my.shared) username;
 in
 {
-  networking.firewall.extraCommands = ''
+  networking.firewall.extraCommands = lib.mkIf config.virtualisation.libvirtd.enable ''
     iptables -A nixos-fw -i virbr0 \
       -m conntrack --ctstate DNAT \
       -j nixos-fw-accept
@@ -29,7 +29,7 @@ in
   };
 
   users.users = {
-    ${username}.extraGroups = [
+    ${username}.extraGroups = lib.optionals config.virtualisation.libvirtd.enable [
       "kvm"
       "libvirtd"
     ];
@@ -63,16 +63,24 @@ in
       };
     };
 
-    spiceUSBRedirection.enable = lib.mkDefault true;
+    spiceUSBRedirection.enable = lib.mkDefault config.virtualisation.libvirtd.enable;
   };
 
   programs = {
     dconf.enable = lib.mkDefault true;
     virt-manager = {
-      enable = lib.mkDefault false;
+      enable = lib.mkDefault config.virtualisation.libvirtd.enable;
       package = lib.mkDefault pkgs.unstable.virt-manager;
     };
   };
+
+  environment.systemPackages = lib.mkIf config.virtualisation.libvirtd.enable [
+    pkgs.unstable.freerdp
+  ];
+
+  systemd.tmpfiles.rules = lib.mkIf config.virtualisation.libvirtd.enable [
+    "L+ /var/lib/libvirt/images/virtio-win.iso - - - - ${pkgs.virtio-win.src}"
+  ];
 
   # environment.systemPackages = with pkgs.unstable; [
   #   libguestfs
