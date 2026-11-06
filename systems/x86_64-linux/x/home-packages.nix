@@ -31,6 +31,8 @@ in
           losslesscut = true;
 
           antigravity-ide = true;
+
+          remmina = true;
         };
       };
     };

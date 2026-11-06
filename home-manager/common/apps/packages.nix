@@ -15,5 +15,7 @@
     haruna = lib.mkDefault false;
     ffmpeg-full = lib.mkDefault false;
     losslesscut = lib.mkDefault false;
+
+    remmina = lib.mkDefault false;
   };
 }
