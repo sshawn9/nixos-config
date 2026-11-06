@@ -122,20 +122,15 @@ let
         unset _nix_zsh_real _curr_zsh_real
       fi
 
-      # Prepend order matters: last prepended = highest priority.
-      # Target: _hm_bin > _sys_bin > container_PATH
-      # (matches NixOS host behavior where user packages override system)
-      case ":$PATH:" in
-        *":$_sys_bin:"*) ;;
-        *) [ -d "$_sys_bin" ] && export PATH="$_sys_bin:$PATH" ;;
-      esac
-
-      if [ -n "$_hm_bin" ]; then
-        case ":$PATH:" in
-          *":$_hm_bin:"*) ;;
-          *) export PATH="$_hm_bin:$PATH" ;;
-        esac
-      fi
+      # Append order matters: first appended = higher priority.
+      # Target: container_PATH > _hm_bin > _sys_bin
+      # (_hm_bin before _sys_bin matches NixOS host behavior where user packages
+      # override system)
+      # Remove inherited entries first so nested shells keep this order.
+      path=(''${path:#$_hm_bin})
+      path=(''${path:#$_sys_bin})
+      [ -n "$_hm_bin" ] && path+=("$_hm_bin")
+      [ -d "$_sys_bin" ] && path+=("$_sys_bin")
 
       # Same priority for XDG_DATA_DIRS: HM share > system share
       for _d in "$_sys_share" "$_hm_share"; do
