@@ -8,4 +8,6 @@ _:
   # boot.kernelPackages = pkgs.stable.linuxPackages_6_18;
 
   virtualisation.libvirtd.enable = true;
+
+  services.samba.enable = true;
 }

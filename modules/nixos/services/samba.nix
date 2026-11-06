@@ -10,14 +10,6 @@
 let
   username = config.my.shared.username;
   user = config.users.users.${username};
-
-  mkReadOnlyShare = path: {
-    inherit path;
-    browseable = "yes";
-    "read only" = "yes";
-    "guest ok" = "no";
-    "valid users" = username;
-  };
 in
 {
   services.samba = {
@@ -29,8 +21,13 @@ in
     winbindd.enable = lib.mkDefault false;
 
     settings = {
-      Music = mkReadOnlyShare "${user.home}/Music";
-      Videos = mkReadOnlyShare "${user.home}/Videos";
+      Public = {
+        path = "${user.home}/Public";
+        browseable = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "valid users" = username;
+      };
     };
   };
 }
