@@ -10,4 +10,9 @@ _:
   virtualisation.libvirtd.enable = true;
 
   services.samba.enable = true;
+
+  services.avahi.settings.server.allow-interfaces = [
+    "wlo1"
+    "enp2s0"
+  ];
 }
