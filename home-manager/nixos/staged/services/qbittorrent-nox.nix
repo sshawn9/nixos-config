@@ -9,11 +9,12 @@ let
   configFile = "${config.xdg.configHome}/qBittorrent/qBittorrent.conf";
   defaultConfig = pkgs.writeText "qBittorrent.conf" ''
     [BitTorrent]
-    Session\Port=6881
+    Session\Port=29102
     Session\AddTrackersFromURLEnabled=true
     Session\AdditionalTrackersURL=https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt
-    Session\GlobalMaxRatio=1
-    Session\DefaultSavePath=${config.xdg.userDirs.download}
+    Session\GlobalMaxRatio=0
+    Session\GlobalUPSpeedLimit=100
+    Session\DefaultSavePath=${config.xdg.userDirs.download}/qBittorrent
     Session\BTProtocol=Both
     Session\DHTEnabled=true
     Session\PeXEnabled=true
@@ -34,6 +35,7 @@ let
     Port=29101
     ReverseProxySupportEnabled=true
     TrustedReverseProxiesList=127.0.0.1
+    LocalHostAuth=false
   '';
   # qBittorrent rewrites this file at runtime, so only seed it once to keep
   # settings changed in the WebUI, including the password.

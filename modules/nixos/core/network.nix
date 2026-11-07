@@ -11,7 +11,7 @@
   users.users.${config.my.shared.username}.extraGroups = [ "networkmanager" ];
 
   networking.firewall = {
-    allowedTCPPorts = [ 6881 ];
-    allowedUDPPorts = [ 6881 ];
+    allowedTCPPorts = [ 29102 ];
+    allowedUDPPorts = [ 29102 ];
   };
 }

@@ -19,6 +19,13 @@ http://:8080 {
 		file_server
 	}
 
+	@qbittorrent header_regexp Host ^qbittorrent\.
+	handle @qbittorrent {
+		reverse_proxy 127.0.0.1:29101 {
+			header_up Host {upstream_hostport}
+		}
+	}
+
 	handle {
 		respond 404
 	}
