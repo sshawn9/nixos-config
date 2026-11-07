@@ -17,8 +17,6 @@ in
 
         mpv.enable = true;
 
-        aria2.enable = true;
-
         claude-code.enable = true;
         codex.enable = true;
 

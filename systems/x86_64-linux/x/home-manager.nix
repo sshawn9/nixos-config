@@ -24,6 +24,9 @@ in
           ];
         };
         services.zeroclaw.codexAuth.enable = true;
+
+        services.qbittorrent-nox.enable = true;
+        services.caddy.enable = true;
       };
     };
   };

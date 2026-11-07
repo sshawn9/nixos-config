@@ -1,0 +1,25 @@
+{
+	admin localhost:2020
+	default_bind 127.0.0.1
+	servers {
+		trusted_proxies static 127.0.0.1/32
+	}
+}
+
+# One port for every user-level site. The system Caddy forwards whole hostnames
+# here with Host intact, so sites match on the first label and stay independent
+# of each host's domain.
+http://:8080 {
+	@vuetorrent header_regexp Host ^vuetorrent\.
+	handle @vuetorrent {
+		root * {$HOME}/.local/share/vuetorrent
+		reverse_proxy /api/* 127.0.0.1:29101 {
+			header_up Host {upstream_hostport}
+		}
+		file_server
+	}
+
+	handle {
+		respond 404
+	}
+}

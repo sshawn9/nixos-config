@@ -28,3 +28,12 @@ http://foldergram.localhost, http://foldergram.x.sshawn9.com {
 
 	reverse_proxy 127.0.0.1:4141
 }
+
+# Everything not matched above goes to the user-level Caddy.
+http:// {
+	log {
+		output file /var/log/caddy/access-http:__fallback.log
+	}
+
+	reverse_proxy 127.0.0.1:8080
+}
