@@ -5,11 +5,10 @@
 }:
 
 {
-  services.scx = {
+  services.scx-loader = {
     enable = lib.mkDefault true;
-    package = lib.mkDefault pkgs.scx.full;
-    scheduler = lib.mkDefault "scx_lavd";
-    extraArgs = lib.mkDefault [ ];
+    schedsPackages = lib.mkDefault [ pkgs.scx.full ];
+    config.default_sched = lib.mkDefault "scx_lavd";
   };
 
   systemd = {
