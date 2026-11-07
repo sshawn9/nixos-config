@@ -24,7 +24,7 @@ let
 in
 {
   programs.nushell = {
-    enable = lib.mkDefault true;
+    enable = lib.mkDefault false;
     package = lib.mkDefault pkgs.unstable.nushell;
     loadSessionVariables = true;
 

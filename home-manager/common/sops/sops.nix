@@ -15,6 +15,8 @@
     sops = {
       defaultSopsFile = self.outPath + "/sops/secrets/secrets.yaml";
       age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
+      # TODO: Consider moving gh_pat, the nix-access-tokens template, and the
+      # nix.extraOptions include out of common: they are user-specific credentials.
       secrets = {
         "gh_pat" = { };
       };

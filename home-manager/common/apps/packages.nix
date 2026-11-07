@@ -4,7 +4,9 @@
   ...
 }:
 {
-  xdg.configFile."haruna" = config.my.paths.local.xdgConfigLayeredTree "haruna";
+  xdg.configFile."haruna" = lib.mkIf config.my.packages.haruna.enable (
+    config.my.paths.local.xdgConfigLayeredTree "haruna"
+  );
 
   my.packages = {
     obsidian = lib.mkDefault false;

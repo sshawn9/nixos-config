@@ -12,11 +12,6 @@
       lfs.enable = lib.mkDefault true;
 
       settings = {
-        user = {
-          name = "sshawn9";
-          email = "29659937+sshawn9@users.noreply.github.com";
-        };
-
         init.defaultBranch = "main";
 
         pull.rebase = true;

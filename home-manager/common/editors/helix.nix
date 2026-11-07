@@ -6,7 +6,7 @@
 {
   programs = {
     helix = {
-      enable = lib.mkDefault true;
+      enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.helix;
     };
   };

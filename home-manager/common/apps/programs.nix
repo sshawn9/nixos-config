@@ -7,7 +7,9 @@
 }:
 
 {
-  home.file.".codex/AGENTS.md".source = config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";
+  home.file.".codex/AGENTS.md" = lib.mkIf config.programs.codex.enable {
+    source = config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";
+  };
 
   xdg.configFile."opencode/AGENTS.md" = lib.mkIf config.programs.opencode.enable {
     source = config.my.paths.local.dotfilesLayeredSource "ai/AGENTS.md";

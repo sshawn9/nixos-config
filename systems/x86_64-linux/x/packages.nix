@@ -10,5 +10,6 @@
     i2c-tools = true;
     nvme-cli = true;
     smartmontools = true;
+    sqlitebrowser = true;
   };
 }
