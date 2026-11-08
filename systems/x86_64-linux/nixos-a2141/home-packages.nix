@@ -10,8 +10,6 @@ in
     users.${username} = {
       my = {
         packages = {
-          ariang = true;
-
           obsidian = true;
           github-desktop = true;
 

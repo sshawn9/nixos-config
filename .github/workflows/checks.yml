@@ -28,6 +28,8 @@ env:
     extra-trusted-public-keys = mousehop.cachix.org-1:5wbRclpnaMFh5hRLx4BR+UMSkOfCiR2kfr6WLItDpPU=
     extra-substituters = https://pyproject-nix.cachix.org
     extra-trusted-public-keys = pyproject-nix.cachix.org-1:UNzugsOlQIu2iOz0VyZNBQm2JSrL/kwxeCcFGw+jMe0=
+    extra-substituters = https://sshawn9.cachix.org
+    extra-trusted-public-keys = sshawn9.cachix.org-1:RHYGWuav56oECYgrMMsnyOn3t2sbLQVIr4dEZ4H5J5k=
 
 concurrency:
   group: nix-checks-${{ github.ref }}

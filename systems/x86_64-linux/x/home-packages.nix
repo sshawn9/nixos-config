@@ -12,8 +12,6 @@ in
         packages = {
           nvtop = true;
 
-          ariang = true;
-
           obsidian = true;
           github-desktop = true;
 

@@ -22,7 +22,7 @@
   "networkPreference": "wifi",
   "cursorSettings": {
     "theme": "System Default",
-    "size": 28,
+    "size": 32,
     "niri": {
       "hideWhenTyping": false,
       "hideAfterInactiveMs": 0
