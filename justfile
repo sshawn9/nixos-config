@@ -52,6 +52,12 @@ npc-bisect *ARGS:
 nixos-build HOST=hostname *FLAGS:
     nh os build --hostname {{ quote(HOST) }} --out-link result . {{ FLAGS }}
 
+# Original: NIX_CONFIG="<caches declared by the host>" just nixos-build {{ HOST }} {{ FLAGS }}
+# Build a NixOS host with the binary caches it declares, before they are active in nix.conf
+[group("nixos")]
+nixos-build-with-caches HOST=hostname *FLAGS:
+    NIX_CONFIG="$(just _cache-config {{ quote("nixosConfigurations." + HOST + ".config") }})" just nixos-build {{ quote(HOST) }} {{ FLAGS }}
+
 # Original: nixos-rebuild dry-build {{ FLAGS }} --flake .#{{ HOST }}
 # Dry-run a NixOS host build
 [group("nixos")]
@@ -100,6 +106,12 @@ nixos-switch-dry-run HOST=hostname *FLAGS:
 darwin-build HOST=hostname *FLAGS:
     nh darwin build --hostname {{ quote(HOST) }} --out-link result . {{ FLAGS }}
 
+# Original: NIX_CONFIG="<caches declared by the host>" just darwin-build {{ HOST }} {{ FLAGS }}
+# Build a nix-darwin host with the binary caches it declares, before they are active in nix.conf
+[group("darwin")]
+darwin-build-with-caches HOST=hostname *FLAGS:
+    NIX_CONFIG="$(just _cache-config {{ quote("darwinConfigurations." + HOST + ".config") }})" just darwin-build {{ quote(HOST) }} {{ FLAGS }}
+
 # Original: nix build {{ FLAGS }} --dry-run --print-build-logs .#darwinConfigurations.{{ HOST }}.system
 # Dry-run a nix-darwin host build
 [group("darwin")]
@@ -124,6 +136,12 @@ darwin-switch-dry-run HOST=hostname *FLAGS:
 home-build CONFIGURATION=default-home-configuration *FLAGS:
     nh home build --configuration {{ quote(CONFIGURATION) }} --out-link result . {{ FLAGS }}
 
+# Original: NIX_CONFIG="<caches declared by the configuration>" just home-build {{ CONFIGURATION }} {{ FLAGS }}
+# Build a standalone Home Manager configuration with the binary caches it declares, before they are active in nix.conf
+[group("home")]
+home-build-with-caches CONFIGURATION=default-home-configuration *FLAGS:
+    NIX_CONFIG="$(just _cache-config {{ quote("homeConfigurations." + CONFIGURATION + ".config") }})" just home-build {{ quote(CONFIGURATION) }} {{ FLAGS }}
+
 # Original: nix build {{ FLAGS }} --dry-run --print-build-logs .#homeConfigurations.{{ CONFIGURATION }}.activationPackage
 # Dry-run a standalone Home Manager configuration build
 [group("home")]
@@ -147,6 +165,12 @@ home-switch-dry-run CONFIGURATION=default-home-configuration *FLAGS:
 [group("configuration")]
 build NAME="" *FLAGS:
     just {{ if nh-domain == "os" { "nixos-build" } else if nh-domain == "darwin" { "darwin-build" } else { "home-build" } }} {{ if NAME == "" { "" } else { quote(NAME) } }} {{ FLAGS }}
+
+# Original: just nixos-build-with-caches / darwin-build-with-caches / home-build-with-caches based on nh-domain
+# Build the auto-detected local configuration with the binary caches it declares, before they are active in nix.conf
+[group("configuration")]
+build-with-caches NAME="" *FLAGS:
+    just {{ if nh-domain == "os" { "nixos-build-with-caches" } else if nh-domain == "darwin" { "darwin-build-with-caches" } else { "home-build-with-caches" } }} {{ if NAME == "" { "" } else { quote(NAME) } }} {{ FLAGS }}
 
 # Original: just nixos-build-dry-run / darwin-build-dry-run / home-build-dry-run based on nh-domain
 # Dry-run build the auto-detected local configuration
@@ -189,6 +213,12 @@ switch NAME="" *FLAGS:
 [group("configuration")]
 switch-dry-run NAME="" *FLAGS:
     just {{ if nh-domain == "os" { "nixos-switch-dry-run" } else if nh-domain == "darwin" { "darwin-switch-dry-run" } else { "home-switch-dry-run" } }} {{ if NAME == "" { "" } else { quote(NAME) } }} {{ FLAGS }}
+
+# Print a NIX_CONFIG listing the binary caches CONFIG declares, including those
+# of its embedded Home Manager users.
+[private]
+_cache-config CONFIG:
+    @nix eval --raw {{ quote(".#" + CONFIG) }} --apply 'c: let get = name: toString (c.nix.settings.${name} or [ ] ++ builtins.concatMap (u: u.nix.settings.${name} or [ ]) (builtins.attrValues (c.home-manager.users or { }))); in "extra-substituters = ${get "extra-substituters"}\nextra-trusted-public-keys = ${get "extra-trusted-public-keys"}\n"'
 
 [private]
 _github-flake REFERENCE:
