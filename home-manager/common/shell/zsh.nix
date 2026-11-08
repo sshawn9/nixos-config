@@ -152,6 +152,8 @@ in
 {
   my.packages.zsh-completions = lib.mkDefault true;
 
+  catppuccin.zsh-syntax-highlighting.enable = lib.mkDefault true;
+
   programs = {
     zsh = {
       enable = lib.mkDefault true;

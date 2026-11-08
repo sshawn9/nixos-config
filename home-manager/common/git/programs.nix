@@ -5,6 +5,11 @@
 }:
 
 {
+  catppuccin = {
+    lazygit.enable = lib.mkDefault true;
+    delta.enable = lib.mkDefault true;
+  };
+
   programs = {
     git = {
       enable = lib.mkDefault true;

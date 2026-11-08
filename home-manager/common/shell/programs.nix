@@ -14,6 +14,8 @@
     source = config.my.paths.local.xdgConfigLayeredSource "atuin/config.toml";
   };
 
+  catppuccin.fzf.enable = lib.mkDefault true;
+
   programs = {
     fzf = {
       enable = lib.mkDefault true;

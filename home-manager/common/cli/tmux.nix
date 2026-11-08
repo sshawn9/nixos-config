@@ -5,6 +5,8 @@
 }:
 
 {
+  catppuccin.tmux.enable = lib.mkDefault true;
+
   programs = {
     tmux = {
       enable = lib.mkDefault true;
@@ -17,7 +19,6 @@
       plugins = with pkgs.unstable.tmuxPlugins; [
         sensible # Community baseline: utf-8, focus-events, aggressive-resize, etc.
         vim-tmux-navigator # Ctrl+h/j/k/l to seamlessly navigate between vim splits and tmux panes
-        catppuccin # Color theme
         {
           plugin = resurrect; # Save and restore windows, panes, and their layout after tmux server restart
           extraConfig = ''

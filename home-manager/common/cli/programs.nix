@@ -13,6 +13,13 @@
     source = config.my.paths.local.xdgConfigLayeredSource "htop/htoprc";
   };
 
+  catppuccin = {
+    btop.enable = lib.mkDefault true;
+    bat.enable = lib.mkDefault true;
+    eza.enable = lib.mkDefault true;
+    yazi.enable = lib.mkDefault true;
+  };
+
   programs = {
     direnv = {
       package = lib.mkDefault pkgs.unstable.direnv;

@@ -15,5 +15,7 @@
       config.programs.mpv.config.include or (pkgs.writeText "mpv-no-theme.conf" "");
   };
 
+  catppuccin.mpv.enable = lib.mkDefault true;
+
   programs.mpv.package = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
 }

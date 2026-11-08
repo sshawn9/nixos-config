@@ -16,13 +16,6 @@
 
     cache.enable = lib.mkDefault true;
 
-    fzf.enable = lib.mkDefault true;
-    bat.enable = lib.mkDefault true;
-    btop.enable = lib.mkDefault true;
-    zsh-syntax-highlighting.enable = lib.mkDefault true;
-
-    mpv.enable = lib.mkDefault true;
-
     # Cursor and GTK icon themes pull catppuccin-cursors and
     # catppuccin-papirus-folders, which nixpkgs marks unavailable on darwin.
     # Keep them gated to Linux to avoid evaluation failure on macOS.
