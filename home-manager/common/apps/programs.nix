@@ -43,6 +43,11 @@
       package = lib.mkDefault inputs.claude-code-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
     opencode = {
+      # TODO: The theme does not follow my.shared.catppuccin. opencode rewrites
+      # cli.json from its TUI, so generating that file here would fight it. One
+      # option is OPENCODE_CLI_CONFIG_CONTENT, which opencode merges over
+      # cli.json, to pin only the theme; its source reads it, but it is not
+      # documented.
       package = lib.mkDefault pkgs.unstable.opencode;
     };
     discord = {
