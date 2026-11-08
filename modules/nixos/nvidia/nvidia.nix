@@ -7,6 +7,13 @@
 
 {
   config = lib.mkIf config.my.shared.nvidia.enable {
+    nix.settings = {
+      extra-substituters = [ "https://cache.nixos-cuda.org" ];
+      extra-trusted-public-keys = [
+        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+      ];
+    };
+
     # boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
 
     # boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
