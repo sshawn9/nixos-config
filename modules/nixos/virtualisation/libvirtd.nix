@@ -67,7 +67,6 @@ in
   };
 
   programs = {
-    dconf.enable = lib.mkDefault true;
     virt-manager = {
       enable = lib.mkDefault config.virtualisation.libvirtd.enable;
       package = lib.mkDefault pkgs.unstable.virt-manager;

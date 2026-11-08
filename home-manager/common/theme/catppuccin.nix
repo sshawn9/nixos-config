@@ -16,13 +16,9 @@
 
     cache.enable = lib.mkDefault true;
 
-    # Cursor and GTK icon themes pull catppuccin-cursors and
-    # catppuccin-papirus-folders, which nixpkgs marks unavailable on darwin.
-    # Keep them gated to Linux to avoid evaluation failure on macOS.
+    # The cursor theme pulls catppuccin-cursors, which nixpkgs marks
+    # unavailable on darwin. Keep it gated to Linux to avoid evaluation
+    # failure on macOS.
     cursors.enable = pkgs.stdenv.hostPlatform.isLinux;
-
-    # The Catppuccin GTK theme port is archived; this sub-module only
-    # provides the Papirus-derived Catppuccin icon set.
-    gtk.icon.enable = pkgs.stdenv.hostPlatform.isLinux;
   };
 }
