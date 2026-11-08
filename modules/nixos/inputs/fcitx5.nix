@@ -1,38 +1,17 @@
-{ lib, pkgs, ... }:
+_:
 
 {
-  # XMODIFIERS / QT_IM_MODULE / GTK_IM_MODULE are set by the upstream
-  # i18n.inputMethod.fcitx5 module via `environment.variables`. We deliberately
-  # do NOT mirror them into `environment.sessionVariables` here:
-  #   - pam_env parses `XMODIFIERS=@im=fcitx` and warns "Expandable variables
-  #     must be wrapped in {}" because it interprets `@` as the start of a
-  #     `@{VAR}` substitution. The value is still set correctly, but the
-  #     warning shows up on every PAM session (including greetd login).
-  #   - With waylandFrontend = true, Wayland-native apps speak the wayland-im
-  #     protocol and do not consult XMODIFIERS at all.
+  # fcitx5 itself, its addons, and its configuration live in Home Manager:
+  # home-manager/nixos/inputs/fcitx5.nix.
 
-  i18n.inputMethod = {
-    enable = lib.mkDefault true;
-    type = "fcitx5";
-    fcitx5 = {
-      waylandFrontend = true;
-
-      addons = with pkgs; [
-        fcitx5-gtk
-        libsForQt5.fcitx5-qt
-        kdePackages.fcitx5-qt
-        (fcitx5-rime.override {
-          rimeDataPkgs = [
-            unstable.rime-ice
-            rime-data
-          ];
-        })
-        fcitx5-material-color
-      ];
-    };
-  };
-
-  environment.systemPackages = with pkgs; [
-    adwaita-icon-theme
-  ];
+  # GNOME enables ibus as the system input method by default. Left on, ibus
+  # would run alongside fcitx5 in every session:
+  #   - QT_IM_MODULE=ibus and XMODIFIERS=@im=ibus are set system-wide; Home
+  #     Manager only overrides XMODIFIERS, so Qt apps would still go to ibus.
+  #   - Its XDG autostart entry starts ibus-daemon in non-GNOME sessions such
+  #     as niri, and GNOME starts ibus itself.
+  # A plain value is enough to override GNOME's mkDefault, and a conflicting
+  # non-default definition elsewhere still fails evaluation instead of being
+  # silently overridden.
+  i18n.inputMethod.enable = false;
 }
