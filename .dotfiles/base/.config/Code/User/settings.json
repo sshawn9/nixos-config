@@ -21,11 +21,6 @@
   // Git
   "git.autofetch": true,
   "git.confirmSync": false,
-  // AI and chat
-  "chat.viewSessions.orientation": "stacked",
-  "chat.mcp.gallery.enabled": true,
-  "claudeCode.preferredLocation": "panel",
-  "claudeCode.selectedModel": "default",
   // Nix
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
@@ -61,6 +56,12 @@
   "[markdown]": {
     "editor.formatOnSave": false
   },
+  // AI and chat
+  "chat.viewSessions.orientation": "stacked",
+  "chat.mcp.gallery.enabled": true,
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.selectedModel": "default",
+  "claudeCode.focusView": true,
   // Codex Accounts
   "codexAccounts.displayLanguage": "zh",
   "codexAccounts.codexAppRestartEnabled": false,
