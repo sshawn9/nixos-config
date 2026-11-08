@@ -13,6 +13,6 @@ in
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1"; # Electron apps Wayland support
     XCURSOR_THEME = "catppuccin-${flavor}-${accent}-cursors";
-    XCURSOR_SIZE = "32";
+    XCURSOR_SIZE = toString config.my.shared.cursor.size;
   };
 }

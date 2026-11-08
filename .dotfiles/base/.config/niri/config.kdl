@@ -2,6 +2,7 @@ include optional=true "outputs.kdl"
 
 // Shared configuration.
 include "top-level-options.kdl"
+include optional=true "cursor.kdl"
 include "input.kdl"
 include "gestures.kdl"
 include "layout.kdl"
