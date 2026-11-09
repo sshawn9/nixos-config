@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   lib,
   pkgs,
@@ -10,14 +11,14 @@ let
     inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-get-zashboard;
 in
 {
-  environment.systemPackages = [
+  environment.systemPackages = lib.mkIf config.services.mihomo.enable [
     mihomo-switch
     mihomo-get-zashboard
   ];
 
-  networking.firewall.allowedTCPPorts = [ 7890 ];
+  networking.firewall.allowedTCPPorts = lib.mkIf config.services.mihomo.enable [ 7890 ];
 
-  system.activationScripts.mihomo-init = {
+  system.activationScripts.mihomo-init = lib.mkIf config.services.mihomo.enable {
     text = ''
       echo "Running mihomo-init..."
       ${mihomo-get-zashboard}/bin/mihomo-get-zashboard || true
@@ -31,5 +32,7 @@ in
     configFile = "/var/lib/mihomo/config.yaml";
     webui = "/var/lib/mihomo/ui";
   };
-  systemd.services.mihomo.wantedBy = lib.mkForce [ ];
+  systemd.services.mihomo = lib.mkIf config.services.mihomo.enable {
+    wantedBy = lib.mkForce [ ];
+  };
 }

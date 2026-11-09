@@ -18,7 +18,7 @@
     );
   };
 
-  users.users.${config.my.shared.username}.extraGroups = [
+  users.users.${config.my.shared.username}.extraGroups = lib.mkIf config.services.sunshine.enable [
     "input"
     "video"
     "render"

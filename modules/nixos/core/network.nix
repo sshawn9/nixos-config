@@ -8,10 +8,9 @@
   networking.hostName = config.my.shared.hostname;
   networking.networkmanager.enable = lib.mkDefault true;
 
-  users.users.${config.my.shared.username}.extraGroups = [ "networkmanager" ];
-
-  networking.firewall = {
-    allowedTCPPorts = [ 29102 ];
-    allowedUDPPorts = [ 29102 ];
-  };
+  users.users.${config.my.shared.username}.extraGroups =
+    lib.mkIf config.networking.networkmanager.enable
+      [
+        "networkmanager"
+      ];
 }

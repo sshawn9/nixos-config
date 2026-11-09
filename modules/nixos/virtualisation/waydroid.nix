@@ -4,7 +4,6 @@
 # https://wiki.nixos.org/wiki/Waydroid
 
 {
-  config,
   lib,
   pkgs,
   ...
@@ -18,16 +17,21 @@
     };
   };
 
-  home-manager.users.${config.my.shared.username} =
-    {
-      config,
-      lib,
-      osConfig,
-      ...
-    }:
-    {
-      systemd.user.tmpfiles.rules = lib.mkIf (!osConfig.virtualisation.waydroid.enable) [
-        "r ${builtins.toJSON "${config.xdg.dataHome}/applications/waydroid.*.desktop"} - - - -"
-      ];
-    };
+  # Clean up each explicitly configured HM user's launchers without creating
+  # Home Manager users just because this system module was imported.
+  home-manager.sharedModules = [
+    (
+      {
+        config,
+        lib,
+        osConfig,
+        ...
+      }:
+      {
+        systemd.user.tmpfiles.rules = lib.mkIf (!osConfig.virtualisation.waydroid.enable) [
+          "r ${builtins.toJSON "${config.xdg.dataHome}/applications/waydroid.*.desktop"} - - - -"
+        ];
+      }
+    )
+  ];
 }

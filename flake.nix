@@ -32,6 +32,17 @@
     };
 
     # Upstream inputs:
+    # disko
+    # └── nixpkgs
+    #
+    # Follow policy: all — the NixOS module generates disk scripts with the host
+    # package set, so share it for consistent storage tools and module evaluation.
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Upstream inputs:
     # nixos-hardware
     # └── nixpkgs
     #

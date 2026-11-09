@@ -101,7 +101,7 @@ let
 in
 {
   fonts = {
-    enableDefaultPackages = lib.mkDefault config.my.shared.desktop.active != [ ];
+    enableDefaultPackages = lib.mkDefault (config.my.shared.desktop.active != [ ]);
     fontDir.enable = lib.mkDefault true;
 
     packages = lib.optionals (config.my.shared.desktop.active != [ ]) fullFontPackages;

@@ -15,14 +15,14 @@ in
     instances = {
       default = {
         configServer = "\${ET_CONFIG_SERVER}";
-        environmentFiles = lib.mkIf sopsEnabled [
+        environmentFiles = lib.mkIf (config.services.easytier.enable && sopsEnabled) [
           config.sops.secrets.easytier_config_server.path
         ];
       };
     };
   };
 
-  sops.secrets.easytier_config_server = lib.mkIf sopsEnabled {
+  sops.secrets.easytier_config_server = lib.mkIf (config.services.easytier.enable && sopsEnabled) {
     restartUnits = [ "easytier-default.service" ];
   };
 
@@ -39,7 +39,7 @@ in
     }
   ];
 
-  systemd.services.easytier-default = {
+  systemd.services.easytier-default = lib.mkIf config.services.easytier.enable {
     unitConfig = {
       StartLimitIntervalSec = 0;
     };
