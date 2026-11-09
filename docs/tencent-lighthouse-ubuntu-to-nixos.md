@@ -1147,3 +1147,186 @@ sudo nixos-rebuild build --flake /etc/nixos#tencent-tokyo-2c2g
 - [NixOS kexec 安装镜像](https://github.com/nix-community/nixos-images/releases/tag/nixos-25.11)：本次使用的临时安装介质。
 - [kexec 手册](https://man7.org/linux/man-pages/man8/kexec.8.html)：加载和执行新内核，以及不同加载接口。
 - [腾讯云轻量服务器共享自定义镜像限制](https://cloud.tencent.com/document/product/1207/63264)：说明为何没有采用导入 CVM 镜像再共享的安装路径。
+
+## 15. 补充：启动方式、GRUB 与 systemd-boot 的选择
+
+本节及后续补充记录于 **2026-11-09**。服务器启动方式和 GRUB 菜单配置已通过只读检查核实；UEFI 转换、通过 VNC 操作启动菜单以及救援模式修复尚未在本实例上演练。平台功能可能变化，以实际实例的控制台、API 返回及腾讯云支持答复为准。
+
+### 15.1 虚拟化、固件、引导器与 kexec 分别负责什么
+
+| 层次               | 本次使用的机制                     | 作用                                                                |
+| ------------------ | ---------------------------------- | ------------------------------------------------------------------- |
+| 虚拟化             | KVM                                | 向客户机提供虚拟 CPU、内存、磁盘和其他硬件                          |
+| 启动固件           | Legacy BIOS                        | 虚拟机开机或普通重启时，初始化虚拟硬件并启动磁盘上的引导程序        |
+| 引导器             | GRUB                               | 显示 NixOS 启动菜单，加载所选 generation 的内核和 initrd            |
+| 操作系统           | Linux 内核、initrd、NixOS 系统配置 | 挂载根文件系统并启动该 generation 的系统与服务                      |
+| 安装期间的内核切换 | kexec                              | 从正在运行的 Linux 直接进入另一个内核，跳过通常的固件和磁盘引导过程 |
+
+KVM 虚拟机既可以使用 BIOS，也可以使用 UEFI；仅知道“服务器使用 KVM”不能判断启动方式。GPT 是磁盘分区表格式，也不能单独证明机器通过 UEFI 启动。本文使用的就是 **GPT + BIOS Boot Partition + BIOS 模式 GRUB**。
+
+本机已经验证成功的普通启动过程是：
+
+```text
+云平台启动虚拟机 → Legacy BIOS → GRUB → 所选 NixOS generation
+```
+
+如果平台提供 UEFI，采用 systemd-boot 时的普通启动过程则是：
+
+```text
+云平台启动虚拟机 → UEFI 固件 → ESP 中的 systemd-boot → 所选 NixOS generation
+```
+
+**kexec 成功不代表启动固件已经改变。** 它允许临时进入安装环境、重新分区并安装系统；之后执行普通重启，仍由云平台为这台虚拟机配置的固件开始启动。
+
+### 15.2 本次为什么安装 GRUB
+
+安装前确认了以下事实：
+
+- `/sys/firmware/efi` 不存在，同时原 Ubuntu 内核启用了 EFI 支持，启动日志显示 Bochs BIOS；结合这些证据判断实际启动方式为 Legacy BIOS。
+- 原 Ubuntu 磁盘虽然有 FAT 分区并挂载在 `/boot/efi`，但这不能推翻实际使用 BIOS 启动的判断。
+- 本次全新分区后，`/dev/vda1` 是 **1 MiB、类型 EF02 的 BIOS Boot Partition**，`/dev/vda2` 是 swap，`/dev/vda3` 是 ext4 根分区；当前布局没有 EFI 系统分区 ESP。
+- GRUB 安装日志中的 `i386-pc` 表示它使用 BIOS 平台，目标 NixOS 仍是 64 位 `x86_64-linux`。
+
+GRUB 同时有 BIOS 和 UEFI 实现，而 **systemd-boot 只支持 UEFI**，需要相应固件和 EFI 系统分区。参见 [systemd-boot 官方手册](https://www.freedesktop.org/software/systemd/man/latest/systemd-boot.html)。因此本次选择 GRUB 是为了匹配已核实的启动方式。
+
+GRUB 同样能显示并启动旧 NixOS generations，使用它不会失去“新系统无法启动时，在启动菜单选择旧系统”的能力，具体操作见第 16 节。
+
+### 15.3 如果以后希望切换为 systemd-boot
+
+重新进入 kexec、调整分区和重新安装引导程序都是可实施的工作。首先需要解决的是：**腾讯云是否允许这台既有 Lighthouse 实例使用 UEFI 固件启动。** 普通 NixOS 引导配置不能把云平台提供的 BIOS 固件改为 UEFI。
+
+迁移应按以下依赖顺序判断：
+
+1. 确认平台允许本实例切换到 UEFI，并取得具体操作方式：例如指定镜像重装会同步切换固件，或平台支持直接调整。
+2. 准备适合 UEFI 的磁盘布局，包括 FAT 格式的 ESP，并配置挂载点。现有的 1 MiB EF02 分区不能直接充当 ESP。需要离线改盘时，可以再进入 kexec 安装环境。
+3. 安装 systemd-boot、写入目标系统的启动文件，再通过普通重启验证完整启动过程与远程访问。
+
+在第一项尚未确认时，只关闭 GRUB 并启用 `boot.loader.systemd-boot.enable`，可能在引导程序安装阶段失败；若还破坏了原有引导，则可能导致下次普通重启失败。即使遗留的 GRUB 仍能启动系统，也不能算 systemd-boot 已经接管启动。
+
+### 15.4 Lighthouse 的镜像范围与 UEFI 平台限制
+
+本次用户在控制台观察到的是：**CVM 页面可以选择 UEFI 镜像，但这台轻量实例的重装列表里没有对应镜像**。没有观察到“同一镜像已经列出，但显示灰色不可选”的情况。
+
+公开文档可以确认以下边界：
+
+| 已确认的事实                                                                                   | 对本实例的含义                                                                      |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Lighthouse 重装接口接受自己的 `BlueprintId`，形式为 `lhbp-…`                                   | CVM 的 `img-…` 镜像 ID 不能直接当作轻量的重装镜像 ID                                |
+| Lighthouse `ResetInstance` 没有 `BootMode` 参数；`ModifyInstancesAttribute` 仅提供实例名称修改 | 没有查到通过这两个公开接口直接修改启动固件的方式，换成 tccli 不会增加这些接口的参数 |
+| CVM 和 Lighthouse 之间提供的是有条件的自定义镜像共享                                           | CVM 公共镜像不会因为在 CVM 页面可选，就自动成为轻量实例的可选镜像                   |
+| 非中国大陆地域的轻量实例不支持 Linux 与 Windows 之间的平台重装互转                             | 本机位于东京，不能把先重装为 UEFI Windows 当作已知可用的转换步骤                    |
+
+接口和地域规则分别见 [Lighthouse 重装接口](https://cloud.tencent.com/document/api/1207/47571)、[修改实例属性接口](https://cloud.tencent.com/document/api/1207/55548)、[重装系统限制](https://cloud.tencent.com/document/product/1207/44576)。
+
+CVM 自定义镜像共享到轻量要求同账号、同地域，并满足操作系统范围、cloud-init 等条件；外部导入镜像和整机自定义镜像等不在支持范围内。该规则中**没有明确保证将 UEFI 镜像共享后，能让已有 BIOS 轻量实例改用 UEFI**，不能把“先在 CVM 制作镜像再共享”写成已经验证的解决办法。参见[自定义镜像共享规则](https://cloud.tencent.com/document/product/1207/63264)。
+
+轻量的 [Windows 分辨率文档](https://cloud.tencent.com/document/product/1207/55742)确实提到 UEFI 镜像，但这不足以证明当前东京 Linux 实例支持转换。同样，重装列表中没有对应镜像，也不足以证明整个 Lighthouse 产品或本实例的底层硬件绝对不支持 UEFI。
+
+**截至本次记录，尚未确认的事项是：本实例是否接受 UEFI 的共享 Linux 镜像，以及平台重装时是否会同步切换虚拟固件，或能否通过工单调整。** 本文没有实施 UEFI 迁移，后续不应把这项能力当作已具备的前提。
+
+### 15.5 后续如何继续核实，而不执行重装
+
+如果已经配置好腾讯云 CLI 凭据，可以在本地查询该实例的重装候选镜像。先把示例实例 ID 换成控制台中的真实 `lhins-…`，地域使用本机的东京 `ap-tokyo`：
+
+```bash
+# 只读查询，不会重装、关机或修改实例。
+tccli lighthouse DescribeResetInstanceBlueprints \
+  --region ap-tokyo \
+  --InstanceId lhins-REPLACE_ME \
+  --Limit 100 \
+  --Offset 0
+```
+
+返回结果中的 `ResetInstanceBlueprintSet` 包含镜像信息、`IsResettable` 和 `NonResettableMessage`。若某个镜像已经返回但不允许使用，可以查看平台给出的原因；若 `TotalCount` 超过本页数量，还需调整 `Offset` 查询后续页。参见[查询实例重装镜像接口](https://cloud.tencent.com/document/product/1207/55549)及[返回数据结构](https://cloud.tencent.com/document/api/1207/47576)。
+
+没有返回某款镜像时，不能仅凭缺失项推断底层固件能力；`IsResettable = true` 也只说明平台允许使用该候选镜像，不能代替对实际启动方式的验证。本次没有执行账户级镜像查询或取得实例级工单答复。
+
+向腾讯云支持核实时，应提供实际实例 ID，并明确询问：
+
+> 这台东京地域的 Lighthouse 现有 Linux 实例，目前采用 Legacy BIOS。是否可以在保留实例和公网 IP 的情况下改为 UEFI？是否存在可用的官方或共享 UEFI Linux 镜像，重装时会不会同步切换虚拟固件？如果支持，请提供具体镜像、控制台入口或接口；如果不支持，请说明是产品、地域、套餐还是既有实例的限制。
+
+这个问题要求的是本实例的操作能力；仅得到“腾讯云 CVM 支持 UEFI”的答复，仍不能作为实施依据。
+
+## 16. 补充：系统无法启动时，通过 VNC 选择旧 generation
+
+### 16.1 云平台 VNC 提供什么能力
+
+腾讯云轻量控制台提供 **VNC 登录**，用于远程查看和操作虚拟机的屏幕与键盘。它提供独立于客户机 SSH 的控制通道，不需要实例里的网络、`sshd` 或 TAT 正常工作，也不需要在 NixOS 中安装桌面环境或 VNC 服务、开放 5900 端口。入口见[轻量服务器 VNC 登录文档](https://cloud.tencent.com/document/product/1207/46824)。
+
+这里要使用实例详情中的 **VNC 登录**。OrcaTerm、网页 SSH 以及依赖云助手的命令执行功能各有服务依赖，不能仅因为它们也显示在浏览器中，就认为它们能操作固件或 GRUB。
+
+VNC 的作用相当于接到虚拟机上的显示器和键盘：即使新内核无法启动、initrd 无法挂载根分区，或者新配置让网络失效，仍可通过平台重启并在引导阶段选择旧系统。前提是云平台控制通道可用，且磁盘上的 GRUB 和旧 generation 文件仍完好。
+
+### 16.2 本机 GRUB 菜单的已核实状态
+
+2026-11-09 安装后的只读检查读取了 `/boot/grub/grub.cfg`，确认：
+
+- 普通启动菜单等待时间为 **5 秒**，配置为 `timeout_style=menu`。
+- 默认项为 `0`，顶层有 `NixOS` 启动项。
+- 存在 **`NixOS - All configurations`** 子菜单。
+- 当时子菜单中只有 **`NixOS - Configuration 1 (2026-11-09 - 26.05.20261105.c56a87d)`**，对应首次安装的 generation 1。
+- 菜单配置使用 `gfxterm` 向虚拟显示屏输出；未设置 GRUB 菜单认证。
+- 内核参数同时包含 `console=ttyS0,115200n8` 与 `console=tty0`。这些参数控制内核输出，不等于 GRUB 已配置串口菜单；本次菜单检查确认的是虚拟显示屏输出。
+
+以后可从本地再次只读查看：
+
+```bash
+ssh -T star@tencent 'sudo -n sed -n "1,220p" /boot/grub/grub.cfg'
+```
+
+这次核实的是引导配置文件，**没有连接 VNC 并重启演练选择旧 generation**。菜单可见性、按键传递以及重启时是否需要重新连接 VNC，还需要在实际控制台完成一次验证。
+
+### 16.3 新配置无法启动时的恢复步骤
+
+以下步骤适用于以后已经存在多个 generations，且至少有一个旧版本已确认能够正常启动的情况。当前初装时只有 generation 1，不能凭空选择一个不存在的更早版本。
+
+1. 登录腾讯云轻量控制台，进入目标实例详情，在“服务器登录”中打开 **VNC 登录**。
+2. 保持 VNC 窗口打开，通过云控制台重启实例。若系统已经卡死、正常重启不能完成，再使用平台提供的强制重启方式；强制重启可能丢失尚未落盘的写入。
+3. 观察启动过程。如果 VNC 连接因重启中断，及时重新连接。GRUB 菜单出现后，点击显示区域使其接收键盘输入，并按方向键打断倒计时。
+4. 选择 **`NixOS - All configurations`** 并按 Enter，按照 generation 编号、日期和版本选择之前正常工作的配置，再按 Enter 启动。
+5. GRUB 会加载该旧 generation 对应的内核、initrd 和系统初始化路径。整个选择过程不要求有问题的新系统先启动成功，也不依赖 SSH 恢复连接。
+
+如果没赶上 5 秒等待窗口，可以通过云平台再次重启后重试；后续维护时可以按下一节延长等待时间。
+
+云账号权限用于打开平台控制台；Linux 账号密码用于启动后登录控制台里的 `login:` 提示符。**当前未设置 GRUB 菜单密码，因此选择旧 generation 本身不需要 root 或 star 的 Linux 密码。** 本文最小系统仅配置了 SSH 公钥，没有设置一个已知的控制台登录密码，这不会阻止在 GRUB 中选择启动项，但不能据此假设能通过 `login:` 获得系统 shell。
+
+当前 GRUB 默认项为 `0`。手动选择旧 generation 不会自动把它永久设为以后每次启动的默认配置；本次恢复后，后续默认启动项仍需明确维护。这里描述的是故障系统启动前的恢复路径。
+
+### 16.4 为后续恢复预留操作时间和旧版本
+
+如果后续需要更宽裕的控制台操作时间，可以在第 6 节的 NixOS 配置中加入以下选项。**这是建议的后续配置，未包含在前文已经验证的四份安装文件中，本次补充文档时也未应用到服务器。**
+
+```nix
+{
+  boot.loader.timeout = 30;
+  boot.loader.grub.timeoutStyle = "menu";
+}
+```
+
+修改源文件后，需要通过正常的 NixOS 重建流程更新磁盘上的引导配置才会生效。不要直接编辑标有自动生成提示的 `/boot/grub/grub.cfg` 作为长期配置。选项定义见本次固定版本的 [loader.nix](https://github.com/NixOS/nixpkgs/blob/c56a87d8e41ce69bd2af57eb35dcc117a9dfca33/nixos/modules/system/boot/loader/loader.nix) 和 [grub.nix](https://github.com/NixOS/nixpkgs/blob/c56a87d8e41ce69bd2af57eb35dcc117a9dfca33/nixos/modules/system/boot/loader/grub/grub.nix)。
+
+保留至少一个实际启动验证过的旧 generation 及其 Nix store 闭包，并确保它还列在启动菜单中。不要在新系统尚未验证时就删除所有旧系统 generations；菜单条目存在但引用的内核、initrd 或系统文件已被删除，也不能恢复。`boot.loader.grub.configurationLimit` 只限制菜单中列出的配置数量，不能替代对旧系统文件的保留。
+
+NixOS generation 回退覆盖该版本的系统配置和程序，不能撤销磁盘格式化，也不会自动把数据库、业务数据或用户文件恢复到当时的内容。默认配置也没有提供“任何启动失败都会自动识别并回滚”的保证；本节记录的是通过 VNC 人工选择已知可用版本的方式。
+
+## 17. 补充：GRUB 也无法启动时的云平台救援模式
+
+当 GRUB 尚能显示菜单、只是新系统启动失败时，优先按第 16 节选择旧 generation。如果 GRUB 文件丢失、引导损坏，导致菜单本身无法进入，则需要独立于原系统盘引导的恢复环境。
+
+Lighthouse 官方提供 **救援模式**：从云平台提供的虚拟 CD-ROM 启动独立系统，再访问原系统盘。它不要求原 NixOS 或原盘上的 GRUB 能正常启动，也不依赖先在故障 NixOS 中执行 kexec。入口及流程见[轻量服务器救援模式文档](https://cloud.tencent.com/document/product/1207/86184)。
+
+按官方流程，基本操作顺序是：
+
+1. 在实例详情的“更多操作”中选择“进入救援模式”，设置仅供救援环境使用的 root 密码，并处理关机确认。
+2. 等待实例进入救援模式，再通过平台 VNC 访问救援系统。这里的 root 密码与原 NixOS 的 SSH 密钥、账号密码是独立的。
+3. 使用 `lsblk`、`blkid` 等检查实际磁盘与文件系统，识别原 NixOS 根分区，再针对故障挂载检查、修复引导或访问保留的旧系统。
+4. 修复并核对引导文件后，从云控制台退出救援模式。退出过程可能触发重启，应继续通过 VNC 观察普通磁盘启动。
+
+使用官方示例时，需要针对本次 NixOS 布局调整：
+
+- **本次根分区是 `/dev/vda3`，不是文档示例中的 `/dev/vda1`。** `/dev/vda1` 是 1 MiB BIOS Boot Partition，不包含可供挂载的根文件系统。
+- NixOS 的命令位于 Nix store 及相应系统 profile 中，不能照搬以 `/bin/bash` 为入口的普通发行版 chroot 示例；前文第 10 节和第 12.4 节记录了安装环境中已验证的 chroot 读取方式。
+- 先确认救援环境是否能识别磁盘、挂载当前 ext4，并具备所需工具。核查时官方文档写的是 CentOS 7.5 64 位救援系统，本次没有实测该救援内核、文件系统工具与已安装 NixOS 的兼容性，也没有验证完整修复流程。
+- 救援系统提供的是访问和修复原盘的机会；如果旧 generation 文件已丢失或磁盘数据被清空，仍需要备份或重新安装。云快照与 NixOS generation 是两种不同的恢复机制。
+
+因此，本次已经完成的验证范围是 **BIOS + GRUB 的普通磁盘启动及 SSH 访问**；VNC 选旧 generation 和云平台救援是已查到的恢复途径，尚需在本实例上演练。后续演练应记录菜单画面、可用按键、实际救援环境与恢复结果，再把对应事项更新为已验证。
