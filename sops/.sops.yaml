@@ -3,6 +3,7 @@ keys:
   - &user_star age1edvdvngr2fyfpreqhxztm0yk8fq8xcu989pp7rlfcf3qgfpv83eq0lnprw
   - &host_x age160ly5kl68yv9gq3j07drvn6wku9v28tmgfcdpnplaukdpsd57c9q4sc9m8
   - &host_nixos-a2141 age1k9hxw4k4u8gq3p266t9ldyml22phat3ftdcxn9rmlfqkrzms9custxmqtz
+  - &host_tokyo01 age1rdtyma7vwyar2ydxzueckks0uwjxn29zdyg62an8s6rly3pdfdpswd947e
 
 creation_rules:
   - path_regex: secrets/.*\.(yaml|json|env|ini)$
@@ -11,3 +12,4 @@ creation_rules:
           - *user_star
           - *host_x
           - *host_nixos-a2141
+          - *host_tokyo01
