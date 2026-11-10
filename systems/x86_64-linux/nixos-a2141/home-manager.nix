@@ -3,7 +3,7 @@
   ...
 }:
 let
-  inherit (config.my.shared) username;
+  inherit (config.my.shared) username hostname;
 in
 {
   home-manager = {
@@ -11,7 +11,10 @@ in
       home.username = username;
 
       my = {
-        paths.dotfilesLayers.overrideDirs = [ "nixos-a2141" ];
+        paths.dotfilesLayers.overrideDirs = [
+          username
+          hostname
+        ];
       };
     };
   };
