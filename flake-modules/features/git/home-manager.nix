@@ -1,0 +1,79 @@
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    {
+      key = "${inputs.catppuccin.outPath}#homeModules.catppuccin";
+      imports = [ inputs.catppuccin.homeModules.catppuccin ];
+    }
+  ];
+
+  catppuccin = {
+    lazygit.enable = lib.mkDefault true;
+    delta.enable = lib.mkDefault true;
+  };
+
+  programs = {
+    git = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.git;
+      lfs.enable = lib.mkDefault true;
+
+      settings = {
+        init.defaultBranch = "main";
+
+        pull.rebase = true;
+        rebase.autoStash = true;
+        # fetch.prune = true;
+        # rerere.enabled = true;
+        # merge.conflictStyle = "zdiff3";
+        push.autoSetupRemote = true;
+        core.quotepath = false;
+      };
+    };
+
+    gh = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.gh;
+
+      settings = {
+        git_protocol = "https";
+      };
+
+      extensions = with pkgs; [ gh-markdown-preview ];
+    };
+
+    mr = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.mr;
+    };
+
+    lazygit = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.lazygit;
+    };
+
+    delta = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.delta;
+
+      enableGitIntegration = true;
+
+      options = {
+        navigate = true;
+        line-numbers = true;
+        side-by-side = true;
+      };
+    };
+  };
+
+  package = {
+    ghq = lib.mkDefault true;
+    gfold = lib.mkDefault true;
+    gita = lib.mkDefault true;
+  };
+}
