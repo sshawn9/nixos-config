@@ -1,34 +1,23 @@
-{ lib, haumea }:
+{ lib }:
 let
-  flatten = lib.collect (value: !lib.isAttrs value);
+  tree =
+    directory:
+    let
+      entries = lib.filterAttrs (
+        name: type:
+        !lib.hasPrefix "_" name && (type == "directory" || (type == "regular" && lib.hasSuffix ".nix" name))
+      ) (builtins.readDir directory);
+    in
+    lib.mapAttrs (
+      name: type:
+      let
+        path = directory + "/${name}";
+      in
+      if type == "directory" then tree path else path
+    ) entries;
 
-  recursive = rec {
-    attrs =
-      directory:
-      haumea.load {
-        src = directory;
-        loader = haumea.loaders.path;
-      };
-    list = directory: flatten (attrs directory);
-  };
-
-  shallow = rec {
-    attrs =
-      directory:
-      lib.mapAttrs (
-        name: value:
-        if !lib.isAttrs value then
-          value
-        else if lib.isPath (value.default or null) then
-          value.default
-        else
-          throw "moduleFiles.shallow.attrs: ${toString directory}/${name} is a directory without default.nix"
-      ) (recursive.attrs directory);
-
-    # A directory's default.nix can use this without importing itself.
-    list = directory: builtins.attrValues (removeAttrs (attrs directory) [ "default" ]);
-  };
+  list = directory: lib.collect (value: !lib.isAttrs value) (tree directory);
 in
 {
-  inherit flatten recursive shallow;
+  inherit tree list;
 }

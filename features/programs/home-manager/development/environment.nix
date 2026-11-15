@@ -24,7 +24,10 @@ in
     direnv = {
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.direnv;
-      nix-direnv.enable = lib.mkDefault true;
+      nix-direnv = {
+        enable = lib.mkDefault true;
+        package = lib.mkDefault pkgs.unstable.nix-direnv;
+      };
     };
     mise = {
       enable = lib.mkDefault true;

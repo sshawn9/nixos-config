@@ -28,6 +28,7 @@ in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.home-manager.flakeModules.home-manager
+    ../compositions/user-presets/star/flake-module.nix
     ../features/nix-ld/flake-module.nix
     ../features/programs/flake-module.nix
     ../features/programs-cli/flake-module.nix
@@ -35,6 +36,8 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     ../features/ssh/flake-module.nix
     ../features/terminal/flake-module.nix
     ../framework/file-sources
+    ../framework/home-manager
+    ../framework/module-files
     ../framework/package
     nixpkgsPolicy.flakeModule
     inputs.treefmt-preset.flakeModules.default

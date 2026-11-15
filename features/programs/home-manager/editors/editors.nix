@@ -15,7 +15,10 @@ in
   };
 
   programs = {
-    vim.enable = lib.mkDefault true;
+    vim = {
+      enable = lib.mkDefault true;
+      packageConfigurable = lib.mkDefault pkgs.unstable.vim-full;
+    };
     helix = {
       enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.helix;

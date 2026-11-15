@@ -30,7 +30,7 @@ in
         wget = false;
         python = {
           enable = true;
-          package = pkgs.python3;
+          package = pkgs.unstable.python3;
         };
       }
     '';

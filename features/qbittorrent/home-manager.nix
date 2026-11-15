@@ -42,7 +42,7 @@ let
   seedConfig = pkgs.writeShellScript "qbittorrent-nox-seed-config" ''
     config_file=${lib.escapeShellArg configFile}
     if [ ! -e "$config_file" ]; then
-      ${pkgs.coreutils}/bin/install -Dm600 ${defaultConfig} "$config_file"
+      ${pkgs.unstable.coreutils}/bin/install -Dm600 ${defaultConfig} "$config_file"
     fi
   '';
 in

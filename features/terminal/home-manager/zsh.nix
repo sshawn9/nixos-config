@@ -129,7 +129,7 @@ in
     plugins = [
       {
         name = "fzf-tab";
-        src = pkgs.zsh-fzf-tab;
+        src = pkgs.unstable.zsh-fzf-tab;
         file = "share/fzf-tab/fzf-tab.plugin.zsh";
       }
     ];

@@ -3,7 +3,7 @@
   programs.nix-ld = {
     enable = lib.mkDefault true;
     package = lib.mkDefault pkgs.unstable.nix-ld;
-    libraries = with pkgs; [
+    libraries = with pkgs.unstable; [
       stdenv.cc.cc.lib
       zlib
       zstd

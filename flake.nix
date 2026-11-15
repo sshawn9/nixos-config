@@ -1,7 +1,7 @@
 {
   description = "My Nix/NixOS Configuration";
 
-  outputs = inputs: import ./outputs inputs;
+  outputs = inputs: import ./outputs-refactor inputs;
 
   inputs = {
     # Official NixOS/Nixpkgs repositories, using mirrors for faster access in China.

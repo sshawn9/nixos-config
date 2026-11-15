@@ -1,0 +1,19 @@
+{
+  config,
+  lib,
+  self,
+  ...
+}:
+{
+  imports = [
+    self.nixosModules.homeManager
+    self.nixosModules.terminal
+  ];
+
+  users.users.star = {
+    isNormalUser = lib.mkDefault true;
+    extraGroups = [ "wheel" ];
+  };
+
+  home-manager.users.star.imports = [ self.homeModules.star ];
+}
