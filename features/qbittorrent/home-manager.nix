@@ -49,17 +49,19 @@ in
 {
   imports = [ ./options.nix ];
 
-  # Stable path for the user-level Caddyfile, which cannot reference the store path.
-  xdg.dataFile."vuetorrent".source = "${pkgs.unstable.vuetorrent}/share/vuetorrent/public";
+  config = lib.mkIf cfg.enable {
+    # Stable path for the user-level Caddyfile, which cannot reference the store path.
+    xdg.dataFile."vuetorrent".source = "${pkgs.unstable.vuetorrent}/share/vuetorrent/public";
 
-  systemd.user.services.qbittorrent-nox = {
-    Unit.Description = "qBittorrent-nox BitTorrent client";
-    Service = {
-      ExecStartPre = toString seedConfig;
-      ExecStart = "${lib.getExe pkgs.unstable.qbittorrent-nox} --confirm-legal-notice";
-      Restart = "on-failure";
-      TimeoutStopSec = 1800;
+    systemd.user.services.qbittorrent-nox = {
+      Unit.Description = "qBittorrent-nox BitTorrent client";
+      Service = {
+        ExecStartPre = toString seedConfig;
+        ExecStart = "${lib.getExe pkgs.unstable.qbittorrent-nox} --confirm-legal-notice";
+        Restart = "on-failure";
+        TimeoutStopSec = 1800;
+      };
+      Install.WantedBy = [ "default.target" ];
     };
-    Install.WantedBy = [ "default.target" ];
   };
 }

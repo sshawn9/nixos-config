@@ -11,8 +11,8 @@ let
 in
 inputs.flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
+    inputs.home-manager.flakeModules.home-manager
     ../framework/file-sources
-    ../framework/home-manager
     ../framework/module-files
     ../framework/package
     ../framework/package-sets

@@ -1,5 +1,4 @@
 {
-  self,
   lib,
   config,
   ...
@@ -8,8 +7,6 @@ let
   inherit (config.lib.fileSources.local) link;
 in
 {
-  imports = [ self.homeModules.fileSources ];
-
   home.file = lib.mkIf config.programs.ssh.enable {
     ".ssh/config" = link {
       source = ".ssh/config";

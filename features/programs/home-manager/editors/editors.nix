@@ -23,7 +23,10 @@ in
       enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.helix;
     };
-    vscode.package = lib.mkDefault pkgs.unstable.vscode;
+    vscode = {
+      enable = lib.mkDefault false;
+      package = lib.mkDefault pkgs.unstable.vscode;
+    };
   };
 
   package = {

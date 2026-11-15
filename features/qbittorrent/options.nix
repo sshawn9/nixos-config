@@ -1,6 +1,8 @@
 { lib, ... }:
 {
   options.features.qbittorrent = {
+    enable = lib.mkEnableOption "qBittorrent";
+
     peerPort = lib.mkOption {
       type = lib.types.port;
       default = 29101;

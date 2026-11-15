@@ -1,15 +1,14 @@
 {
   config,
   lib,
-  pkgs,
   self,
   ...
 }:
 {
   imports = [
-    self.homeModules.homeManager
     self.homeModules.user-environment
     self.homeModules.programs-cli
+    self.homeModules.git
     self.homeModules.ssh
     self.homeModules.terminal
   ];

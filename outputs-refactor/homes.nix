@@ -34,7 +34,11 @@ let
         inputs.home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = { inherit inputs self; };
-          modules = [ self.homeModules.homeManager ] ++ moduleFiles.list entry.path;
+          modules = [
+            self.homeModules.package
+            self.homeModules.fileSources
+          ]
+          ++ moduleFiles.list entry.path;
         }
       );
     in

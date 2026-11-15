@@ -4,6 +4,7 @@
   networking.networkmanager.enable = lib.mkDefault true;
   time.timeZone = lib.mkDefault "Asia/Shanghai";
   system.stateVersion = "25.11";
+  sharedOptionsUser = "star";
 
   boot = {
     tmp.useTmpfs = true;

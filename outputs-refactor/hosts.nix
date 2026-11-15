@@ -37,7 +37,21 @@ let
           specialArgs = { inherit inputs self; };
           modules = [
             self.nixosModules.package
-            { nixpkgs.pkgs = pkgs; }
+            inputs.home-manager.nixosModules.home-manager
+            ./shared-options.nix
+            {
+              nixpkgs.pkgs = pkgs;
+              home-manager = {
+                useGlobalPkgs = lib.mkDefault true;
+                useUserPackages = lib.mkDefault true;
+                backupFileExtension = lib.mkDefault "hm-backup";
+                extraSpecialArgs = { inherit inputs self; };
+                sharedModules = [
+                  self.homeModules.package
+                  self.homeModules.fileSources
+                ];
+              };
+            }
           ]
           ++ moduleFiles.list entry.path;
         }

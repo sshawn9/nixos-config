@@ -5,9 +5,6 @@
   pkgs,
   ...
 }:
-let
-  inherit (config.lib.fileSources.local.xdgConfig) link;
-in
 {
   imports = [
     {
@@ -15,8 +12,6 @@ in
       imports = [ inputs.catppuccin.homeModules.catppuccin ];
     }
   ];
-
-  xdg.configFile."htop/htoprc" = lib.mkIf config.programs.htop.enable (link "htop/htoprc");
 
   catppuccin.btop.enable = lib.mkDefault config.programs.btop.enable;
 

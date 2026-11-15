@@ -1,14 +1,10 @@
 {
-  config,
   lib,
   self,
   ...
 }:
 {
-  imports = [
-    self.nixosModules.homeManager
-    self.nixosModules.terminal
-  ];
+  imports = [ self.nixosModules.terminal ];
 
   users.users.star = {
     isNormalUser = lib.mkDefault true;

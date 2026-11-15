@@ -1,6 +1,4 @@
+{ self, ... }:
 {
-  imports = [
-    ./nixos/desktop/sniffnet.nix
-    ./nixos/desktop/steam.nix
-  ];
+  imports = self.lib.moduleFiles.list ./nixos;
 }

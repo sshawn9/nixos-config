@@ -36,7 +36,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     ../features/ssh/flake-module.nix
     ../features/terminal/flake-module.nix
     ../framework/file-sources
-    ../framework/home-manager
     ../framework/module-files
     ../framework/package
     nixpkgsPolicy.flakeModule
