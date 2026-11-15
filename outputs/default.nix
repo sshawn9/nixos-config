@@ -27,6 +27,15 @@ let
 in
 flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
+    inputs.home-manager.flakeModules.home-manager
+    ../features/nix-ld/flake-module.nix
+    ../features/programs/flake-module.nix
+    ../features/programs-cli/flake-module.nix
+    ../features/qbittorrent/flake-module.nix
+    ../features/ssh/flake-module.nix
+    ../features/terminal/flake-module.nix
+    ../framework/file-sources
+    ../framework/package
     nixpkgsPolicy.flakeModule
     inputs.treefmt-preset.flakeModules.default
     systems.flakeModule
