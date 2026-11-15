@@ -5,7 +5,8 @@
 }:
 let
   inherit (config.flake.lib) evaluationContext;
-  inherit (config.flake.modules.generic) package;
+  nixosPackage = config.flake.nixosModules.package;
+  homePackage = config.flake.homeModules.package;
   fileSources = config.flake.homeModules.fileSources;
 
   homeManager =
@@ -21,9 +22,12 @@ let
     {
       key = "${toString ./default.nix}#homeManager";
       imports =
-        lib.optionals context.isNixOS [ inputs.home-manager.nixosModules.home-manager ]
-        ++ lib.optionals (context.isNixOS || context.isStandaloneHome) [ package ]
+        lib.optionals context.isNixOS [
+          inputs.home-manager.nixosModules.home-manager
+          nixosPackage
+        ]
         ++ lib.optionals context.isHomeManager [
+          homePackage
           fileSources
           ./home.nix
         ];
@@ -55,6 +59,7 @@ in
 {
   imports = [
     inputs.flake-parts.flakeModules.flakeModules
+    inputs.home-manager.flakeModules.home-manager
     ../evaluation-context/default.nix
     ../file-sources/default.nix
     ../package/default.nix
