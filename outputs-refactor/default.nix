@@ -12,8 +12,10 @@ in
 inputs.flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
     inputs.home-manager.flakeModules.home-manager
+    ../framework/evaluation-context
     ../framework/file-sources
     ../framework/module-files
+    ../framework/options
     ../framework/package
     ../framework/package-sets
     ./hosts.nix

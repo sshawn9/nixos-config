@@ -1,7 +1,9 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
-  package = {
-    inshellisense = lib.mkDefault false;
-    warp-terminal = lib.mkDefault false;
+  config = lib.mkIf config.features.terminal.enable {
+    package = {
+      inshellisense = lib.mkDefault false;
+      warp-terminal = lib.mkDefault false;
+    };
   };
 }

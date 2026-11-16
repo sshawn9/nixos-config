@@ -6,9 +6,8 @@
 }:
 let
   sourceUser = config.sharedOptionsUser;
-  userOptions = lib.modules.mapAttrsOfSubmodule (
-    _: { opt, ... }: opt.features or { }
-  ) options.home-manager.users;
+  sharedOptions = lib.filterAttrs (name: _: name == "features" || name == "common") options;
+  userOptions = lib.modules.mapAttrsOfSubmodule (_: { opt, ... }: opt) options.home-manager.users;
   sourceOptions = if sourceUser == null then { } else userOptions.${sourceUser};
 in
 {
@@ -17,18 +16,16 @@ in
     default = null;
   };
 
-  config = lib.optionalAttrs (options ? features) {
-    features = lib.mapAttrsRecursiveCond (value: !lib.isOption value) (
-      path: _:
-      let
-        sourceOption = lib.attrByPath path {
-          isDefined = false;
-          definitions = [ ];
-        } sourceOptions;
-      in
-      lib.mkIf (sourceOption.isDefined && sourceOption.value != null) (
-        lib.modules.mkAliasDefinitions sourceOption
-      )
-    ) options.features;
-  };
+  config = lib.mapAttrsRecursiveCond (value: !lib.isOption value) (
+    path: _:
+    let
+      sourceOption = lib.attrByPath path {
+        isDefined = false;
+        definitions = [ ];
+      } sourceOptions;
+    in
+    lib.mkIf (sourceOption.isDefined && sourceOption.value != null) (
+      lib.modules.mkAliasDefinitions sourceOption
+    )
+  ) sharedOptions;
 }

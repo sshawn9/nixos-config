@@ -1,4 +1,4 @@
 { self, ... }:
 {
-  imports = self.lib.moduleFiles.list ./home-manager;
+  imports = [ ./options.nix ] ++ self.lib.moduleFiles.list ./home-manager;
 }

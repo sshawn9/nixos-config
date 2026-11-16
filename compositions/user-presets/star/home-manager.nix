@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    self.homeModules.catppuccin
     self.homeModules.user-environment
     self.homeModules.programs-cli
     self.homeModules.git

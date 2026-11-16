@@ -1,4 +1,4 @@
 { self, ... }:
 {
-  imports = self.lib.moduleFiles.list ./nixos;
+  imports = [ ./options.nix ] ++ self.lib.moduleFiles.list ./nixos;
 }

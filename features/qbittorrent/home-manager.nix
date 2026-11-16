@@ -49,7 +49,7 @@ in
 {
   imports = [ ./options.nix ];
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf config.features.qbittorrent.enable {
     # Stable path for the user-level Caddyfile, which cannot reference the store path.
     xdg.dataFile."vuetorrent".source = "${pkgs.unstable.vuetorrent}/share/vuetorrent/public";
 

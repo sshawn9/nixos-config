@@ -16,6 +16,7 @@ let
     zstyle ':fzf-tab:complete:cd:*' fzf-preview '${lib.getExe config.programs.eza.package} -a -1 --color=always $realpath'
     zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ''${(P)word}'
   '';
+
   justCompletions = ''
     jg() {
       command just --justfile "''${XDG_CONFIG_HOME:-$HOME/.config}/just/justfile" --working-directory . "$@"
@@ -36,6 +37,9 @@ let
     }
     compdef _jg jg
   '';
+
+  containerEnabled = (config.features.container.enable or false) && pkgs.stdenv.hostPlatform.isLinux;
+
   rosCompletions = ''
     if [[ -n "$DISTROBOX_ENTER_PATH" || -n "$CONTAINER_ID" ]]; then
       _ros_setups=(/opt/ros/*/setup.zsh(NOn))
@@ -54,20 +58,26 @@ let
       }
     fi
   '';
+
+  hostProfileDirectory = ''
+    _hm_profile=${lib.escapeShellArg config.home.profileDirectory}
+    case "$_hm_profile" in
+      /etc/profiles/per-user/*) _hm_profile="/nix/var/nix/profiles/system$_hm_profile" ;;
+    esac
+    for _hm_profile in \
+      "$_hm_profile" \
+      "/nix/var/nix/profiles/system/etc/profiles/per-user/$USER" \
+      "/nix/var/nix/profiles/per-user/$USER/profile"; do
+      [ -d "$_hm_profile/bin" ] && break
+      _hm_profile=""
+    done
+  '';
+
   containerEnvironment = ''
     if [ -n "$DISTROBOX_ENTER_PATH" ] || [ -n "$CONTAINER_ID" ]; then
-      _hm_module_bin="/nix/var/nix/profiles/system/etc/profiles/per-user/$USER/bin"
-      _hm_standalone_bin="/nix/var/nix/profiles/per-user/$USER/profile/bin"
-      if [ -d "$_hm_module_bin" ]; then
-        _hm_bin="$_hm_module_bin"
-        _hm_share="/nix/var/nix/profiles/system/etc/profiles/per-user/$USER/share"
-      elif [ -d "$_hm_standalone_bin" ]; then
-        _hm_bin="$_hm_standalone_bin"
-        _hm_share="/nix/var/nix/profiles/per-user/$USER/profile/share"
-      else
-        _hm_bin=""
-        _hm_share=""
-      fi
+      ${hostProfileDirectory}
+      _hm_bin="''${_hm_profile:+$_hm_profile/bin}"
+      _hm_share="''${_hm_profile:+$_hm_profile/share}"
       _sys_bin="/nix/var/nix/profiles/system/sw/bin"
       _sys_share="/nix/var/nix/profiles/system/sw/share"
 
@@ -99,7 +109,7 @@ let
           esac
         fi
       done
-      unset _hm_module_bin _hm_standalone_bin _hm_bin _hm_share _sys_bin _sys_share _d
+      unset _hm_profile _hm_bin _hm_share _sys_bin _sys_share _d
       [ -x /usr/bin/sudo ] && alias sudo='/usr/bin/sudo'
     fi
   '';
@@ -112,37 +122,39 @@ in
     }
   ];
 
-  catppuccin.zsh-syntax-highlighting.enable = lib.mkDefault (
-    config.programs.zsh.enable && config.programs.zsh.syntaxHighlighting.enable
-  );
+  config = lib.mkIf config.features.terminal.enable {
+    catppuccin.zsh-syntax-highlighting.enable = lib.mkDefault (
+      config.programs.zsh.enable && config.programs.zsh.syntaxHighlighting.enable
+    );
 
-  package.zsh-completions = lib.mkIf config.programs.zsh.enable (lib.mkDefault true);
+    package.zsh-completions = lib.mkIf config.programs.zsh.enable (lib.mkDefault true);
 
-  programs.zsh = {
-    enable = lib.mkDefault true;
-    package = lib.mkDefault pkgs.unstable.zsh;
-    dotDir = "${config.xdg.configHome}/zsh";
-    enableCompletion = true;
-    autosuggestion.enable = lib.mkDefault true;
-    syntaxHighlighting.enable = lib.mkDefault true;
-    autocd = true;
-    plugins = [
-      {
-        name = "fzf-tab";
-        src = pkgs.unstable.zsh-fzf-tab;
-        file = "share/fzf-tab/fzf-tab.plugin.zsh";
-      }
-    ];
-    envExtra = lib.mkIf pkgs.stdenv.hostPlatform.isLinux containerEnvironment;
-    initContent = lib.mkMerge [
-      (lib.mkOrder 1000 (completionStyles + rosCompletions))
-      (lib.mkOrder 1500 (
-        lib.optionalString config.programs.uv.enable ''
-          compdef _uv uv
-          compdef _uvx uvx
-        ''
-        + justCompletions
-      ))
-    ];
+    programs.zsh = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.unstable.zsh;
+      dotDir = "${config.xdg.configHome}/zsh";
+      enableCompletion = true;
+      autosuggestion.enable = lib.mkDefault true;
+      syntaxHighlighting.enable = lib.mkDefault true;
+      autocd = true;
+      plugins = [
+        {
+          name = "fzf-tab";
+          src = pkgs.unstable.zsh-fzf-tab;
+          file = "share/fzf-tab/fzf-tab.plugin.zsh";
+        }
+      ];
+      envExtra = lib.mkIf containerEnabled containerEnvironment;
+      initContent = lib.mkMerge [
+        (lib.mkOrder 1000 (completionStyles + lib.optionalString containerEnabled rosCompletions))
+        (lib.mkOrder 1500 (
+          lib.optionalString config.programs.uv.enable ''
+            compdef _uv uv
+            compdef _uvx uvx
+          ''
+          + justCompletions
+        ))
+      ];
+    };
   };
 }

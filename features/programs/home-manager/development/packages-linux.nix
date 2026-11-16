@@ -1,8 +1,15 @@
-{ lib, pkgs, ... }:
 {
-  package = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-    patchelf = lib.mkDefault true;
-    elfutils = lib.mkDefault true;
-    apx = lib.mkDefault false;
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  config = lib.mkIf (config.features.programs.enable && pkgs.stdenv.hostPlatform.isLinux) {
+    package = {
+      patchelf = lib.mkDefault true;
+      elfutils = lib.mkDefault true;
+      apx = lib.mkDefault false;
+    };
   };
 }

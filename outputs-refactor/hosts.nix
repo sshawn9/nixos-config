@@ -36,6 +36,7 @@ let
         inputs.nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs self; };
           modules = [
+            self.nixosModules.commonOptions
             self.nixosModules.package
             inputs.home-manager.nixosModules.home-manager
             ./shared-options.nix
@@ -47,6 +48,7 @@ let
                 backupFileExtension = lib.mkDefault "hm-backup";
                 extraSpecialArgs = { inherit inputs self; };
                 sharedModules = [
+                  self.homeModules.commonOptions
                   self.homeModules.package
                   self.homeModules.fileSources
                 ];

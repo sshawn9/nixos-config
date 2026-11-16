@@ -5,7 +5,7 @@ in
 {
   imports = [ ./options.nix ];
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf config.features.qbittorrent.enable {
     networking.firewall = {
       allowedTCPPorts = [ cfg.peerPort ];
       allowedUDPPorts = [ cfg.peerPort ];

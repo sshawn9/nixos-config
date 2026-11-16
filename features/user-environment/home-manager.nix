@@ -1,7 +1,15 @@
-{ lib, pkgs, ... }:
 {
-  xdg.enable = lib.mkDefault true;
-  home.sessionPath = [ "$HOME/.local/bin" ];
-  programs.home-manager.enable = lib.mkDefault true;
-  nix.package = lib.mkDefault pkgs.unstable.nix;
+  config,
+  lib,
+  ...
+}:
+{
+  imports = [ ./options.nix ];
+
+  config = lib.mkIf config.features.user-environment.enable {
+    xdg = {
+      enable = lib.mkDefault true;
+      localBinInPath = lib.mkDefault true;
+    };
+  };
 }

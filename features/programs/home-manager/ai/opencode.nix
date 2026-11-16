@@ -8,12 +8,14 @@ let
   inherit (config.lib.fileSources.local) link;
 in
 {
-  xdg.configFile."opencode/AGENTS.md" = lib.mkIf config.programs.opencode.enable (
-    link "ai/AGENTS.md"
-  );
+  config = lib.mkIf config.features.programs.enable {
+    xdg.configFile."opencode/AGENTS.md" = lib.mkIf config.programs.opencode.enable (
+      link "ai/AGENTS.md"
+    );
 
-  programs.opencode = {
-    enable = lib.mkDefault false;
-    package = lib.mkDefault pkgs.unstable.opencode;
+    programs.opencode = {
+      enable = lib.mkDefault false;
+      package = lib.mkDefault pkgs.unstable.opencode;
+    };
   };
 }

@@ -35,8 +35,13 @@ let
           inherit pkgs;
           extraSpecialArgs = { inherit inputs self; };
           modules = [
+            self.homeModules.commonOptions
             self.homeModules.package
             self.homeModules.fileSources
+            {
+              nix.package = lib.mkDefault pkgs.unstable.nix;
+              programs.home-manager.enable = lib.mkDefault true;
+            }
           ]
           ++ moduleFiles.list entry.path;
         }

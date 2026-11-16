@@ -1,4 +1,6 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
-  programs.sniffnet.enable = lib.mkDefault false;
+  config = lib.mkIf config.features.programs.enable {
+    programs.sniffnet.enable = lib.mkDefault false;
+  };
 }

@@ -4,7 +4,10 @@
   ...
 }:
 {
-  imports = [ self.nixosModules.terminal ];
+  imports = [
+    self.nixosModules.catppuccin
+    self.nixosModules.terminal
+  ];
 
   users.users.star = {
     isNormalUser = lib.mkDefault true;

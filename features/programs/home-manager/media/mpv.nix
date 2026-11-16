@@ -16,17 +16,19 @@ in
     }
   ];
 
-  xdg.configFile = lib.mkIf config.programs.mpv.enable {
-    "mpv/mpv.conf" = link "mpv/mpv.conf";
-    "mpv/input.conf" = link "mpv/input.conf";
-    "mpv/catppuccin.conf".source =
-      config.programs.mpv.config.include or (pkgs.writeText "mpv-no-theme.conf" "");
-  };
+  config = lib.mkIf config.features.programs.enable {
+    xdg.configFile = lib.mkIf config.programs.mpv.enable {
+      "mpv/mpv.conf" = link "mpv/mpv.conf";
+      "mpv/input.conf" = link "mpv/input.conf";
+      "mpv/catppuccin.conf".source =
+        config.programs.mpv.config.include or (pkgs.writeText "mpv-no-theme.conf" "");
+    };
 
-  catppuccin.mpv.enable = lib.mkDefault config.programs.mpv.enable;
+    catppuccin.mpv.enable = lib.mkDefault config.programs.mpv.enable;
 
-  programs.mpv = {
-    enable = lib.mkDefault false;
-    package = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
+    programs.mpv = {
+      enable = lib.mkDefault false;
+      package = inputs.nix-packages.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
+    };
   };
 }
