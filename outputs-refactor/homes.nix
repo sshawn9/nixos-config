@@ -38,6 +38,7 @@ let
             self.homeModules.commonOptions
             self.homeModules.package
             self.homeModules.fileSources
+            self.homeModules.allFeatures
             {
               nix.package = lib.mkDefault pkgs.unstable.nix;
               programs.home-manager.enable = lib.mkDefault true;

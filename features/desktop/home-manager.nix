@@ -7,6 +7,5 @@ in
     ./options.nix
   ]
   ++ self.lib.moduleFiles.list ./home-manager/common
-  ++ lib.optionals context.inNixOS (self.lib.moduleFiles.list ./home-manager/embedded)
-  ++ lib.optionals context.isStandaloneHome (self.lib.moduleFiles.list ./home-manager/standalone);
+  ++ lib.optionals context.inNixOS (self.lib.moduleFiles.list ./home-manager/embedded);
 }

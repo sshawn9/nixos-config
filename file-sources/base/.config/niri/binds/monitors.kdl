@@ -1,0 +1,42 @@
+binds {
+    // Ctrl changes monitor focus; Ctrl+Shift moves the current column there.
+    // Ctrl+Alt moves the whole workspace there.
+    Mod+Ctrl+H { focus-monitor-left; }
+    Mod+Ctrl+J { focus-monitor-down; }
+    Mod+Ctrl+K { focus-monitor-up; }
+    Mod+Ctrl+L { focus-monitor-right; }
+
+    Mod+Ctrl+Left { focus-monitor-left; }
+    Mod+Ctrl+Down { focus-monitor-down; }
+    Mod+Ctrl+Up { focus-monitor-up; }
+    Mod+Ctrl+Right { focus-monitor-right; }
+
+    Mod+Ctrl+Comma { focus-monitor-previous; }
+    Mod+Ctrl+Period { focus-monitor-next; }
+
+    Mod+Shift+Ctrl+H { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L { move-column-to-monitor-right; }
+
+    Mod+Shift+Ctrl+Left { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+
+    Mod+Shift+Ctrl+Comma { move-column-to-monitor-previous; }
+    Mod+Shift+Ctrl+Period { move-column-to-monitor-next; }
+
+    Mod+Alt+Ctrl+H { move-workspace-to-monitor-left; }
+    Mod+Alt+Ctrl+J { move-workspace-to-monitor-down; }
+    Mod+Alt+Ctrl+K { move-workspace-to-monitor-up; }
+    Mod+Alt+Ctrl+L { move-workspace-to-monitor-right; }
+
+    Mod+Alt+Ctrl+Left { move-workspace-to-monitor-left; }
+    Mod+Alt+Ctrl+Down { move-workspace-to-monitor-down; }
+    Mod+Alt+Ctrl+Up { move-workspace-to-monitor-up; }
+    Mod+Alt+Ctrl+Right { move-workspace-to-monitor-right; }
+
+    Mod+Alt+Ctrl+Comma { move-workspace-to-monitor-previous; }
+    Mod+Alt+Ctrl+Period { move-workspace-to-monitor-next; }
+}

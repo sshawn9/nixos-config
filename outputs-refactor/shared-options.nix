@@ -6,7 +6,14 @@
 }:
 let
   sourceUser = config.sharedOptionsUser;
-  sharedOptions = lib.filterAttrs (name: _: name == "features" || name == "common") options;
+  sharedOptions = lib.filterAttrs (
+    name: _:
+    lib.elem name [
+      "features"
+      "common"
+      "fileSources"
+    ]
+  ) options;
   userOptions = lib.modules.mapAttrsOfSubmodule (_: { opt, ... }: opt) options.home-manager.users;
   sourceOptions = if sourceUser == null then { } else userOptions.${sourceUser};
 in

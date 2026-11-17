@@ -1,0 +1,12 @@
+index-strategy = "first-index"
+python-downloads = "automatic"
+python-preference = "only-managed"
+
+[[index]]
+default = true
+name = "pypi"
+url = "https://pypi.org/simple"
+
+# [[index]]
+# name = "tuna"
+# url = "https://pypi.tuna.tsinghua.edu.cn/simple"

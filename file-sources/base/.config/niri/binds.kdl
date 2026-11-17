@@ -1,0 +1,10 @@
+include "binds/session.kdl"
+include "binds/apps.kdl"
+include "binds/windows.kdl"
+include "binds/workspaces.kdl"
+include "binds/monitors.kdl"
+include "binds/capture.kdl"
+include "binds/hardware.kdl"
+
+// Noctalia takes precedence for matching keybindings.
+include "binds/noctalia.kdl"

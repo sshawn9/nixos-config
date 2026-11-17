@@ -38,6 +38,8 @@ let
           modules = [
             self.nixosModules.commonOptions
             self.nixosModules.package
+            self.nixosModules.fileSources
+            self.nixosModules.allFeatures
             inputs.home-manager.nixosModules.home-manager
             ./shared-options.nix
             {
@@ -50,6 +52,7 @@ let
                   self.homeModules.commonOptions
                   self.homeModules.package
                   self.homeModules.fileSources
+                  self.homeModules.allFeatures
                 ];
               };
             }

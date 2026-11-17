@@ -1,0 +1,8 @@
+binds {
+    Mod+Shift+Slash repeat=false { show-hotkey-overlay; }
+    Mod+Tab repeat=false { toggle-overview; }
+    Mod+Ctrl+R repeat=false { spawn "niri" "msg" "action" "load-config-file"; }
+
+    Mod+Shift+E repeat=false { quit skip-confirmation=false; }
+    Mod+Shift+P repeat=false { power-off-monitors; }
+}

@@ -1,0 +1,8 @@
+[plugins]
+enabled = [
+  "kenn/keybind-cheatsheet",
+  "local/memory-temperature",
+  "alexander/screen-toolkit",
+  "baizhu/paged-todo",
+]
+auto_update = "all"

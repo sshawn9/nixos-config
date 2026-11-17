@@ -1,0 +1,3 @@
+include "window-rules/global.kdl"
+include "window-rules/tiled-apps.kdl"
+include "window-rules/floating.kdl"

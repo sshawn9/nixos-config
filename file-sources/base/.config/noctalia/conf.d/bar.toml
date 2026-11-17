@@ -1,0 +1,107 @@
+[bar]
+order = ["main"]
+
+[bar.main]
+start = [
+  "workspaces",
+  "taskbar",
+  "media",
+]
+end = [
+  "tray",
+  "notifications",
+  "screen-toolkit",
+  "clipboard",
+  "bar",
+  "volume",
+  "brightness",
+  "caffeine",
+]
+position = "top"
+enabled = true
+auto_hide = false
+reserve_space = true
+thickness = 28
+background_opacity = 0.0
+border_width = 0.0
+shadow = false
+radius = 12
+concave_edge_corners = false
+margin_ends = 4
+margin_edge = -2
+padding = 0
+widget_spacing = 4
+capsule = true
+capsule_thickness = 0.8064516
+capsule_opacity = 0.8
+hover_highlight = false
+center = []
+capsule_group = []
+
+[bar.main.dead_zone]
+
+[bar.main.dead_zone.actions]
+scroll_up = "workspace-switch prev"
+scroll_down = "workspace-switch next"
+
+[bar.sub]
+start = [
+  "session",
+  "launcher",
+  "keybinds",
+  "clock",
+  "group:system-monitor",
+]
+end = [
+  "lock_keys",
+  "network",
+  "bluetooth",
+  "battery",
+  "settings",
+  "control-center",
+]
+position = "bottom"
+enabled = true
+auto_hide = false
+reserve_space = true
+thickness = 28
+background_opacity = 0.0
+border_width = 0.0
+shadow = false
+radius = 12
+concave_edge_corners = false
+margin_ends = 4
+margin_edge = -2
+padding = 0
+widget_spacing = 4
+capsule = true
+capsule_thickness = 0.8064516
+capsule_opacity = 0.8
+hover_highlight = false
+center = []
+
+[bar.sub.dead_zone]
+
+[bar.sub.dead_zone.actions]
+scroll_up = "workspace-switch prev"
+scroll_down = "workspace-switch next"
+
+[[bar.sub.capsule_group]]
+accordion = false
+accordion_direction = "end"
+enabled = true
+id = "system-monitor"
+members = [
+  "cpu-usage",
+  "cpu-temp",
+  "gpu-temp",
+  "ram-used",
+  "ram-temp",
+  "disk-used",
+  "net-rx",
+  "net-tx",
+]
+fill = "surface_variant"
+opacity = 0.80000001192092896
+padding = 6.0
+widget_spacing = 4

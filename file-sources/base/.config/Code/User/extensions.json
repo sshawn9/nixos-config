@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    "activitywatch.aw-watcher-vscode",
+    "anthropic.claude-code",
+    "charliermarsh.ruff",
+    "editorconfig.editorconfig",
+    "jnoortheen.nix-ide",
+    "mkhl.direnv",
+    "ms-azuretools.vscode-containers",
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-renderers",
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpp-devtools",
+    "ms-vscode.cpptools",
+    "openai.chatgpt",
+    "shd101wyy.markdown-preview-enhanced",
+    "tamasfe.even-better-toml",
+    "tomoki1207.pdf"
+  ]
+}

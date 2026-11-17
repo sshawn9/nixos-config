@@ -1,0 +1,4 @@
+[weather]
+enabled = true
+unit = "metric"
+effects = true

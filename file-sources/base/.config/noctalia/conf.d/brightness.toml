@@ -1,0 +1,4 @@
+[brightness]
+enable_ddcutil = true
+minimum_brightness = 0.01
+sync_all_monitors = true

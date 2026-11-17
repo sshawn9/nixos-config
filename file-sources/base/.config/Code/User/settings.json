@@ -1,0 +1,72 @@
+{
+  // Window
+  "window.zoomLevel": 3,
+  "window.density.layout": "compact",
+  // Keyboard
+  "keyboard.dispatch": "keyCode",
+  // Editor
+  "editor.fontFamily": "'JetBrainsMono Nerd Font Mono', 'Noto Sans Mono CJK SC', monospace",
+  "editor.fontSize": 20,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  // Diff editor
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.renderSideBySide": false,
+  // Files
+  "files.autoSave": "onFocusChange",
+  // Direnv
+  "direnv.restart.automatic": true,
+  // Terminal
+  "terminal.integrated.fontSize": 18,
+  // Git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  // Nix
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "nix.enableLanguageServer": true,
+  "nix.hiddenLanguageServerErrors": [
+    "textDocument/definition",
+    "textDocument/formatting",
+    "textDocument/rangeFormatting"
+  ],
+  "nix.serverPath": "nixd",
+  "nix.serverSettings": {
+    "nixd": {
+      "formatting": {
+        "command": [
+          "nixfmt"
+        ]
+      }
+    }
+  },
+  // Python
+  "python.analysis.typeCheckingMode": "standard",
+  // GitHub Copilot
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "python": false
+  },
+  // Markdown
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  // AI and chat
+  "chat.viewSessions.orientation": "stacked",
+  "chat.mcp.gallery.enabled": true,
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.selectedModel": "default",
+  "claudeCode.focusView": true,
+  // Codex Accounts
+  "codexAccounts.displayLanguage": "zh",
+  "codexAccounts.codexAppRestartEnabled": false,
+  "codexAccounts.autoRefreshMinutes": 60,
+  "codexAccounts.backgroundTokenRefreshEnabled": true,
+  "codexAccounts.quotaWarningEnabled": false,
+  "codexAccounts.hourlyQuotaControlEnabled": true
+}

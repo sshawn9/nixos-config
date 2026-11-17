@@ -8,9 +8,11 @@ let
       lib.filter (path: baseNameOf path == "flake-module.nix") (moduleFiles.list directory)
     else
       [ ];
+  addModuleKey = module: module // { key = module._file; };
 in
 inputs.flake-parts.lib.mkFlake { inherit inputs; } {
   imports = [
+    inputs.flake-parts.flakeModules.touchup
     inputs.home-manager.flakeModules.home-manager
     ../framework/evaluation-context
     ../framework/file-sources
@@ -18,12 +20,16 @@ inputs.flake-parts.lib.mkFlake { inherit inputs; } {
     ../framework/options
     ../framework/package
     ../framework/package-sets
+    ./features.nix
     ./hosts.nix
     ./homes.nix
     inputs.treefmt-preset.flakeModules.default
   ]
   ++ flakeModuleFiles ../features
   ++ flakeModuleFiles ../compositions/user-presets;
+
+  touchup.attr.nixosModules.any.finish = addModuleKey;
+  touchup.attr.homeModules.any.finish = addModuleKey;
 
   perSystem =
     { config, pkgs, ... }:

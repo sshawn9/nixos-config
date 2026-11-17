@@ -12,5 +12,5 @@
     };
   };
 
-  home-manager.users.star.fileSources.overrideDirs = lib.mkAfter [ ".dotfiles/x" ];
+  home-manager.users.star.fileSources.overrideDirs = lib.mkAfter [ "file-sources/x" ];
 }

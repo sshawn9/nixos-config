@@ -24,7 +24,7 @@
 
     baseDir = lib.mkOption {
       type = lib.types.str;
-      default = "files";
+      default = "file-sources/base";
       description = "Base layer directory, relative to the source root.";
     };
 
