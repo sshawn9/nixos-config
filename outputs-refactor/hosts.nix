@@ -44,6 +44,7 @@ let
             ./shared-options.nix
             {
               nixpkgs.pkgs = pkgs;
+              networking.hostName = lib.mkDefault entry.name;
               home-manager = {
                 useGlobalPkgs = lib.mkDefault true;
                 useUserPackages = lib.mkDefault true;

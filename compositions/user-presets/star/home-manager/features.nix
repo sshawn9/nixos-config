@@ -13,6 +13,7 @@
     programs.enable = lib.mkDefault true;
     programs-cli.enable = lib.mkDefault true;
     qbittorrent.enable = lib.mkDefault true;
+    scheduling.enable = lib.mkDefault true;
     sops.enable = lib.mkDefault true;
     ssh.enable = lib.mkDefault true;
     system-base.enable = lib.mkDefault true;

@@ -20,6 +20,26 @@ in
     hashedPasswordFile = lib.mkIf config.features.sops.enable config.sops.secrets.starHashedPassword.path;
   };
 
+  security.sudo.extraRules = [
+    {
+      users = [ primaryUser ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (subject.user === ${builtins.toJSON primaryUser}) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   sops.secrets.starHashedPassword = lib.mkIf config.features.sops.enable {
     sopsFile = self.outPath + "/secrets/star/hashed-password.enc.yaml";
     key = "hashed_password";
