@@ -45,7 +45,6 @@ let
               home-manager = {
                 useGlobalPkgs = lib.mkDefault true;
                 useUserPackages = lib.mkDefault true;
-                backupFileExtension = lib.mkDefault "hm-backup";
                 extraSpecialArgs = { inherit inputs self; };
                 sharedModules = [
                   self.homeModules.commonOptions
