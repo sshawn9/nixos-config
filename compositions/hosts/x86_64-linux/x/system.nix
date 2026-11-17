@@ -3,6 +3,7 @@
   networking.hostName = "x";
   system.stateVersion = "25.11";
   sharedOptionsUser = "star";
+  users.mutableUsers = lib.mkDefault false;
 
   boot = {
     tmp.useTmpfs = true;

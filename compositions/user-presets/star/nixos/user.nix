@@ -16,5 +16,13 @@ in
   users.users.${primaryUser} = {
     isNormalUser = lib.mkDefault true;
     extraGroups = [ "wheel" ];
+    password = lib.mkIf (!config.features.sops.enable) "nixos";
+    hashedPasswordFile = lib.mkIf config.features.sops.enable config.sops.secrets.starHashedPassword.path;
+  };
+
+  sops.secrets.starHashedPassword = lib.mkIf config.features.sops.enable {
+    sopsFile = self.outPath + "/secrets/star/hashed-password.enc.yaml";
+    key = "hashed_password";
+    neededForUsers = true;
   };
 }
