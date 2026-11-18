@@ -8,6 +8,7 @@
     package = {
       regctl = lib.mkDefault true;
       skopeo = lib.mkDefault true;
+      apx = lib.mkDefault false;
     };
   };
 }

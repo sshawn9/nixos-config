@@ -9,7 +9,6 @@
     package = {
       patchelf = lib.mkDefault true;
       elfutils = lib.mkDefault true;
-      apx = lib.mkDefault false;
     };
   };
 }

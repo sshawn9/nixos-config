@@ -15,5 +15,10 @@
         notifPackage = lib.mkDefault pkgs.unstable.gpu-screen-recorder-notification;
       };
     };
+
+    package = {
+      flameshot = lib.mkDefault false;
+      kooha = lib.mkDefault false;
+    };
   };
 }

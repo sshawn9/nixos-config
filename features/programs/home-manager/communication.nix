@@ -10,5 +10,7 @@
       enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.discord;
     };
+
+    package.telegram-desktop = lib.mkDefault false;
   };
 }

@@ -9,6 +9,8 @@ let
 in
 {
   config = lib.mkIf config.features.programs.enable {
+    home.sessionPath = lib.optional config.package.rustup.enable "$HOME/.cargo/bin";
+
     xdg.configFile."mise/config.toml" = lib.mkIf config.programs.mise.enable (link "mise/config.toml");
 
     xdg.configFile."mise/install-python-wheels.sh" = lib.mkIf config.programs.mise.enable (
@@ -38,6 +40,19 @@ in
         enable = lib.mkDefault true;
         package = lib.mkDefault pkgs.unstable.uv;
       };
+    };
+
+    package = {
+      cc = {
+        enable = lib.mkDefault true;
+        package = lib.mkDefault pkgs.unstable.stdenv.cc;
+      };
+      nodejs = lib.mkDefault true;
+      rustup = lib.mkDefault true;
+      gettext = lib.mkDefault true;
+      binutils = lib.mkDefault true;
+      gnumake = lib.mkDefault true;
+      pkg-config = lib.mkDefault true;
     };
   };
 }

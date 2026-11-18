@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -9,6 +10,11 @@
 
   config = lib.mkIf config.features.programs.enable {
     programs.mousehop.enable = lib.mkDefault false;
+
+    package = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+      cosmic-files = lib.mkDefault false;
+      nemo = lib.mkDefault false;
+    };
 
     nix.settings = lib.mkIf config.programs.mousehop.enable {
       extra-substituters = [ "https://mousehop.cachix.org" ];
