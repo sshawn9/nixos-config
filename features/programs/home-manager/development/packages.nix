@@ -6,6 +6,8 @@
 }:
 {
   config = lib.mkIf config.features.programs.enable {
+    home.sessionPath = lib.optional config.package.rustup.enable "$HOME/.cargo/bin";
+
     package = {
       cc = {
         enable = lib.mkDefault true;

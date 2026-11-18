@@ -7,6 +7,11 @@
   system.stateVersion = "25.11";
   users.mutableUsers = lib.mkDefault false;
 
+  nix.settings = {
+    max-jobs = 3;
+    cores = 16;
+  };
+
   boot = {
     tmp.useTmpfs = true;
     loader = {
