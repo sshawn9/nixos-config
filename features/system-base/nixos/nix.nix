@@ -6,6 +6,8 @@
   ...
 }:
 {
+  imports = [ ../nix-caches.nix ];
+
   config = lib.mkIf (config.features.system-base.enable && config.nix.enable) {
     nix = {
       package = lib.mkDefault pkgs.unstable.nix;
@@ -13,6 +15,8 @@
 
       settings = {
         auto-optimise-store = lib.mkDefault true;
+        max-jobs = lib.mkDefault 1;
+        cores = lib.mkDefault 1;
         experimental-features = lib.mkDefault [
           "nix-command"
           "flakes"

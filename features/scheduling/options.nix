@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.features.scheduling.enable = lib.mkEnableOption "sched_ext CPU scheduling";
+  options.features.scheduling.enable = lib.mkEnableOption "CPU and process scheduling";
 }

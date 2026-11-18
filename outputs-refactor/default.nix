@@ -39,6 +39,7 @@ inputs.flake-parts.lib.mkFlake { inherit inputs; } {
         ".dotfiles/*/.config/DankMaterialShell/**"
         "sops/secrets/**"
         "secrets/**"
+        "file-sources/**"
       ];
 
       devShells.default = pkgs.mkShell {

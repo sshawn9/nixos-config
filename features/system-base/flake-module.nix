@@ -1,6 +1,6 @@
 {
   flake = {
     nixosModules.system-base = ./nixos.nix;
-    homeModules.system-base = ./options.nix;
+    homeModules.system-base = ./home-manager.nix;
   };
 }

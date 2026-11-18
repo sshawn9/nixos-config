@@ -24,6 +24,7 @@
       };
 
       nvidia = {
+        branch = lib.mkDefault "latest";
         modesetting.enable = lib.mkDefault true;
         dynamicBoost.enable = lib.mkDefault true;
         powerManagement.enable = lib.mkDefault true;

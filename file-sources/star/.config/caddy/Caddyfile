@@ -21,7 +21,7 @@ http://:8080 {
 
 	@qbittorrent header_regexp Host ^qbittorrent\.
 	handle @qbittorrent {
-		reverse_proxy 127.0.0.1:29101 {
+		reverse_proxy 127.0.0.1:29102 {
 			header_up Host {upstream_hostport}
 		}
 	}

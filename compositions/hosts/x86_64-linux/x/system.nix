@@ -5,6 +5,7 @@
   users.mutableUsers = lib.mkDefault false;
 
   boot = {
+    kernel.sysctl."kernel.nmi_watchdog" = lib.mkDefault 0;
     tmp.useTmpfs = true;
     loader = {
       efi.efiSysMountPoint = "/boot";
