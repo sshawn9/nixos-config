@@ -1,4 +1,9 @@
-{ lib, self, ... }:
+{
+  config,
+  lib,
+  self,
+  ...
+}:
 {
   imports = [ self.nixosModules.star ];
 
@@ -18,5 +23,11 @@
       efi.efiSysMountPoint = "/boot";
       systemd-boot.enable = true;
     };
+  };
+
+  services.ananicy.enable = true;
+
+  systemd.services.mihomo = lib.mkIf config.services.mihomo.enable {
+    wantedBy = lib.mkForce [ ];
   };
 }

@@ -20,9 +20,5 @@ in
     };
 
     networking.firewall.allowedTCPPorts = lib.mkIf service.enable [ 7890 ];
-
-    systemd.services.mihomo = lib.mkIf service.enable {
-      wantedBy = lib.mkForce [ ];
-    };
   };
 }

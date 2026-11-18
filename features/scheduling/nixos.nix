@@ -16,7 +16,7 @@
     };
 
     services.ananicy = {
-      enable = lib.mkDefault true;
+      enable = lib.mkDefault false;
       package = lib.mkDefault pkgs.unstable.ananicy-cpp;
       rulesProvider = lib.mkDefault pkgs.unstable.ananicy-rules-cachyos;
 

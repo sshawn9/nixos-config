@@ -13,7 +13,10 @@ in
     home.file = lib.mkIf config.programs.ssh.enable {
       ".ssh/config" = link ".ssh/config";
 
-      ".ssh/config.d" = link ".ssh/config.d";
+      ".ssh/config.d" = link {
+        source = ".ssh/config.d";
+        onMissing = "ignore";
+      };
 
       ".ssh/id_ed25519.pub" = link ".ssh/id_ed25519.pub";
     };
