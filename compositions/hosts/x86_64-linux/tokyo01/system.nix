@@ -5,6 +5,8 @@
     self.nixosModules.star
   ];
 
+  home-manager.users.star.fileSources.localRoot = null;
+
   system.stateVersion = "26.11";
 
   # The installed disk boots in BIOS mode.
