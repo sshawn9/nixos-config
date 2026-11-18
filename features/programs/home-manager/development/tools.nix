@@ -7,10 +7,9 @@ in
     xdg.configFile."just" = lib.mkIf config.package.just.enable (link "just");
 
     package = {
+      just = lib.mkDefault true;
       watchexec = lib.mkDefault true;
       entr = lib.mkDefault true;
-      just = lib.mkDefault true;
-      hyperfine = lib.mkDefault true;
       tokei = lib.mkDefault true;
       sqlite = lib.mkDefault true;
       sqlitebrowser = lib.mkDefault false;

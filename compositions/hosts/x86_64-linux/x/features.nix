@@ -3,7 +3,6 @@
     catppuccin.enable = true;
     git.enable = true;
     nix-ld.enable = true;
-    programs-cli.enable = true;
     ssh.enable = true;
     system-base.enable = true;
     terminal.enable = true;

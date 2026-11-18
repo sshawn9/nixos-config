@@ -31,7 +31,6 @@ flake-parts.lib.mkFlake { inherit inputs; } {
     ../compositions/user-presets/star/flake-module.nix
     ../features/nix-ld/flake-module.nix
     ../features/programs/flake-module.nix
-    ../features/programs-cli/flake-module.nix
     ../features/qbittorrent/flake-module.nix
     ../features/ssh/flake-module.nix
     ../features/terminal/flake-module.nix

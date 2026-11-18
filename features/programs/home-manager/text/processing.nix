@@ -13,7 +13,7 @@
     }
   ];
 
-  config = lib.mkIf config.features.programs-cli.enable {
+  config = lib.mkIf config.features.programs.enable {
     catppuccin.bat.enable = lib.mkDefault config.programs.bat.enable;
 
     programs = {
@@ -36,7 +36,6 @@
     };
 
     package = {
-      bc = lib.mkDefault true;
       moreutils = lib.mkDefault true;
       dos2unix = lib.mkDefault true;
       libxml2 = lib.mkDefault true;
@@ -46,6 +45,8 @@
       jo = lib.mkDefault true;
       dasel = lib.mkDefault true;
       sd = lib.mkDefault true;
+      qpdf = lib.mkDefault false;
+      poppler-utils = lib.mkDefault false;
     };
   };
 }

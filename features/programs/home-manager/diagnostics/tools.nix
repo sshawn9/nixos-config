@@ -16,7 +16,7 @@ in
     }
   ];
 
-  config = lib.mkIf config.features.programs-cli.enable {
+  config = lib.mkIf config.features.programs.enable {
     xdg.configFile."htop/htoprc" = lib.mkIf config.programs.htop.enable (link "htop/htoprc");
 
     catppuccin.btop.enable = lib.mkDefault config.programs.btop.enable;
@@ -44,6 +44,7 @@ in
       ncdu = lib.mkDefault true;
       dust = lib.mkDefault true;
       procs = lib.mkDefault true;
+      hyperfine = lib.mkDefault true;
     };
   };
 }

@@ -5,7 +5,7 @@
   ...
 }:
 {
-  config = lib.mkIf (config.features.programs-cli.enable && pkgs.stdenv.hostPlatform.isLinux) {
+  config = lib.mkIf (config.features.programs.enable && pkgs.stdenv.hostPlatform.isLinux) {
     package = {
       perf = lib.mkDefault true;
       lm_sensors = lib.mkDefault false;

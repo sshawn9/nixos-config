@@ -9,11 +9,19 @@
   imports = [ inputs.mousehop.homeManagerModules.default ];
 
   config = lib.mkIf config.features.programs.enable {
-    programs.mousehop.enable = lib.mkDefault false;
+    programs = {
+      discord = {
+        enable = lib.mkDefault false;
+        package = lib.mkDefault pkgs.unstable.discord;
+      };
+      mousehop.enable = lib.mkDefault false;
+    };
 
-    package = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      cosmic-files = lib.mkDefault false;
-      nemo = lib.mkDefault false;
+    package = {
+      google-chrome = lib.mkDefault false;
+      microsoft-edge = lib.mkIf pkgs.stdenv.hostPlatform.isLinux (lib.mkDefault false);
+      telegram-desktop = lib.mkDefault false;
+      obsidian = lib.mkDefault false;
     };
 
     nix.settings = lib.mkIf config.programs.mousehop.enable {

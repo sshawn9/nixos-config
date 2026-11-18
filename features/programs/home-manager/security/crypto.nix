@@ -1,6 +1,6 @@
 { config, lib, ... }:
 {
-  config = lib.mkIf config.features.programs-cli.enable {
+  config = lib.mkIf config.features.programs.enable {
     package = {
       age = lib.mkDefault true;
       openssl = lib.mkDefault true;

@@ -16,7 +16,7 @@ in
     }
   ];
 
-  config = lib.mkIf config.features.programs-cli.enable {
+  config = lib.mkIf config.features.programs.enable {
     xdg.configFile."yazi/yazi.toml" = lib.mkIf config.programs.yazi.enable (link "yazi/yazi.toml");
 
     catppuccin = {
