@@ -17,8 +17,9 @@
       default = null;
       description = ''
         Matching repository root in a mutable checkout. Set this to an
-        absolute string path when using local sources. Store-only
-        configurations can leave it unset.
+        absolute string path to link local sources to that checkout.
+        Linking local sources while this is null falls back to the snapshot
+        in storeRoot and emits an evaluation warning.
       '';
     };
 

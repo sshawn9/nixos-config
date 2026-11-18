@@ -105,7 +105,7 @@ let
 
   localRoot =
     if cfg.localRoot == null then
-      throw "fileSources.localRoot must be set before using local file sources"
+      lib.warn "fileSources.localRoot is null. Local file sources are falling back to the storeRoot snapshot." cfg.storeRoot
     else
       cfg.localRoot;
 in

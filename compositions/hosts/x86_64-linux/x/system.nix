@@ -25,8 +25,6 @@
     };
   };
 
-  services.ananicy.enable = true;
-
   systemd.services.mihomo = lib.mkIf config.services.mihomo.enable {
     wantedBy = lib.mkForce [ ];
   };
