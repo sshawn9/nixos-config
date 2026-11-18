@@ -33,8 +33,18 @@
     dhcpV4Config.ClientIdentifier = "mac";
   };
 
-  nix.settings = {
-    max-jobs = 1;
-    cores = 1;
+  nix = {
+    settings = {
+      max-jobs = 1;
+      cores = 1;
+      min-free = 4 * 1024 * 1024 * 1024;
+      max-free = 8 * 1024 * 1024 * 1024;
+    };
+
+    gc = {
+      automatic = true;
+      dates = "04:00";
+      options = "--delete-older-than 10d";
+    };
   };
 }
