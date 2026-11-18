@@ -18,6 +18,5 @@
     ssh.enable = lib.mkDefault true;
     system-base.enable = lib.mkDefault true;
     terminal.enable = lib.mkDefault true;
-    user-environment.enable = lib.mkDefault true;
   };
 }
