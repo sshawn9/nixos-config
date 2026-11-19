@@ -9,21 +9,11 @@ let
     resolved: file:
     let
       present = resolved != null;
-      source =
-        path:
-        if resolved.mode == "store" then
-          path
-        else
-          "${pkgs.linkFarm "file-source-local" { source = path; }}/source";
     in
     lib.mkMerge [
       (lib.mkIf present (
         {
-          source =
-            if resolved.directory then
-              pkgs.linkFarm "file-sources-${resolved.mode}-${resolved.name}" resolved.files
-            else
-              source resolved.source;
+          inherit (resolved) source;
         }
         // lib.optionalAttrs resolved.directory { recursive = lib.mkDefault true; }
         // file
@@ -35,5 +25,5 @@ in
   _class = "homeManager";
   imports = [ ./options.nix ];
 
-  config.lib.fileSources = import ./sources.nix { inherit config lib; } mkLink;
+  config.lib.fileSources = import ./sources.nix { inherit config lib pkgs; } mkLink;
 }

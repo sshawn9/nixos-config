@@ -1,0 +1,22 @@
+{
+	servers :443 {
+		listener_wrappers {
+			layer4 {
+				@reality tls sni hello.sshawn9.com
+				route @reality {
+					proxy {
+						proxy_protocol v2
+						upstream tcp/127.0.0.1:24443
+					}
+				}
+			}
+			tls
+		}
+	}
+
+	servers 127.0.0.1:8443 {
+		protocols h1 h2
+	}
+}
+
+import sites/hello.caddy

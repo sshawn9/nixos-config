@@ -1,4 +1,8 @@
-{ config, lib }:
+{
+  config,
+  lib,
+  pkgs,
+}:
 mkLink:
 let
   cfg = config.fileSources;
@@ -36,10 +40,19 @@ let
     in
     go "";
 
+  mkSource =
+    resolved:
+    if resolved.directory then
+      pkgs.linkFarm "file-sources-${resolved.mode}-${resolved.name}" resolved.files
+    else if resolved.mode == "store" then
+      resolved.source
+    else
+      "${pkgs.linkFarm "file-source-local" { inherit (resolved) source; }}/source";
+
   mkSources =
     mode: root:
     let
-      resolve =
+      resolvePath =
         path:
         let
           relative = clean path;
@@ -69,14 +82,15 @@ let
             source = join root selected;
           };
 
-      scope = prefix: {
-        link =
+      scope = prefix: rec {
+        # Return a usable source and the local directories its links depend on.
+        resolve =
           value:
           let
             file = if builtins.isString value then { source = value; } else value;
             inherit (file) source;
             onMissing = file.onMissing or "error";
-            resolved = resolve (join prefix source);
+            resolved = resolvePath (join prefix source);
             message = "fileSources: no source found for '${toString source}'";
             checked =
               if resolved != null then
@@ -89,7 +103,25 @@ let
                 }
                 .${onMissing};
           in
-          mkLink checked (
+          if checked == null then
+            null
+          else
+            {
+              source = mkSource checked;
+              inherit (checked) directory;
+              localDirectories = lib.optionals (mode == "local" && cfg.localRoot != null) (
+                lib.unique (
+                  map dirOf (if checked.directory then builtins.attrValues checked.files else [ checked.source ])
+                )
+              );
+            };
+
+        link =
+          value:
+          let
+            file = if builtins.isString value then { source = value; } else value;
+          in
+          mkLink (resolve file) (
             removeAttrs file [
               "source"
               "onMissing"

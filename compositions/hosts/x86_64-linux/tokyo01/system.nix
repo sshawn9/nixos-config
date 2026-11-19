@@ -1,11 +1,19 @@
-{ modulesPath, self, ... }:
+{
+  lib,
+  modulesPath,
+  self,
+  ...
+}:
 {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     self.nixosModules.star
   ];
 
-  home-manager.users.star.fileSources.localRoot = null;
+  home-manager.users.star.fileSources = {
+    localRoot = null;
+    overrideDirs = lib.mkAfter [ "file-sources/tokyo01" ];
+  };
 
   system.stateVersion = "26.11";
 

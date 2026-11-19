@@ -9,6 +9,7 @@
     terminal.enable = true;
 
     caddy.enable = true;
+    sops.enable = true;
     system-tuning.enable = true;
   };
 }

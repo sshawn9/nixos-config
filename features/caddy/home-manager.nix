@@ -29,7 +29,7 @@ in
           "XDG_DATA_HOME=${config.xdg.dataHome}"
         ];
       };
-      Install.WantedBy = [ "default.target" ];
+      # Install.WantedBy = [ "default.target" ];
     };
   };
 }

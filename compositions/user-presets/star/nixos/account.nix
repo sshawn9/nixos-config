@@ -17,7 +17,9 @@ in
     isNormalUser = lib.mkDefault true;
     extraGroups = [ "wheel" ];
     password = lib.mkIf (!config.features.sops.enable) "nixos";
-    hashedPasswordFile = lib.mkIf config.features.sops.enable config.sops.secrets.starHashedPassword.path;
+    hashedPasswordFile = lib.mkIf config.features.sops.enable (
+      lib.mkDefault config.sops.secrets.starHashedPassword.path
+    );
   };
 
   sops.secrets.starHashedPassword = lib.mkIf config.features.sops.enable {
