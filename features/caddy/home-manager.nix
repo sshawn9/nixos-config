@@ -15,7 +15,7 @@ in
   config = lib.mkIf config.features.caddy.enable {
     package.caddy = lib.mkDefault true;
 
-    xdg.configFile."caddy/Caddyfile" = link "caddy/Caddyfile";
+    xdg.configFile."caddy" = link "caddy";
 
     systemd.user.services.caddy = {
       Unit.Description = "Caddy web server";

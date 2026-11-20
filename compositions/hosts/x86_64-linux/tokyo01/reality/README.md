@@ -3,19 +3,22 @@
 本目录由主机组装器递归加载，不需要再添加 `imports`。
 下文使用 `hello.example.com` 作为示例域名。
 
-- `xray.nix`：VLESS + RAW/TCP + REALITY + XTLS Vision，仅监听 `127.0.0.1:24443`。
-- `../caddy.nix`：固定 caddy-l4 插件版本及构建哈希，连接 Caddy 配置入口和只读目录绑定，并通过环境变量提供网页目录。
-- `file-sources/tokyo01/.config/caddy/Caddyfile`：主入口，在公网 TCP 443 的 TLS 握手前按 SNI 分流，并导入 `sites/hello.caddy`。
-- `sites/hello.caddy`：位于上述配置目录内，声明公网 HTTPS 入口、HTTP 跳转和 `127.0.0.1:8443` 的回落网站。
+- `xray.nix`：声明 Xray 服务、caddy-l4 插件、Caddy 全局分流和域名站点配置。Xray 仅监听 `127.0.0.1:24443`，Caddy 在公网 TCP 443 的 TLS 握手前按 SNI 分流，并提供 HTTP 跳转和 `127.0.0.1:8443` 的回落网站。
 - `site/index.html`：普通浏览器访问域名时看到的页面。
 - `secrets/tokyo01/xray.enc.json`：完整的 Xray 服务端 JSON 配置，由 SOPS 加密保存。
 
 ## 更换域名
 
 在仓库根目录执行 `sops secrets/tokyo01/xray.enc.json`，修改 `inbounds[0].streamSettings.realitySettings.serverNames`。
-同步修改 `file-sources/tokyo01/.config/caddy/Caddyfile` 中的 L4 域名匹配、`sites/hello.caddy` 中的域名和 `mihomo.yaml` 的 `servername`。
-域名是公开配置，直接写在 Caddyfile 中，不需要域名环境变量或单独的 SOPS 配置。
-网页目录通过 `REALITY_SITE_ROOT` 指向 `site/` 的 Nix store 快照，服务器无需本地 checkout。
+同步修改 `xray.nix` 中的 `domain` 和 `mihomo.yaml` 的 `servername`。
+`domain` 同时用于 L4 的 SNI 匹配、公开 HTTPS 站点和 HTTP 跳转。
+域名是公开配置，直接写在 Nix 中，不需要域名环境变量或单独的 SOPS 配置。
+网页目录直接引用 `site/` 的 Nix store 路径，服务器无需本地 checkout。
+
+Xray 所需的 Caddy 配置统一位于 `xray.nix`：全局选项通过 `services.caddy.globalConfig` 声明，
+域名站点和本机回落站点通过 `services.caddy.virtualHosts` 声明。
+主配置由 NixOS 原生模块生成，仍会合并其他 feature 的 `globalConfig`、`extraConfig` 和 `virtualHosts`，
+也保留主用户 Caddy 目录中通用文件片段的 `import` 入口。
 
 在 Cloudflare 为该子域名建立指向服务器公网 IPv4 的 A 记录，选择 **DNS only**。
 客户端的 `server` 填写服务器公网地址，`servername` 用于 TLS SNI。
@@ -38,7 +41,8 @@ Caddy 监听公网 TCP 443，Xray 的 24443 和回落网站的 8443 仅监听本
 
 L4 分流不终止 TLS；通过 PROXY protocol v2 将客户端地址传给 Xray。
 回落目标必须保持独立的 `127.0.0.1:8443`，不能指回带有同一条 L4 规则的公网 443。
-以后增加普通网站时，在 `sites/` 下创建文件并由主 Caddyfile 导入即可，它们不经过 Xray。
+以后增加普通网站时，可通过 `services.caddy.virtualHosts` 声明，或在主用户的 Caddy 目录中创建
+`<名称>.extra-before.caddy`、`<名称>.extra-after.caddy` 文件；它们不经过 Xray。
 
 Caddy 使用 ACME 自动签发和续期公开可信证书，禁用 TLS-ALPN 验证，避免依赖
 已被 L4 转入 Xray 的代理域名握手。首次签发完成前，HTTPS 和 REALITY 暂时无法使用。
