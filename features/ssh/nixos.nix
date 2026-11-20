@@ -12,5 +12,24 @@
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.openssh;
     };
+
+    programs = {
+      mosh = {
+        enable = lib.mkDefault true;
+        package = lib.mkDefault pkgs.unstable.mosh;
+      };
+    };
+
+    package = {
+      tsshd.enable = true;
+      trzsz-ssh.enable = true;
+    };
+
+    networking.firewall.allowedUDPPortRanges = [
+      {
+        from = 61001;
+        to = 61999;
+      }
+    ];
   };
 }
