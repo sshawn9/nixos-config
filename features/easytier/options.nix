@@ -39,7 +39,68 @@ in
   options.features.easytier = {
     enable = lib.mkEnableOption "EasyTier";
 
+    client = {
+      enable = lib.mkEnableOption "the EasyTier Config Server client";
+
+      configServer = lib.mkOption {
+        type = lib.types.nullOr lib.types.nonEmptyStr;
+        default = null;
+        example = "https://et-config.example.com/DEVICE_TOKEN";
+        description = ''
+          Full Config Server URL, including the protocol, host, port when
+          needed, and device token path. Accepts HTTPS address discovery or
+          direct UDP/TCP/WS/WSS connections. Required when the client is enabled.
+        '';
+      };
+    };
+
+    relay = {
+      enable = lib.mkEnableOption "the EasyTier shared relay node";
+
+      port = lib.mkOption {
+        type = lib.types.ints.between 1 65532;
+        default = 11010;
+        description = ''
+          Base port for all seven relay protocols: TCP/UDP use this port,
+          WireGuard/WS use port + 1, QUIC/WSS use port + 2, and FakeTCP uses
+          port + 3. The upper bound leaves room for all derived ports.
+        '';
+      };
+    };
+
     backend = {
+      default = {
+        type = lib.mkOption {
+          type = lib.types.enum [
+            "udp"
+            "tcp"
+            "ws"
+            "wss"
+          ];
+          default = "tcp";
+          description = "Default Config Server transport and corresponding API backend; WS and WSS share the WS backend.";
+        };
+
+        apiDomain = lib.mkOption {
+          type = lib.types.nullOr lib.types.nonEmptyStr;
+          default = null;
+          example = "et-api.example.com";
+          description = "Optional HTTPS API hostname, served as an alias of the selected backend API.";
+        };
+
+        configDomain = lib.mkOption {
+          type = lib.types.nullOr lib.types.nonEmptyStr;
+          default = null;
+          example = "et-config.example.com";
+          description = ''
+            Public Config Server hostname, without a scheme. HTTPS requests
+            discover the default connection address; WebSocket upgrades connect
+            to the WS backend when it is enabled. Resolve this hostname directly
+            to the server, since the discovered UDP/TCP/WS addresses also use it.
+          '';
+        };
+      };
+
       udp = mkBackendOptions {
         apiPort = 11211;
         configPort = 22020;
@@ -50,41 +111,19 @@ in
         configPort = 22021;
       };
 
-      ws =
-        mkBackendOptions {
-          apiPort = 11213;
-          configPort = 22022;
-        }
-        // {
-          wssDomain = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "et-config.example.com";
-            description = ''
-              Public WSS hostname, without a scheme. Caddy terminates TLS on
-              port 443 and forwards to this backend's native WS listener.
-            '';
-          };
-        };
+      ws = mkBackendOptions {
+        apiPort = 11213;
+        configPort = 22022;
+      };
     };
 
     frontend = {
       default = {
-        type = lib.mkOption {
-          type = lib.types.enum [
-            "udp"
-            "tcp"
-            "ws"
-          ];
-          default = "tcp";
-          description = "Frontend served at frontend.default.domain; that frontend must be enabled.";
-        };
-
         domain = lib.mkOption {
           type = lib.types.nullOr lib.types.nonEmptyStr;
           default = null;
           example = "et.example.com";
-          description = "Optional main domain, served as an alias of the selected frontend.";
+          description = "Optional main frontend domain; API requests use backend.default.apiDomain.";
         };
       };
     }

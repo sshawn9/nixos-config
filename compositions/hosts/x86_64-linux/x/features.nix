@@ -14,6 +14,13 @@
       niri.enable = true;
       noctalia.enable = true;
     };
+    easytier = {
+      enable = true;
+      client = {
+        enable = true;
+        configServer = "https://et-config.sshawn9.com/user";
+      };
+    };
     libvirt.enable = true;
     mihomo.enable = true;
     nvidia.enable = true;

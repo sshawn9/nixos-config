@@ -43,16 +43,9 @@ in
       backend.configPort
     ];
 
-    services.caddy.virtualHosts = {
-      ${toString backend.apiDomain}.extraConfig =
-        lib.mkIf config.systemd.services.easytier-web-ws.enable ''
-          reverse_proxy 127.0.0.1:${toString backend.apiPort}
-        '';
-
-      ${toString backend.wssDomain}.extraConfig =
-        lib.mkIf config.systemd.services.easytier-web-ws.enable ''
-          reverse_proxy 127.0.0.1:${toString backend.configPort}
-        '';
-    };
+    services.caddy.virtualHosts.${toString backend.apiDomain}.extraConfig =
+      lib.mkIf config.systemd.services.easytier-web-ws.enable ''
+        reverse_proxy 127.0.0.1:${toString backend.apiPort}
+      '';
   };
 }
