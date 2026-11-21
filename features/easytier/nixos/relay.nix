@@ -13,6 +13,15 @@ in
       enable = lib.mkDefault true;
       package = lib.mkDefault pkgs.unstable.easytier;
 
+      # 手动运行同等中转功能（EasyTier 2.7.1+，默认端口 11010）：
+      # sudo easytier-core \
+      #   --instance-name relay \
+      #   --shared-runtime \
+      #   --listeners 11010 \
+      #   --enable-relay-foreign-network-kcp true \
+      #   --enable-relay-foreign-network-quic true
+      # 自定义 relay.port 时同步替换 --listeners；同机运行时避免与现有中转服务占用相同端口。
+      # 文件描述符上限由下方 systemd 的 LimitNOFILE 设置，手动运行时由启动环境单独设置。
       instances.relay = {
         # EasyTier 2.7.1+: use one multithreaded runtime with the available CPU count.
         extraArgs = [
