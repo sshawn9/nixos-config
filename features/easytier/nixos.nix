@@ -38,6 +38,7 @@ in
     ./overlay.nix
     ./nixos/client.nix
     ./nixos/relay.nix
+    ./nixos/backend/geoip.nix
     ./nixos/backend/udp.nix
     ./nixos/backend/tcp.nix
     ./nixos/backend/ws.nix

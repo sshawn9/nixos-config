@@ -18,6 +18,7 @@ easytier/
 │   ├── client.nix         # 连接 Config Server，接受远程组网配置
 │   ├── relay.nix          # 七种传输协议的共享中转节点
 │   ├── backend/
+│   │   ├── geoip.nix     # 三个后端共用的城市定位数据库和自动更新
 │   │   ├── udp.nix       # UDP 配置监听、独立 API 和数据库
 │   │   ├── tcp.nix       # TCP 配置监听、独立 API 和数据库
 │   │   └── ws.nix        # WS 直接接入，以及 Caddy 提供的 WSS
@@ -189,6 +190,28 @@ Caddy `serverAliases`，复用反代配置，不增加服务进程或 HTTP 跳�
 默认 API 域名也可以填写所选后端已有的 API 域名，此时无需添加域名别名；
 使用独立域名可以在后续切换默认后端时保持调用地址不变。
 该域名需要在 DNS 服务商处解析到默认后端所在服务器。
+
+### 设备位置
+
+启用任意 Web 后端后，自动接入免费的 MaxMind GeoLite2 City 数据库，由
+[P3TERX/GeoLite.mmdb](https://github.com/P3TERX/GeoLite.mmdb) 分发。
+三个后端通过 `ET_GEOIP_DB` 共用 `/var/lib/easytier-geoip/GeoLite2-City.mmdb`，
+可以显示数据库中提供的国家、省/地区和城市；IP 对应的省市缺失或不准确时，界面也会受影响。
+
+系统启动、每次通过 `test` / `switch` 应用系统配置时，均运行 `easytier-geoip-update.service`，
+后端等待更新任务完成后启动。首次直接下载上游当前版本，不固定初始库或哈希。
+`easytier-geoip-update.timer` 每天按服务器本地时间检查，错过的每日任务会补执行。
+更新使用 HTTP ETag，未变化时不重复下载数据库；下载、校验成功且内容有变化时原子替换文件，
+并异步重启正在运行的后端重新查询设备位置。已有库时更新失败继续用旧库；
+首次无库时更新失败会阻止后端启动，需要修复下载问题后重新启动或部署。
+日常自动更新不依赖重新构建或切换 NixOS。
+
+查看更新状态：
+
+```sh
+systemctl list-timers easytier-geoip-update.timer
+journalctl -u easytier-geoip-update.service
+```
 
 ## 设备接入
 
