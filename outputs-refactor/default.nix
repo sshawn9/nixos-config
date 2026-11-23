@@ -17,12 +17,14 @@ inputs.flake-parts.lib.mkFlake { inherit inputs; } {
     ../framework/evaluation-context
     ../framework/file-sources
     ../framework/module-files
+    ../framework/nixos-system
     ../framework/options
     ../framework/package
     ../framework/package-sets
     ./features.nix
     ./hosts.nix
     ./homes.nix
+    ./installers.nix
     inputs.treefmt-preset.flakeModules.default
   ]
   ++ flakeModuleFiles ../features

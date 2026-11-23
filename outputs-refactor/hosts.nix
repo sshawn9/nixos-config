@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  withSystem,
   ...
 }:
 let
@@ -31,36 +30,13 @@ let
   configurations = lib.concatMap (
     entry:
     let
-      configuration = withSystem entry.system (
-        { pkgs, ... }:
-        inputs.nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs self; };
-          modules = [
-            self.nixosModules.commonOptions
-            self.nixosModules.package
-            self.nixosModules.fileSources
-            self.nixosModules.allFeatures
-            inputs.home-manager.nixosModules.home-manager
-            ./shared-options.nix
-            {
-              nixpkgs.pkgs = pkgs;
-              networking.hostName = lib.mkDefault entry.name;
-              home-manager = {
-                useGlobalPkgs = lib.mkDefault true;
-                useUserPackages = lib.mkDefault true;
-                extraSpecialArgs = { inherit inputs self; };
-                sharedModules = [
-                  self.homeModules.commonOptions
-                  self.homeModules.package
-                  self.homeModules.fileSources
-                  self.homeModules.allFeatures
-                ];
-              };
-            }
-          ]
-          ++ moduleFiles.list entry.path;
-        }
-      );
+      configuration = self.lib.mkNixosSystem {
+        inherit (entry) system;
+        modules = [
+          { networking.hostName = lib.mkDefault entry.name; }
+        ]
+        ++ moduleFiles.list entry.path;
+      };
     in
     [ (lib.nameValuePair "${entry.name}@${entry.system}" configuration) ]
     ++ lib.optional (nameCounts.${entry.name} == 1) (lib.nameValuePair entry.name configuration)

@@ -1,0 +1,29 @@
+{
+  inputs.repo.url = "path:./config";
+
+  outputs = { repo, ... }:
+    let
+      username = __USERNAME__;
+    in
+    {
+      nixosConfigurations.installed = repo.lib.mkNixosSystem {
+        system = "@system@";
+        modules = [
+          ./configuration.nix
+          (repo.outPath + "@target@/nixos.nix")
+          {
+            common.primaryUser = username;
+            sharedOptionsUser = username;
+            users.users = {
+              ${username}.hashedPassword = __USER_PASSWORD_HASH__;
+              root.hashedPassword = __ROOT_PASSWORD_HASH__;
+            };
+            home-manager.users.${username} = {
+              imports = [ (repo.outPath + "@target@/home-manager.nix") ];
+              common.primaryUser = username;
+            };
+          }
+        ];
+      };
+    };
+}

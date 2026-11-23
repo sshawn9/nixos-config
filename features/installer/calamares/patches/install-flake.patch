@@ -1,0 +1,102 @@
+Description: Join the generated machine configuration to a repository target
+ Prepare the installed flake after the native job has written configuration.nix,
+ then keep its nixos-install invocation and progress reporting. Inputs must be
+ archived into the target store, where nixos-install evaluates the flake.
+diff --git a/modules/nixos/main.py b/modules/nixos/main.py
+--- a/modules/nixos/main.py
++++ b/modules/nixos/main.py
+@@ -592,6 +592,59 @@ class NixProgress:
+         self._copies_expected = ce
+ 
+ 
++def prepare_flake(root, gs):
++    def nix_string(value):
++        return json.dumps(value, ensure_ascii=False).replace("${", "\\${")
++
++    def password_hash(key, lock_empty=False):
++        obscured = gs.value(key)
++        if not isinstance(obscured, str):
++            raise ValueError("The users page did not provide " + key)
++        password = libcalamares.utils.obscure(obscured)
++        if lock_empty and not password:
++            return "!"
++        result = subprocess.check_output(
++            ["@mkpasswd@", "--method=yescrypt", "--stdin"],
++            input=(password + "\n").encode("utf8"),
++            stderr=subprocess.STDOUT,
++        ).decode("utf8").strip()
++        if not result.startswith("$y$") or "\n" in result:
++            raise ValueError("mkpasswd did not return a yescrypt password hash")
++        return result
++
++    nixos_dir = os.path.join(root, "etc/nixos")
++    subprocess.check_output(
++        ["cp", "-rT", "--no-preserve=mode,ownership", "--", "@source@",
++         os.path.join(nixos_dir, "config")],
++        stderr=subprocess.STDOUT,
++    )
++    subprocess.check_output(
++        ["chmod", "-R", "u+w", os.path.join(nixos_dir, "config")],
++        stderr=subprocess.STDOUT,
++    )
++    values = {
++        "USERNAME": nix_string(gs.value("username")),
++        "USER_PASSWORD_HASH": nix_string(password_hash("password")),
++        "ROOT_PASSWORD_HASH": nix_string(password_hash("rootPassword", lock_empty=True)),
++    }
++    with open("@configuration@", encoding="utf8") as template:
++        flake = re.sub(r"__([A-Z_]+)__", lambda match: values[match[1]], template.read())
++    with open(os.path.join(nixos_dir, "flake.nix"), "w", encoding="utf8") as output:
++        output.write(flake)
++
++    # Lock before nixos-install measures the path flake's content hash.
++    flags = ["--offline"] if @offline@ else []
++    subprocess.check_output(
++        ["nix", "flake", "lock", *flags, "path:" + nixos_dir],
++        stderr=subprocess.STDOUT,
++    )
++    subprocess.check_output(
++        ["nix", "flake", "archive", *flags, "--no-check-sigs", "--to", root,
++         "path:" + nixos_dir],
++        stderr=subprocess.STDOUT,
++    )
++
++
+ def run():
+     """NixOS Configuration."""
+ 
+@@ -1044,6 +1097,13 @@ def run():
+     # Write the configuration.nix file
+     libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", config], None, cfg)
+ 
++    try:
++        prepare_flake(root_mount_point, gs)
++    except (OSError, ValueError, subprocess.CalledProcessError) as error:
++        output = getattr(error, "output", None)
++        details = output.decode("utf8", errors="replace") if output else str(error)
++        return (_("Failed to prepare the installed configuration"), details)
++
+     status = _("Installing NixOS")
+     libcalamares.job.setprogress(INSTALL_PROGRESS_START)
+ 
+@@ -1061,6 +1121,11 @@ def run():
+     nixosInstallCmd.extend(
+         [
+             "nixos-install",
++            "--flake",
++            "path:" + os.path.join(root_mount_point, "etc/nixos") + "#installed",
++            "--no-channel-copy",
++            "--option", "substitute", "true",
++            "--option", "always-allow-substitutes", "true",
+             "--no-root-passwd",
+             "--root",
+             root_mount_point,
+@@ -1081,6 +1146,8 @@ def run():
+         ]
+     )
+ 
++    if @offline@:
++        nixosInstallCmd.extend(["--option", "substituters", ""])
+     progress = NixProgress()
+ 
+     try:
