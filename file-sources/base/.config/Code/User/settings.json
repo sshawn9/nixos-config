@@ -59,6 +59,7 @@
     "editor.formatOnSave": false
   },
   // AI and chat
+  "chat.fontSize": 14,
   "chat.viewSessions.orientation": "stacked",
   "chat.mcp.gallery.enabled": true,
   "claudeCode.preferredLocation": "panel",
