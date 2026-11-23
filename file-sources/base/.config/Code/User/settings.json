@@ -14,6 +14,8 @@
   "diffEditor.renderSideBySide": false,
   // Files
   "files.autoSave": "onFocusChange",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
   // Direnv
   "direnv.restart.automatic": true,
   // Terminal
