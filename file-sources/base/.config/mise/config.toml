@@ -5,3 +5,6 @@ all_compile = false
 # Inside a uv project (identified by uv.lock), create/source its .venv so
 # `python` resolves to the project environment, including in subdirectories.
 python.uv_venv_auto = "create|source"
+
+# Keep mutable global tool versions outside the repository.
+write_targets.tools = "~/.config/mise/config.local.toml"
