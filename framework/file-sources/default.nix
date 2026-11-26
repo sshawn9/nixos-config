@@ -1,6 +1,7 @@
 {
   flake = {
     nixosModules.fileSources = ./options.nix;
+    systemManagerModules.fileSources = ./options.nix;
     homeModules.fileSources = ./home-manager.nix;
 
     # TODO: Implement system file links with target paths relative to /.

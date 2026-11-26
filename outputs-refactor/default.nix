@@ -21,10 +21,12 @@ inputs.flake-parts.lib.mkFlake { inherit inputs; } {
     ../framework/options
     ../framework/package
     ../framework/package-sets
+    ../framework/system-manager
     ./features.nix
     ./hosts.nix
     ./homes.nix
     ./installers.nix
+    ./system-manager.nix
     inputs.treefmt-preset.flakeModules.default
   ]
   ++ flakeModuleFiles ../features
@@ -32,6 +34,7 @@ inputs.flake-parts.lib.mkFlake { inherit inputs; } {
 
   touchup.attr.nixosModules.any.finish = addModuleKey;
   touchup.attr.homeModules.any.finish = addModuleKey;
+  touchup.attr.systemManagerModules.any.finish = addModuleKey;
 
   perSystem =
     { config, pkgs, ... }:

@@ -76,6 +76,29 @@
     };
 
     # Upstream inputs:
+    # system-manager
+    # ├── flake-compat (source only)
+    # ├── nixpkgs
+    # └── userborn
+    #     ├── flake-compat (shared with system-manager/flake-compat)
+    #     ├── flake-parts
+    #     │   └── nixpkgs-lib (shared with system-manager/userborn/nixpkgs)
+    #     ├── nixpkgs (shared with system-manager/nixpkgs)
+    #     ├── pre-commit-hooks-nix
+    #     │   ├── flake-compat (shared with system-manager/userborn/flake-compat)
+    #     │   ├── gitignore
+    #     │   │   └── nixpkgs (shared with system-manager/userborn/pre-commit-hooks-nix/nixpkgs)
+    #     │   └── nixpkgs (shared with system-manager/userborn/nixpkgs)
+    #     └── systems
+    #
+    # Follow policy: partial — share nixpkgs for module and Home Manager
+    # compatibility; retain upstream userborn and source-only flake-compat pins.
+    system-manager = {
+      url = "github:numtide/system-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Upstream inputs:
     # flake-parts
     # └── nixpkgs-lib
     #

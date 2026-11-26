@@ -29,4 +29,8 @@ in
   flake.homeModules.allFeatures = {
     imports = collect "homeModules";
   };
+
+  flake.systemManagerModules.allFeatures = {
+    imports = collect "systemManagerModules";
+  };
 }
