@@ -58,6 +58,7 @@
   "[markdown]": {
     "editor.formatOnSave": false
   },
+  "markdown-preview-enhanced.previewTheme": "vscode.css",
   // AI and chat
   "chat.fontSize": 14,
   "chat.viewSessions.orientation": "stacked",
