@@ -63,6 +63,7 @@
   "chat.fontSize": 14,
   "chat.viewSessions.orientation": "stacked",
   "chat.mcp.gallery.enabled": true,
+  "chatgpt.followUpQueueMode": "steer",
   "claudeCode.preferredLocation": "panel",
   "claudeCode.selectedModel": "default",
   "claudeCode.focusView": true,
